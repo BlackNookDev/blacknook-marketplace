@@ -5,27 +5,27 @@ import Image from 'next/image';
 import { Check, Loader2, Shield, Sparkles } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
+import HeroPresenceStrip from '@/components/presence/HeroPresenceStrip';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { getFeaturedServices } from '../../../lib/data';
 
 const FLOATING = getFeaturedServices(8).map((s, i) => ({
   ...s,
-  // yüzde konum + hafif rotasyon
   style: [
-    { top: '8%', left: '6%', rotate: -12, size: 'lg' as const },
-    { top: '12%', right: '8%', rotate: 10, size: 'md' as const },
-    { top: '38%', left: '3%', rotate: 8, size: 'md' as const },
-    { top: '42%', right: '4%', rotate: -8, size: 'lg' as const },
-    { bottom: '22%', left: '10%', rotate: -6, size: 'md' as const },
-    { bottom: '18%', right: '9%', rotate: 14, size: 'md' as const },
-    { top: '58%', left: '18%', rotate: 4, size: 'sm' as const },
-    { top: '62%', right: '16%', rotate: -4, size: 'sm' as const },
+    { top: '10%', left: '8%', rotate: -12, size: 'lg' as const },
+    { top: '14%', right: '10%', rotate: 10, size: 'md' as const },
+    { top: '40%', left: '5%', rotate: 8, size: 'md' as const },
+    { top: '44%', right: '6%', rotate: -8, size: 'lg' as const },
+    { bottom: '20%', left: '12%', rotate: -6, size: 'md' as const },
+    { bottom: '16%', right: '11%', rotate: 14, size: 'md' as const },
+    { top: '56%', left: '20%', rotate: 4, size: 'sm' as const },
+    { top: '60%', right: '18%', rotate: -4, size: 'sm' as const },
   ][i],
   delay: i * 0.35,
 }));
 
 const TRUST = [
-  { icon: Sparkles, label: 'Seçilmiş premium servisler' },
+  { icon: Sparkles, label: '60 gün para iade garantisi' },
   { icon: Shield, label: 'Doğrulanmış sağlayıcılar' },
   { icon: Check, label: '50+ araç tek pazaryerinde' },
 ];
@@ -47,17 +47,12 @@ export default function HeroMailCollector() {
   };
 
   return (
-    <section className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-28">
-      {/* Atmosfer */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
-      >
-        <div className="absolute left-1/2 top-[28%] h-[55vmin] w-[70vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.07)_0%,transparent_68%)] blur-2xl" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--bn-bg,#050505)] to-transparent" />
+    <section className="relative flex min-h-[72svh] w-full flex-col items-center justify-center overflow-hidden px-4 pb-10 pt-24 sm:min-h-[68svh]">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute left-1/2 top-[30%] h-[40vmin] w-[52vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.06)_0%,transparent_68%)] blur-2xl" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bn-bg,#050505)] to-transparent" />
       </div>
 
-      {/* Yüzen logo’lar */}
       <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
         {FLOATING.map((item) => (
           <m.div
@@ -74,7 +69,7 @@ export default function HeroMailCollector() {
               reduce
                 ? undefined
                 : {
-                    y: [0, -10, 0],
+                    y: [0, -8, 0],
                     rotate: [
                       item.style.rotate,
                       item.style.rotate + 3,
@@ -89,50 +84,49 @@ export default function HeroMailCollector() {
               delay: item.delay,
             }}
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur-md lg:h-16 lg:w-16">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] shadow-[0_8px_28px_rgba(0,0,0,0.4)] backdrop-blur-md lg:h-11 lg:w-11">
               <ServiceCatalogLogo
                 icon={item.icon}
                 brandColor={item.brandColor}
                 name={item.name}
-                size={item.style.size === 'lg' ? 'md' : 'sm'}
+                size="sm"
               />
             </div>
           </m.div>
         ))}
       </div>
 
-      {/* Merkez kart */}
       <m.div
-        className="relative z-10 w-full max-w-lg"
-        initial={reduce ? false : { opacity: 0, y: 24 }}
+        className="relative z-10 w-full max-w-sm"
+        initial={reduce ? false : { opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: duration.scene, ease: easePremium }}
       >
-        <div className="relative rounded-3xl border border-white/10 bg-zinc-950/80 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:p-10">
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-zinc-900 shadow-lg">
+        <div className="relative rounded-2xl border border-white/10 bg-zinc-950/80 p-5 shadow-[0_16px_56px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:p-6">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-zinc-900 shadow-lg">
               <Image
                 src="/bn-mark.png"
                 alt=""
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain brightness-0 invert"
+                width={22}
+                height={22}
+                className="h-5 w-5 object-contain brightness-0 invert"
                 priority
               />
             </div>
           </div>
 
-          <div className="mt-4 text-center">
-            <h1 className="font-display text-[1.65rem] font-bold leading-tight tracking-tight text-white sm:text-3xl">
+          <div className="mt-2 text-center">
+            <h1 className="font-display text-xl font-bold leading-tight tracking-tight text-white sm:text-[1.35rem]">
               İşiniz için premium yazılım.
-              <span className="mt-1 block text-zinc-400">Tek seferlik lisanslarla.</span>
+              <span className="mt-0.5 block text-zinc-400">Tek seferlik lisanslarla.</span>
             </h1>
-            <p className="mt-4 text-sm text-zinc-500 sm:text-base">
+            <p className="mt-2.5 text-xs text-zinc-500 sm:text-sm">
               Deal uyarıları alın + ilk satın alımda %10 indirim
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-3">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-2.5">
             <label htmlFor="hero-email" className="sr-only">
               Email
             </label>
@@ -144,21 +138,21 @@ export default function HeroMailCollector() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === 'loading' || status === 'done'}
               placeholder="Email"
-              className="h-12 w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-500 focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-60"
+              className="h-9 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-500 focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={status === 'loading' || status === 'done'}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white text-sm font-bold text-black transition-[opacity,transform] duration-premium ease-premium hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-white text-xs font-bold text-black transition-[opacity,transform] duration-premium ease-premium hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
             >
               {status === 'loading' ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
                   Kaydediliyor…
                 </>
               ) : status === 'done' ? (
                 <>
-                  <Check className="h-4 w-4" aria-hidden />
+                  <Check className="h-3.5 w-3.5" aria-hidden />
                   Listeye eklendiniz
                 </>
               ) : (
@@ -169,20 +163,21 @@ export default function HeroMailCollector() {
         </div>
       </m.div>
 
-      {/* Trust bar */}
       <m.ul
-        className="relative z-10 mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4"
+        className="relative z-10 mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 px-4"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35, duration: duration.base, ease: easePremium }}
       >
         {TRUST.map(({ icon: Icon, label }) => (
-          <li key={label} className="flex items-center gap-2 text-sm text-zinc-400">
-            <Icon className="h-4 w-4 text-zinc-300" strokeWidth={1.75} aria-hidden />
+          <li key={label} className="flex items-center gap-1.5 text-xs text-zinc-400">
+            <Icon className="h-3.5 w-3.5 text-zinc-300" strokeWidth={1.75} aria-hidden />
             {label}
           </li>
         ))}
       </m.ul>
+
+      <HeroPresenceStrip />
     </section>
   );
 }

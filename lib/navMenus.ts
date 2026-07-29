@@ -117,10 +117,55 @@ export const NAV_MENUS: NavMenuConfig[] = [
   },
 ];
 
-/** Navbar tek “Kategoriler” menüsü */
-export const CATEGORIES_NAV = {
-  label: 'Kategoriler',
+/** Navbar “Ekosistem” mega menü */
+export const ECOSYSTEM_NAV = {
+  label: 'Ekosistem',
   href: '/services',
+  browseAllLabel: 'Tüm deal’leri gör',
+  categories: BROWSE_CATEGORIES.map((c) => ({
+    label: c.label,
+    href: `/services?category=${c.id}`,
+  })),
+  trending: [
+    {
+      title: 'Yakında bitiyor',
+      description: 'Kaçırmadan yakala — süresi dolmak üzere olan deal’ler.',
+      href: '/services',
+    },
+    {
+      title: 'AI stack',
+      description: 'En iyi yapay zeka araçlarını tek yerde keşfet.',
+      href: '/services?category=build-code',
+    },
+    {
+      title: 'Müşteri favorileri',
+      description: '4.9+ puan alan, en çok tercih edilen araçlar.',
+      href: '/services',
+    },
+    {
+      title: 'BlackNOOK özel',
+      description: 'Yalnızca üyelerimize özel seçilmiş deal’ler.',
+      href: '/services',
+    },
+    {
+      title: 'CRM & Satış araçları',
+      description: 'Sekmeleri değil, anlaşmaları kapat.',
+      href: '/services?category=sales-leads',
+      badge: 'YENİ' as const,
+    },
+  ],
+  featured: {
+    title: 'SEO Yazılımı',
+    description: 'Daha yüksek sıralama, daha az maliyet.',
+    href: '/services?category=marketing',
+    cta: 'Keşfet',
+  },
+} as const;
+
+/** @deprecated — ECOSYSTEM_NAV kullanın */
+export const CATEGORIES_NAV = {
+  label: ECOSYSTEM_NAV.label,
+  href: ECOSYSTEM_NAV.href,
   items: [
     { label: 'Servisler', href: '/services' },
     { label: 'Micro-SaaS', href: '/services?type=micro-saas' },

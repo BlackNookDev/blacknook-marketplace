@@ -32,7 +32,7 @@ export default function BrandLogo({ className, iconClassName, textClassName }: P
           textClassName
         )}
       >
-        BlackNOOK
+        Blacknook
       </span>
     </Link>
   );

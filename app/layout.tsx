@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Syne, Source_Sans_3 } from 'next/font/google';
 import Providers from '@/components/Providers';
@@ -33,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="relative min-h-screen bg-transparent font-sans text-white antialiased">
         <SiteBackground />
         <Providers>
-          <Navbar />
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
           <div className="relative z-0 flex min-h-screen flex-col">
             <div className="flex-1">{children}</div>
             <TechLogoLoop />

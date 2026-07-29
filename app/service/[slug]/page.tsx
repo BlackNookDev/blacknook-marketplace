@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Check } from 'lucide-react';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
+import ServicePricingTable from '@/components/ServicePricingTable';
 import { getAllServiceSlugs, getServiceBySlug } from '../../../lib/data';
+import { getServicePricingPlan } from '../../../lib/pricingTiers';
 import ServiceDetailActions from './ServiceDetailActions';
 
 type PageProps = {
@@ -25,6 +27,7 @@ export function generateMetadata({ params }: PageProps) {
 export default function ServiceDetailPage({ params }: PageProps) {
   const service = getServiceBySlug(params.slug);
   if (!service) notFound();
+  const pricingPlan = getServicePricingPlan(service.slug);
 
   return (
     <main className="min-h-screen bg-transparent pb-24 pt-28">
@@ -147,6 +150,8 @@ export default function ServiceDetailPage({ params }: PageProps) {
             </div>
           </aside>
         </div>
+
+        <ServicePricingTable serviceName={service.name} plan={pricingPlan} />
       </div>
     </main>
   );

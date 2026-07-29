@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -26,6 +26,8 @@ function GitHubIcon() {
 
 export default function RegisterEarlyAccessForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +37,12 @@ export default function RegisterEarlyAccessForm() {
     if (isLoading) return;
     setIsLoading(true);
     window.setTimeout(() => {
+      if (next === 'match') {
+        window.sessionStorage.setItem('bn_match_ready', '1');
+        setIsLoading(false);
+        router.push('/?match=1');
+        return;
+      }
       setIsLoading(false);
       router.push('/login');
     }, 1200);
@@ -46,13 +54,19 @@ export default function RegisterEarlyAccessForm() {
         Kayıt ol
       </h1>
       <p className="mt-3 text-sm text-zinc-400">
-        Zaten hesabınız var mı?{' '}
-        <Link
-          href="/login"
-          className="font-medium text-sky-400 transition-colors hover:text-sky-300"
-        >
-          Log in
-        </Link>
+        {next === 'match' ? (
+          <>Geliştirici eşleşmesi için önce bir hesap oluşturun.</>
+        ) : (
+          <>
+            Zaten hesabınız var mı?{' '}
+            <Link
+              href="/login"
+              className="font-medium text-sky-400 transition-colors hover:text-sky-300"
+            >
+              Log in
+            </Link>
+          </>
+        )}
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
