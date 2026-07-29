@@ -28,20 +28,13 @@ export default function ServiceGrid() {
       aria-labelledby="service-grid-heading"
     >
       <div className="relative mx-auto max-w-6xl px-6">
-        <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
+        <div className="mb-8 md:mb-10">
           <h2
             id="service-grid-heading"
             className="font-display text-2xl font-bold tracking-tight text-zinc-50 md:text-3xl"
           >
             Servisler
           </h2>
-          <Link
-            href="/services"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-white/15 bg-white/[0.03] px-3.5 py-2 text-sm font-medium text-zinc-200 transition-colors duration-premium ease-premium hover:border-white/25 hover:bg-white/[0.06] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
-          >
-            Daha fazla
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </Link>
         </div>
 
         <m.div
@@ -57,6 +50,16 @@ export default function ServiceGrid() {
             </m.div>
           ))}
         </m.div>
+
+        <div className="mt-10 flex justify-end">
+          <Link
+            href="/services"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/[0.03] px-3.5 py-2 text-sm font-medium text-zinc-200 transition-colors duration-premium ease-premium hover:border-white/25 hover:bg-white/[0.06] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+          >
+            Daha fazla
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Link>
+        </div>
       </div>
     </section>
   );

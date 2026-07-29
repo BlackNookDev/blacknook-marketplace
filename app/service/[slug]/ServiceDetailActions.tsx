@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useSession } from 'next-auth/react';
 import { AnimatePresence, m } from 'framer-motion';
 import { Send, X } from 'lucide-react';
+import AuthRequiredModal from '@/components/AuthRequiredModal';
 import { duration, easePremium } from '@/components/motion/tokens';
 
 type Props = {
@@ -12,7 +14,9 @@ type Props = {
 };
 
 export default function ServiceDetailActions({ serviceName, serviceSlug }: Props) {
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [requirements, setRequirements] = useState('');
   const [companyName, setCompanyName] = useState('');
@@ -26,6 +30,12 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
   }, []);
 
   useEffect(() => {
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+    }
+  }, [session?.user?.email]);
+
+  useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -37,7 +47,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
   const resetForm = () => {
     setRequirements('');
     setCompanyName('');
-    setEmail('');
+    setEmail(session?.user?.email ?? '');
     setError('');
     setSuccess(false);
   };
@@ -45,6 +55,15 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
   const closeModal = () => {
     setOpen(false);
     setTimeout(resetForm, 200);
+  };
+
+  const handleRequestClick = () => {
+    if (status === 'loading') return;
+    if (!session) {
+      setAuthOpen(true);
+      return;
+    }
+    setOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,26 +121,26 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: duration.base, ease: easePremium }}
-            className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-[var(--bn-surface)] shadow-2xl"
+            className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-[var(--bn-surface,#0c0c0e)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={closeModal}
-              className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-zinc-900/80 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
               aria-label="Kapat"
             >
               <X className="h-4 w-4" />
             </button>
 
             <form onSubmit={handleSubmit} className="relative p-8 pt-10">
-              <h2 id="install-request-title" className="text-xl font-bold text-white pr-10">
+              <h2 id="install-request-title" className="pr-10 text-xl font-bold text-white">
                 Kurulum Talep Et
               </h2>
-              <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
-                <span className="text-zinc-300 font-medium">{serviceName}</span> için kurulum
+              <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                <span className="font-medium text-zinc-300">{serviceName}</span> için kurulum
                 ihtiyacınızı yazın; en kısa sürede{' '}
-                <span className="text-zinc-300">dev@blacknook.com</span> üzerinden size dönüş
+                <span className="text-zinc-300">contact@blacknook.com</span> üzerinden size dönüş
                 yapacağız.
               </p>
 
@@ -142,7 +161,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
                       value={requirements}
                       onChange={(e) => setRequirements(e.target.value)}
                       placeholder={`${serviceName} kurulumu için gereksinimlerinizi yazın…`}
-                      className="w-full resize-none rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/20"
+                      className="w-full resize-none rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
                     />
                   </div>
                   <div>
@@ -156,7 +175,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="Şirket Adı"
-                      className="w-full rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/20"
+                      className="w-full rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
                     />
                   </div>
                   <div>
@@ -170,7 +189,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="E-posta"
-                      className="w-full rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/20"
+                      className="w-full rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-white/20 focus:outline-none focus:ring-2 focus:ring-white/15"
                     />
                   </div>
 
@@ -180,19 +199,19 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
                     </p>
                   )}
 
-                  <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+                  <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row">
                     <button
                       type="button"
                       onClick={closeModal}
                       disabled={sending}
-                      className="flex-1 rounded-xl border border-white/10 bg-zinc-900/50 py-3 text-sm font-semibold text-zinc-200 hover:bg-zinc-800/80 transition-colors disabled:opacity-50"
+                      className="flex-1 rounded-xl border border-white/10 bg-zinc-900/50 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:bg-zinc-800/80 disabled:opacity-50"
                     >
                       İptal
                     </button>
                     <button
                       type="submit"
                       disabled={sending}
-                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-black py-3 text-sm font-semibold text-white hover:bg-zinc-950 hover:border-white/25 disabled:opacity-50 transition-all"
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-black py-3 text-sm font-semibold text-white transition-all hover:border-white/25 hover:bg-zinc-950 disabled:opacity-50"
                     >
                       <Send className="h-4 w-4" aria-hidden />
                       {sending ? 'Gönderiliyor…' : 'Talebi Gönder'}
@@ -213,11 +232,12 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
         type="button"
         whileTap={{ scale: 0.98 }}
         className="group relative w-full rounded-full bg-white py-3.5 text-sm font-semibold text-black transition-[opacity,transform] duration-premium ease-premium hover:opacity-90"
-        onClick={() => setOpen(true)}
+        onClick={handleRequestClick}
       >
         Kurulum talep et
       </m.button>
       {mounted && createPortal(modal, document.body)}
+      <AuthRequiredModal open={authOpen} onClose={() => setAuthOpen(false)} mounted={mounted} />
     </>
   );
 }

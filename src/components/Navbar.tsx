@@ -21,13 +21,8 @@ export default function Navbar() {
     >
       <nav className="relative w-full max-w-5xl" aria-label="Ana navigasyon">
         <div className="relative flex h-12 items-center justify-between gap-3 rounded-full border border-white/[0.08] bg-black/50 pl-4 pr-2 shadow-[0_8px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl backdrop-saturate-150">
-          <BrandLogo />
-
-          <div className="hidden items-center gap-1 md:flex">
-            <NavDropdown />
-          </div>
-
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <BrandLogo />
             <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 sm:flex">
               <Search className="h-3.5 w-3.5 text-zinc-500" strokeWidth={1.5} aria-hidden />
               <input
@@ -39,7 +34,12 @@ export default function Navbar() {
                 aria-label="Servis ara"
               />
             </div>
+          </div>
 
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="hidden md:block">
+              <NavDropdown />
+            </div>
             <Link
               href="/services"
               className="rounded-full px-3 py-1.5 text-sm text-zinc-400 transition-colors hover:text-white md:hidden"
