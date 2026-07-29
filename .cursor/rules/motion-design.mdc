@@ -1,0 +1,18 @@
+---
+alwaysApply: false
+---
+---
+description: Sitenin animasyonlarını basit ("fade-in") seviyesinden çıkarıp Apple, Stripe, Linear ve Vercel gibi üst düzey (premium) SaaS projelerindeki sinematik ve yüksek mühendislik gerektiren seviyeye taşır.
+globs: **/*.{tsx,jsx}
+---
+
+# Premium & Cinematic Motion (Üst Düzey Animasyon Kuralları)
+
+- **Metin Maskeleme (Masked Reveals):** Başlıkları (h1, h2) basitçe `opacity` ile ekrana getirmek KESİNLİKLE YASAKTIR. Bunun yerine metinleri `overflow-hidden` bir kapsayıcı (container) içine alın ve metnin y ekseninde aşağıdan (%100) yukarıya (%0) doğru bir maske içinden (clip-path) süzülerek çıkmasını sağlayın. Bu, premium SaaS sitelerinin imza niteliğindeki başlık animasyonudur.
+- **Spotlight ve Fare Takibi (Mouse Tracking Glow):** Kart tasarımlarında basit `hover:bg-gray-100` efektleri kullanılamaz. Framer Motion'ın `useMotionValue` ve `useMotionTemplate` hook'larını kullanarak, kullanıcının faresi kartın üzerinde gezinirken imleci takip eden radyal bir ışık/parlama (spotlight) efekti oluşturun.
+- **Kelime Staggering (Word-by-Word Reveal):** Açıklama metinleri (paragraph) tek parça halinde aniden belirmemelidir. Metinleri kelimelere bölerek (split text), her bir parçaya dalga (wave) vari bir akıcılıkla sırayla belirmesi için gelişmiş `staggerChildren` orkestrasyonu uygulayın.
+- **Kaydırma Odaklı Derinlik (Scroll-Driven Parallax):** Kullanıcı sayfayı aşağı kaydırdığında elementlerin hepsi aynı düzlemde hareket etmemelidir. Framer Motion'ın `useScroll` ve `useTransform` hook'larını kullanarak arka plandaki elementlere, ışıklara (glow) ve görsellere farklı hızlarda hareket edecekleri hafif parallax gecikmeleri (örn: `y` ekseninde `[-50, 50]`) vererek 3D derinlik algısı yaratın.
+- **Kusursuz Morphing (Shared Layout Transitions):** Sekme (Tab) değiştirmelerinde, menü hover durumlarında veya aktif eleman geçişlerinde anlık renk/durum değişiklikleri YASAKTIR. Seçili öğenin arka planının veya alt çizgisinin diğer sekmenin üzerine pürüzsüzce kayarak geçmesi için KESİNLİKLE `layoutId` kullanın.
+- **Premium Yay Fiziği (Bespoke Springs):** Sadece "spring" yazıp bırakmayın. Fiziksel ağırlığı olan, premium hissettiren özel yay değerleri konfigüre edin. 
+  - Giriş (Reveal) animasyonları için ağır ve kararlı: `transition={{ type: "spring", mass: 1.2, stiffness: 100, damping: 25 }}`
+  - Mikro etkileşimler (Hover/Tap) için hızlı ve duyarlı: `transition={{ type: "spring", mass: 0.5, stiffness: 400, damping: 30 }}`

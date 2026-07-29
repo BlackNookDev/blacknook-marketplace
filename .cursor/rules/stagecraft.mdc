@@ -1,0 +1,13 @@
+---
+alwaysApply: false
+---
+---
+description: Premium, sinematik, Apple/Keynote tarzı UI, sahne ışığı ve derinlik efektleri
+globs: app/**/*.tsx, src/components/**/*.tsx
+---
+# Stagecraft & Cinematic Presentation
+
+- **Sahne ve Odak (Focal Point):** Önemli elemanları (örneğin 3D Spline modeli veya ürün kapağını) sahnedeki bir aktör gibi düşün. Arka planı hafifçe karartarak (`backdrop-blur-sm`, koyu radyal gradient) asıl objeyi ön plana çıkar.
+- **Işık ve Yansıma:** Dümdüz renkler yerine, kartların üst kısımlarına çok ince bir beyaz parlama (`border-t border-white/10`) veya butonların altına hafif bir "glow" (`shadow-[0_0_15px_rgba(255,255,255,0.1)]`) ekleyerek derinlik kat.
+- **Glassmorphism (Cam Efekti):** Sticky navbar veya vurgulu paneller için yarı saydam materyaller kullan (`bg-zinc-900/50 backdrop-blur-md border border-zinc-800/50`).
+- **Sinematik Girişler (Reveals):** Sayfa ilk yüklendiğinde içerikler perde açılıyormuş gibi yumuşak bir şekilde, hafifçe aşağıdan yukarı doğru süzülerek (Y ekseninde `20px`'den `0px`'e) ve blur efekti (`blur-sm` to `blur-none`) ile ortaya çıksın.

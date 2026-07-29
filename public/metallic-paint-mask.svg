@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 720" width="400" height="720">
+  <!-- Near full-bleed black fill; tiny padding avoids edge cutoff -->
+  <rect x="8" y="8" width="384" height="704" rx="40" fill="#000000"/>
+</svg>

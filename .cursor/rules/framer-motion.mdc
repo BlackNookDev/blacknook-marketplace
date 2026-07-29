@@ -1,0 +1,15 @@
+---
+alwaysApply: false
+---
+---
+description: Framer Motion kütüphanesinin projede teknik olarak nasıl kullanılacağını ve Next.js (App Router) ile nasıl entegre edileceğini belirler.
+globs: **/*.{tsx,jsx}
+---
+
+# Framer Motion Teknik Kuralları
+
+- **Strict "use client" Kuralı:** `motion` bileşenleri (framer-motion) içeren her sayfanın veya bileşenin en üst satırında KESİNLİKLE `"use client";` direktifi bulunmalıdır. Aksi takdirde Next.js sunucu tarafında (SSR) hata fırlatır.
+- **Performans (GPU Hızlandırma):** Animasyonlarda layout zıplamalarını önlemek için `width`, `height`, `top`, `left` gibi tarayıcıyı yeniden boyamaya (repaint) zorlayan özellikleri canlandırmaktan kaçının. Bunun yerine DAİMA GPU hızlandırmalı özellikleri kullanın: `transform` (`x`, `y`, `scale`) ve `opacity`.
+- **Variant Kullanımı (Temiz Kod):** Karmaşık veya çoklu bileşen animasyonlarında inline `initial` ve `animate` prop'ları yerine her zaman `variants` objesi oluşturun. Bu, kodu temiz tutar ve orkestrasyonu (`staggerChildren`) kolaylaştırır.
+- **Çıkış Animasyonları:** DOM'dan silinen elementlerin yumuşakça kaybolması için her koşullu render (conditional rendering) işlemini `<AnimatePresence>` ile sarmalayın ve elementlere `exit` prop'unu tanımlayın.
+- **Layout Animasyonları:** Sekme (tab) geçişleri veya liste sıralaması değiştiğinde pürüzsüz geçiş için pürüzsüz morph efektleri yaratan `layoutId` prop'unu aktif olarak kullanın.

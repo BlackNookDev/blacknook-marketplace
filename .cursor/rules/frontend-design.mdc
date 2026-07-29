@@ -1,0 +1,13 @@
+---
+alwaysApply: false
+---
+---
+description: Özgün, bilinçli tasarım, UI/UX hiyerarşisi ve mikro etkileşimler
+globs: app/**/*.tsx, src/components/**/*.tsx
+---
+# Frontend Design & UI/UX Standards
+
+- **Görsel Hiyerarşi:** Başlıklar (H1, H2), gövde metinleri ve meta veriler arasında font boyutu (`text-sm`, `text-3xl`) ve font ağırlığı/rengi (`text-zinc-100 font-bold`, `text-zinc-400 font-normal`) ile net bir ayrım yarat.
+- **Boşluk Kullanımı (White Space):** Elementlerin nefes almasına izin ver. Konu olarak ilişkili elementleri birbirine yakın tutarken (`gap-2`), farklı bölümler arasına belirgin boşluklar (`my-12`, `gap-8`) koy (Gestalt Prensipleri).
+- **Mikro Etkileşimler:** Tıklanabilir her element (buton, kart, link) belirgin bir hover ve active state'e sahip olmalıdır. (örn: `hover:bg-zinc-800 active:scale-95 transition-all`).
+- **Görünmez Sınırlar:** Çok fazla kutu (border) kullanmak yerine farklı arka plan tonları (`bg-zinc-950` üzerinde `bg-zinc-900` kartlar) ile içerikleri birbirinden ayır.
