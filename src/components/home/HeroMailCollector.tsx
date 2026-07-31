@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Check, Loader2, Shield, Sparkles } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
@@ -33,17 +32,34 @@ const TRUST = [
 export default function HeroMailCollector() {
   const reduce = useReducedMotion();
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === 'loading' || !email.trim()) return;
+    setError('');
     setStatus('loading');
-    window.setTimeout(() => {
+
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(data.error || 'Kayıt alınamadı. Lütfen tekrar deneyin.');
+        setStatus('idle');
+        return;
+      }
       setStatus('done');
       setEmail('');
       window.setTimeout(() => setStatus('idle'), 3500);
-    }, 1100);
+    } catch {
+      setError('Bağlantı hatası. Lütfen tekrar deneyin.');
+      setStatus('idle');
+    }
   };
 
   return (
@@ -105,13 +121,13 @@ export default function HeroMailCollector() {
         <div className="relative rounded-2xl border border-white/10 bg-zinc-950/80 p-5 shadow-[0_16px_56px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:p-6">
           <div className="absolute -top-5 left-1/2 -translate-x-1/2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-zinc-900 shadow-lg">
-              <Image
-                src="/bn-mark.png"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/bn-mark.svg"
                 alt=""
                 width={22}
                 height={22}
                 className="h-5 w-5 object-contain brightness-0 invert"
-                priority
               />
             </div>
           </div>
@@ -127,6 +143,11 @@ export default function HeroMailCollector() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-5 space-y-2.5">
+            {error ? (
+              <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                {error}
+              </p>
+            ) : null}
             <label htmlFor="hero-email" className="sr-only">
               Email
             </label>

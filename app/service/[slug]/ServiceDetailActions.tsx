@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { AnimatePresence, m } from 'framer-motion';
 import { Send, X } from 'lucide-react';
@@ -14,6 +15,9 @@ type Props = {
 };
 
 export default function ServiceDetailActions({ serviceName, serviceSlug }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -28,6 +32,15 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const returnUrl = `${pathname}?openInstall=1`;
+
+  useEffect(() => {
+    if (status === 'loading' || !session) return;
+    if (searchParams.get('openInstall') !== '1') return;
+    setOpen(true);
+    router.replace(pathname, { scroll: false });
+  }, [session, status, searchParams, pathname, router]);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -237,7 +250,12 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
         Kurulum talep et
       </m.button>
       {mounted && createPortal(modal, document.body)}
-      <AuthRequiredModal open={authOpen} onClose={() => setAuthOpen(false)} mounted={mounted} />
+      <AuthRequiredModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        mounted={mounted}
+        returnUrl={returnUrl}
+      />
     </>
   );
 }

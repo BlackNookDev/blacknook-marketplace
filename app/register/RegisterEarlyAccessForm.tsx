@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 
 function GoogleIcon() {
@@ -28,24 +29,60 @@ export default function RegisterEarlyAccessForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
+  const callbackUrl =
+    searchParams.get('callbackUrl') || (next === 'match' ? '/?match=1' : '/');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOAuth = (provider: 'google' | 'github') => {
+    if (isLoading) return;
+    setError('');
+    setIsLoading(true);
+    void signIn(provider, { callbackUrl });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return;
+    setError('');
     setIsLoading(true);
-    window.setTimeout(() => {
-      if (next === 'match') {
-        window.sessionStorage.setItem('bn_match_ready', '1');
-        setIsLoading(false);
-        router.push('/?match=1');
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+
+      if (!res.ok) {
+        setError(data.error || 'Kayıt sırasında bir hata oluştu.');
         return;
       }
+
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        setError('Hesap oluşturuldu ancak otomatik giriş başarısız. Lütfen giriş yapın.');
+        router.push('/login');
+        return;
+      }
+
+      router.push(callbackUrl);
+      router.refresh();
+    } catch {
+      setError('Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
       setIsLoading(false);
-      router.push('/login');
-    }, 1200);
+    }
   };
 
   return (
@@ -73,6 +110,7 @@ export default function RegisterEarlyAccessForm() {
         <button
           type="button"
           disabled={isLoading}
+          onClick={() => handleOAuth('google')}
           className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.04] px-4 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
         >
           <GoogleIcon />
@@ -81,6 +119,7 @@ export default function RegisterEarlyAccessForm() {
         <button
           type="button"
           disabled={isLoading}
+          onClick={() => handleOAuth('github')}
           className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-zinc-100 px-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-white disabled:opacity-50"
         >
           <GitHubIcon />
@@ -98,6 +137,30 @@ export default function RegisterEarlyAccessForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {error ? (
+          <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </p>
+        ) : null}
+
+        <div>
+          <label htmlFor="register-name" className="mb-2 block text-sm font-medium text-zinc-300">
+            Ad
+          </label>
+          <input
+            id="register-name"
+            type="text"
+            name="name"
+            required
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={isLoading}
+            className="h-12 w-full rounded-xl border border-white/15 bg-transparent px-4 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
+            placeholder="Adınız Soyadınız"
+          />
+        </div>
+
         <div>
           <label htmlFor="register-email" className="mb-2 block text-sm font-medium text-zinc-300">
             Email

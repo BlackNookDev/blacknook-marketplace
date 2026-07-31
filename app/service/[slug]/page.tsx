@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { Check } from 'lucide-react';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
@@ -132,7 +133,9 @@ export default function ServiceDetailPage({ params }: PageProps) {
               <p className="mb-6 text-sm leading-relaxed text-zinc-500">
                 {service.name} servisini BlackNOOK üzerinden projenize ekleyin.
               </p>
-              <ServiceDetailActions serviceName={service.name} serviceSlug={service.slug} />
+              <Suspense fallback={null}>
+                <ServiceDetailActions serviceName={service.name} serviceSlug={service.slug} />
+              </Suspense>
 
               <dl className="mt-8 space-y-4 border-t border-white/[0.08] pt-6 text-sm">
                 <div className="flex justify-between gap-4">

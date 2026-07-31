@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { Users } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import BrandLogo from '@/components/BrandLogo';
@@ -13,8 +13,6 @@ import MatchPresenceBadge from '@/components/presence/MatchPresenceBadge';
 import PresenceDock from '@/components/presence/PresenceDock';
 import { duration, easePremium } from '@/components/motion/tokens';
 
-const MATCH_KEY = 'bn_match_ready';
-
 export default function Navbar() {
   const reduce = useReducedMotion();
   const router = useRouter();
@@ -22,9 +20,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [matchOpen, setMatchOpen] = useState(false);
 
-  const canMatch = () =>
-    Boolean(session) ||
-    (typeof window !== 'undefined' && window.sessionStorage.getItem(MATCH_KEY) === '1');
+  const canMatch = () => Boolean(session);
 
   const openMatch = () => setMatchOpen(true);
 
@@ -89,12 +85,34 @@ export default function Navbar() {
               >
                 Ekosistem
               </Link>
-              <Link
-                href="/login"
-                className="rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-black transition-[opacity,transform] duration-premium ease-premium hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] sm:px-4"
-              >
-                Giriş yap
-              </Link>
+              {status === 'loading' ? (
+                <span className="rounded-full px-3.5 py-1.5 text-sm text-zinc-500 sm:px-4">
+                  …
+                </span>
+              ) : session ? (
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span
+                    className="hidden max-w-[8rem] truncate text-sm text-zinc-400 sm:inline"
+                    title={session.user.email ?? undefined}
+                  >
+                    {session.user.name || session.user.email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="rounded-full px-3 py-1.5 text-sm text-red-400 transition-colors hover:text-red-300"
+                  >
+                    Çıkış
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-black transition-[opacity,transform] duration-premium ease-premium hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] sm:px-4"
+                >
+                  Giriş yap
+                </Link>
+              )}
             </div>
           </div>
         </nav>

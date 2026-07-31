@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     // Base64 görüntüler için harici domain gerekmez
     dangerouslyAllowSVG: true,

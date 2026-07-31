@@ -82,3 +82,10 @@ CREATE TABLE IF NOT EXISTS reviews (
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (product_id, user_id)
 );
+
+-- Waitlist (ana sayfa e-posta toplama)
+CREATE TABLE IF NOT EXISTS waitlist_signups (
+  id          SERIAL PRIMARY KEY,
+  email       VARCHAR(255) NOT NULL UNIQUE,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

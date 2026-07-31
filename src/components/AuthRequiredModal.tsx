@@ -10,10 +10,15 @@ type Props = {
   open: boolean;
   onClose: () => void;
   mounted: boolean;
+  /** Giriş/kayıt sonrası dönülecek URL */
+  returnUrl?: string;
 };
 
 /** Giriş yapılmamış kullanıcılar için login / kayıt popup */
-export default function AuthRequiredModal({ open, onClose, mounted }: Props) {
+export default function AuthRequiredModal({ open, onClose, mounted, returnUrl = '/' }: Props) {
+  const loginHref = `/login?callbackUrl=${encodeURIComponent(returnUrl)}`;
+  const registerHref = `/register?callbackUrl=${encodeURIComponent(returnUrl)}`;
+
   const modal = (
     <AnimatePresence>
       {open && (
@@ -63,14 +68,14 @@ export default function AuthRequiredModal({ open, onClose, mounted }: Props) {
 
             <div className="mt-8 flex flex-col gap-3">
               <Link
-                href="/login"
+                href={loginHref}
                 onClick={onClose}
                 className="flex h-12 items-center justify-center rounded-xl bg-white text-sm font-bold text-black transition-opacity hover:opacity-90"
               >
                 Giriş yap
               </Link>
               <Link
-                href="/register"
+                href={registerHref}
                 onClick={onClose}
                 className="flex h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/[0.08]"
               >

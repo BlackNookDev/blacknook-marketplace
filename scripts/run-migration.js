@@ -3,6 +3,9 @@ const path = require('path');
 const { Client } = require('pg');
 
 function loadEnv(envPath) {
+  if (!fs.existsSync(envPath)) {
+    return {};
+  }
   const content = fs.readFileSync(envPath, 'utf-8');
   const env = {};
   for (const line of content.split('\n')) {
@@ -21,6 +24,12 @@ function loadEnv(envPath) {
     env[key] = value;
   }
   return env;
+}
+
+function resolveEnv() {
+  const fileEnv = loadEnv(path.join(__dirname, '..', '.env'));
+  const merged = { ...fileEnv, ...process.env };
+  return merged;
 }
 
 function getPgConfig(env) {
@@ -63,11 +72,14 @@ async function main() {
     process.exit(1);
   }
 
-  const env = loadEnv(path.join(__dirname, '..', '.env'));
-  const sql = fs.readFileSync(migrationFile, 'utf-8');
+  const env = resolveEnv();
+  const sqlPath = path.isAbsolute(migrationFile)
+    ? migrationFile
+    : path.join(process.cwd(), migrationFile);
+  const sql = fs.readFileSync(sqlPath, 'utf-8');
 
   if (!env.DB_HOST && !env.DB_NAME) {
-    console.error('✗ .env dosyasında DB_HOST / DB_NAME (TablePlus alanları) tanımlı değil.');
+    console.error('✗ DB_HOST / DB_NAME tanımlı değil (.env veya process.env).');
     process.exit(1);
   }
 

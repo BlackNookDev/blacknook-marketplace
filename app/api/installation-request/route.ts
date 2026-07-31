@@ -1,24 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-
-const DEFAULT_TO = 'dev@blacknook.com';
-
-function getTransporter() {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASSWORD;
-
-  if (!host || !user || !pass) {
-    return null;
-  }
-
-  return nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: { user, pass },
-  });
-}
+import { escapeHtml, sendPlatformEmail } from '@/lib/mail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,39 +25,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Geçerli bir e-posta adresi girin.' }, { status: 400 });
     }
 
-    const to = process.env.INSTALLATION_REQUEST_TO || DEFAULT_TO;
-    const subject = `Kurulum talebi: ${serviceName}`;
-    const text = [
-      `Servis: ${serviceName} (${serviceSlug})`,
-      `Şirket: ${company}`,
-      `İletişim e-postası: ${fromEmail}`,
-      '',
-      'Talep detayı:',
-      reqText,
-    ].join('\n');
-
-    const transporter = getTransporter();
-    if (!transporter) {
-      console.error(
-        '[installation-request] SMTP yapılandırması eksik (SMTP_HOST, SMTP_USER, SMTP_PASSWORD).'
-      );
-      return NextResponse.json(
-        {
-          error:
-            'E-posta sunucusu yapılandırılmamış. Lütfen daha sonra tekrar deneyin veya doğrudan dev@blacknook.com adresine yazın.',
-        },
-        { status: 503 }
-      );
-    }
-
-    const from = process.env.SMTP_FROM || process.env.SMTP_USER;
-
-    await transporter.sendMail({
-      from,
-      to,
+    const mailResult = await sendPlatformEmail({
+      subject: `Kurulum talebi: ${serviceName}`,
       replyTo: fromEmail,
-      subject,
-      text,
+      text: [
+        `Servis: ${serviceName} (${serviceSlug})`,
+        `Şirket: ${company}`,
+        `İletişim e-postası: ${fromEmail}`,
+        '',
+        'Talep detayı:',
+        reqText,
+      ].join('\n'),
       html: `
         <p><strong>Servis:</strong> ${escapeHtml(serviceName)} (<code>${escapeHtml(serviceSlug)}</code>)</p>
         <p><strong>Şirket:</strong> ${escapeHtml(company)}</p>
@@ -87,6 +46,11 @@ export async function POST(req: NextRequest) {
       `,
     });
 
+    if (!mailResult.ok) {
+      console.error('[installation-request] SMTP yapılandırması eksik.');
+      return NextResponse.json({ error: mailResult.error }, { status: 503 });
+    }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('Kurulum talebi e-posta hatası:', error);
@@ -95,12 +59,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }

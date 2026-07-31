@@ -19,7 +19,7 @@ export default function BrandLogo({ className, iconClassName, textClassName }: P
       )}
     >
       <Image
-        src="/bn-mark.png"
+        src="/bn-mark.svg"
         alt=""
         width={28}
         height={28}

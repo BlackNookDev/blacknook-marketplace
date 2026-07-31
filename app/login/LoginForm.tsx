@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 
 function GoogleIcon() {
@@ -24,15 +26,46 @@ function GitHubIcon() {
 }
 
 export default function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOAuth = (provider: 'google' | 'github') => {
+    if (isLoading) return;
+    setError('');
+    setIsLoading(true);
+    void signIn(provider, { callbackUrl });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return;
+    setError('');
     setIsLoading(true);
-    window.setTimeout(() => setIsLoading(false), 1200);
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('E-posta veya şifre hatalı.');
+        return;
+      }
+
+      router.push(callbackUrl);
+      router.refresh();
+    } catch {
+      setError('Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -54,6 +87,7 @@ export default function LoginForm() {
         <button
           type="button"
           disabled={isLoading}
+          onClick={() => handleOAuth('google')}
           className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.04] px-4 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
         >
           <GoogleIcon />
@@ -62,6 +96,7 @@ export default function LoginForm() {
         <button
           type="button"
           disabled={isLoading}
+          onClick={() => handleOAuth('github')}
           className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-zinc-100 px-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-white disabled:opacity-50"
         >
           <GitHubIcon />
@@ -79,6 +114,12 @@ export default function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {error ? (
+          <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </p>
+        ) : null}
+
         <div>
           <label htmlFor="login-email" className="mb-2 block text-sm font-medium text-zinc-300">
             Email
@@ -130,15 +171,6 @@ export default function LoginForm() {
           )}
         </button>
       </form>
-
-      <p className="mt-6 text-center">
-        <Link
-          href="/login#forgot"
-          className="text-sm font-medium text-sky-400 transition-colors hover:text-sky-300"
-        >
-          Forgot Password?
-        </Link>
-      </p>
     </div>
   );
 }
