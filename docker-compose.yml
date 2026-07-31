@@ -1,10 +1,10 @@
 # BlackNOOK Marketplace — Docker Compose
 #
-# Domain ataması (Coolify / reverse proxy):
-#   app     → blacknook.com (FE) + api.blacknook.com (API)   internal port 3000
-#   pgadmin → db.blacknook.com                               internal port 80
+# Deploy: bu makinede build + Nginx Proxy Manager (veya nginx) ile domain bağla.
+#   app     → blacknook.com + api.blacknook.com   → 127.0.0.1:18080 (container 3000)
+#   pgadmin → db.blacknook.com                    → 127.0.0.1:18081 (container 80)
 #
-# PostgreSQL host'a publish EDİLMEZ — yerel Postgres ile karışmaz, sadece Docker ağı içinde.
+# PostgreSQL host'a publish EDİLMEZ — yerel Postgres ile karışmaz.
 
 services:
   postgres:
@@ -64,7 +64,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-BlackNOOK <noreply@blacknook.com>}
     ports:
-      - '${APP_PORT:-18080}:3000'
+      - '127.0.0.1:${APP_PORT:-18080}:3000'
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/']
       interval: 30s
@@ -88,7 +88,7 @@ services:
     volumes:
       - blacknook_marketplace_pgadmin_data:/var/lib/pgadmin
     ports:
-      - '${PGADMIN_PORT:-18081}:80'
+      - '127.0.0.1:${PGADMIN_PORT:-18081}:80'
     networks:
       - blacknook_marketplace_internal
 
