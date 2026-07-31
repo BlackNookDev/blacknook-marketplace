@@ -1,13 +1,22 @@
+# BlackNOOK Marketplace — Docker Compose
+#
+# Domain ataması (Coolify / reverse proxy):
+#   app     → blacknook.com (FE) + api.blacknook.com (API)   internal port 3000
+#   pgadmin → db.blacknook.com                               internal port 80
+#
+# PostgreSQL host'a publish EDİLMEZ — yerel Postgres ile karışmaz, sadece Docker ağı içinde.
+
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: blacknook-marketplace-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       POSTGRES_DB: ${DB_NAME:-blacknook}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - blacknook_marketplace_postgres_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
@@ -16,10 +25,16 @@ services:
       retries: 10
       start_period: 10s
     networks:
-      - blacknook
+      - blacknook_marketplace_internal
+    # Bilinçli: ports yok — makinedeki 5432'ye bağlanmaz / karışmaz
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.blacknook.com}
+    container_name: blacknook-marketplace-app
     restart: unless-stopped
     depends_on:
       postgres:
@@ -32,7 +47,10 @@ services:
       DB_NAME: ${DB_NAME:-blacknook}
       DB_SSL: 'false'
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://blacknook.com}
+      AUTH_COOKIE_DOMAIN: ${AUTH_COOKIE_DOMAIN:-.blacknook.com}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.blacknook.com}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
@@ -46,7 +64,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-BlackNOOK <noreply@blacknook.com>}
     ports:
-      - '${APP_PORT:-3000}:3000'
+      - '${APP_PORT:-18080}:3000'
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/']
       interval: 30s
@@ -54,10 +72,11 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - blacknook
+      - blacknook_marketplace_internal
 
   pgadmin:
     image: dpage/pgadmin4:8
+    container_name: blacknook-marketplace-pgadmin
     restart: unless-stopped
     depends_on:
       postgres:
@@ -67,16 +86,19 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?PGADMIN_DEFAULT_PASSWORD is required}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - blacknook_marketplace_pgadmin_data:/var/lib/pgadmin
     ports:
-      - '${PGADMIN_PORT:-5050}:80'
+      - '${PGADMIN_PORT:-18081}:80'
     networks:
-      - blacknook
+      - blacknook_marketplace_internal
 
 volumes:
-  postgres_data:
-  pgadmin_data:
+  blacknook_marketplace_postgres_data:
+    name: blacknook_marketplace_postgres_data
+  blacknook_marketplace_pgadmin_data:
+    name: blacknook_marketplace_pgadmin_data
 
 networks:
-  blacknook:
+  blacknook_marketplace_internal:
+    name: blacknook_marketplace_internal
     driver: bridge

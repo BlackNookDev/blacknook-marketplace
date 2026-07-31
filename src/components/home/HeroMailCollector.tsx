@@ -7,6 +7,7 @@ import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
 import HeroPresenceStrip from '@/components/presence/HeroPresenceStrip';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { getFeaturedServices } from '../../../lib/data';
+import { apiFetch } from '@/lib/apiUrl';
 
 const FLOATING = getFeaturedServices(8).map((s, i) => ({
   ...s,
@@ -42,7 +43,7 @@ export default function HeroMailCollector() {
     setStatus('loading');
 
     try {
-      const res = await fetch('/api/waitlist', {
+      const res = await apiFetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

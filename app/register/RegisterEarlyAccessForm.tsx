@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
+import { apiFetch } from '@/lib/apiUrl';
 
 function GoogleIcon() {
   return (
@@ -51,7 +52,7 @@ export default function RegisterEarlyAccessForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await apiFetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

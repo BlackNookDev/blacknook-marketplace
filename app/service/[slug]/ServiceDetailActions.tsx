@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { apiFetch } from '@/lib/apiUrl';
 import { AnimatePresence, m } from 'framer-motion';
 import { Send, X } from 'lucide-react';
 import AuthRequiredModal from '@/components/AuthRequiredModal';
@@ -84,7 +85,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
     setError('');
     setSending(true);
     try {
-      const res = await fetch('/api/installation-request', {
+      const res = await apiFetch('/api/installation-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

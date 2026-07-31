@@ -7,6 +7,7 @@ import { Loader2, Sparkles, X } from 'lucide-react';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { DEVELOPERS, getActiveDeveloperCount } from '../../lib/developerPresence';
+import { apiFetch } from '@/lib/apiUrl';
 
 type Phase = 'ask' | 'typing' | 'matching' | 'done';
 
@@ -89,7 +90,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
 
     try {
       const [res] = await Promise.all([
-        fetch('/api/match-request', {
+        apiFetch('/api/match-request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ need }),
