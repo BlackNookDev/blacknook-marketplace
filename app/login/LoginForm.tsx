@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 
 function GoogleIcon() {
@@ -59,6 +59,7 @@ export default function LoginForm() {
         return;
       }
 
+      await getSession();
       router.push(callbackUrl);
       router.refresh();
     } catch {

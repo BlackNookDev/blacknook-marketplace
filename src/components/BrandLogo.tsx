@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -18,13 +17,13 @@ export default function BrandLogo({ className, iconClassName, textClassName }: P
         className
       )}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src="/bn-mark.svg"
         alt=""
         width={28}
         height={28}
-        className={cn('h-7 w-7 shrink-0 object-contain brightness-0 invert', iconClassName)}
-        priority
+        className={cn('h-7 w-7 shrink-0 object-contain', iconClassName)}
       />
       <span
         className={cn(

@@ -7,20 +7,11 @@ import pool from './db';
 
 function getAuthCookieDomain(): string | undefined {
   const explicit = process.env.AUTH_COOKIE_DOMAIN?.trim();
-  if (explicit) return explicit;
-
-  try {
-    const host = new URL(process.env.NEXTAUTH_URL ?? '').hostname;
-    if (!host || host === 'localhost' || host === '127.0.0.1') return undefined;
-    const parts = host.split('.');
-    if (parts.length >= 2) return `.${parts.slice(-2).join('.')}`;
-  } catch {
-    /* ignore */
-  }
-  return undefined;
+  return explicit || undefined;
 }
 
 const authCookieDomain = getAuthCookieDomain();
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith('https://') === true;
 
 async function ensureOAuthUser(params: {
   email: string;
@@ -175,14 +166,18 @@ export const authOptions: AuthOptions = {
   session: { strategy: 'jwt' },
   pages: { signIn: '/register' },
   secret: process.env.NEXTAUTH_SECRET,
+  useSecureCookies,
   cookies: authCookieDomain
     ? {
         sessionToken: {
-          name:
-            process.env.NODE_ENV === 'production'
-              ? '__Secure-next-auth.session-token'
-              : 'next-auth.session-token',
+          name: useSecureCookies
+            ? '__Secure-next-auth.session-token'
+            : 'next-auth.session-token',
           options: {
+            httpOnly: true,
+            sameSite: 'lax',
+            path: '/',
+            secure: useSecureCookies,
             domain: authCookieDomain,
           },
         },

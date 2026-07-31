@@ -1,8 +1,8 @@
 # BlackNOOK Marketplace — Docker Compose
 #
-# Deploy: bu makinede build + Nginx Proxy Manager (veya nginx) ile domain bağla.
-#   app     → blacknook.com + api.blacknook.com   → 127.0.0.1:18080 (container 3000)
-#   pgadmin → db.blacknook.com                    → 127.0.0.1:18081 (container 80)
+# Deploy: bu makinede build + Nginx Proxy Manager ile domain bağla.
+#   app     → blacknook.com          → 127.0.0.1:18080 (container 3000)
+#   pgadmin → db.blacknook.com       → 127.0.0.1:18081 (container 80)
 #
 # PostgreSQL host'a publish EDİLMEZ — yerel Postgres ile karışmaz.
 
@@ -33,7 +33,7 @@ services:
       context: .
       args:
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.blacknook.com}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     container_name: blacknook-marketplace-app
     restart: unless-stopped
     depends_on:
@@ -48,9 +48,8 @@ services:
       DB_SSL: 'false'
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-https://blacknook.com}
-      AUTH_COOKIE_DOMAIN: ${AUTH_COOKIE_DOMAIN:-.blacknook.com}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.blacknook.com}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
