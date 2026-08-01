@@ -127,7 +127,7 @@ export default function HeroMailCollector() {
                 alt="Blacknook"
                 width={22}
                 height={22}
-                className="h-5 w-5 object-contain"
+                className="h-5 w-5 object-contain brightness-0 invert"
               />
             </div>
           </div>

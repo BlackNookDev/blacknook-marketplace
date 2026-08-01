@@ -24,7 +24,10 @@ export default function BrandLogo({ className, iconClassName, textClassName }: P
         alt="Blacknook logosu"
         width={28}
         height={28}
-        className={cn('h-7 w-7 shrink-0 object-contain', iconClassName)}
+        className={cn(
+          'h-7 w-7 shrink-0 object-contain brightness-0 invert',
+          iconClassName
+        )}
         priority
       />
       <span

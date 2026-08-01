@@ -40,7 +40,7 @@ export default function PartnerPortalShell({ title, children }: Props) {
               alt=""
               width={22}
               height={22}
-              className="h-5 w-5 object-contain"
+              className="h-5 w-5 object-contain brightness-0 invert"
             />
             <span className="font-display text-[13px] font-bold tracking-wide text-white sm:text-sm">
               BLACKNOOK
