@@ -4,6 +4,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import bcrypt from 'bcryptjs';
 import pool from './db';
+import { ensureAuthEnv, getAuthSecret } from './authEnv';
+
+ensureAuthEnv();
 
 function getAuthCookieDomain(): string | undefined {
   const explicit = process.env.AUTH_COOKIE_DOMAIN?.trim();
@@ -11,7 +14,9 @@ function getAuthCookieDomain(): string | undefined {
 }
 
 const authCookieDomain = getAuthCookieDomain();
-const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith('https://') === true;
+const useSecureCookies =
+  process.env.NEXTAUTH_URL?.startsWith('https://') === true ||
+  Boolean(process.env.VERCEL);
 
 async function ensureOAuthUser(params: {
   email: string;
@@ -27,7 +32,7 @@ async function ensureOAuthUser(params: {
 
   const role = params.role === 'vendor' ? 'vendor' : 'user';
   const placeholderPassword = await bcrypt.hash(
-    `oauth:${email}:${process.env.NEXTAUTH_SECRET ?? 'blacknook'}`,
+    `oauth:${email}:${getAuthSecret()}`,
     12
   );
   const [result]: any = await pool.query(
@@ -165,7 +170,7 @@ export const authOptions: AuthOptions = {
   },
   session: { strategy: 'jwt' },
   pages: { signIn: '/register' },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getAuthSecret(),
   useSecureCookies,
   cookies: authCookieDomain
     ? {

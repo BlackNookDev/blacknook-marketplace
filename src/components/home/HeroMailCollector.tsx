@@ -134,7 +134,7 @@ export default function HeroMailCollector() {
 
           <div className="mt-2 text-center">
             <h1 className="font-display text-xl font-bold leading-tight tracking-tight text-white sm:text-[1.35rem]">
-              İşiniz için premium yazılım.
+              İşiniz için Kurumsal Teknoloji.
               <span className="mt-0.5 block text-zinc-400">Tek seferlik lisanslarla.</span>
             </h1>
             <p className="mt-2.5 text-xs text-zinc-500 sm:text-sm">

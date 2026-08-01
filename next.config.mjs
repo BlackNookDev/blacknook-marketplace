@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Docker/self-host için standalone; Vercel kendi runtime'ını kullanır
+  ...(process.env.VERCEL ? {} : { output: 'standalone' }),
   images: {
     // Base64 görüntüler için harici domain gerekmez
     dangerouslyAllowSVG: true,
