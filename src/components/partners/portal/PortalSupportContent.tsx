@@ -7,7 +7,7 @@ import { BookOpen, HelpCircle, Mail, MessageSquare } from 'lucide-react';
 const FAQ = [
   {
     q: 'Ürünüm ne kadar sürede incelenir?',
-    a: 'Eksiksiz başvurularda inceleme genellikle birkaç iş günü içinde tamamlanır. Eksik medya veya belirsiz fiyatlandırma süreci uzatabilir.',
+    a: 'Eksiksiz başvurularda inceleme genellikle birkaç iş günü içinde tamamlanır. Eksik medya veya belirsiz fiyatlandırma süreci uzatabilir. Ayrıntılar için Yardım → Partner kaynakları.',
   },
   {
     q: 'Ödemeler ne zaman yapılır?',
@@ -39,13 +39,19 @@ export default function PortalSupportContent() {
         Partner portalı desteği: sık sorulanlar, yardım merkezi ve doğrudan talep formu.
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {[
+          {
+            href: '/help/partner',
+            icon: BookOpen,
+            title: 'Partner kaynakları',
+            body: 'Başvuru, lansman, ödeme ve Portal rehberi',
+          },
           {
             href: '/help',
             icon: HelpCircle,
             title: 'Yardım merkezi',
-            body: 'Hesap, ödeme ve partner makaleleri',
+            body: 'Hesap, ödeme ve genel makaleler',
           },
           {
             href: '/select',

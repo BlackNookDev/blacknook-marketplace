@@ -81,7 +81,7 @@ export default function HelpCenterContent() {
                       {category.title}
                     </p>
                     <p className="mt-1 font-medium text-zinc-100">{article.title}</p>
-                    <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{article.body}</p>
+                    <p className="mt-0.5 text-sm text-zinc-500">{article.summary}</p>
                   </Link>
                 </li>
               ))}

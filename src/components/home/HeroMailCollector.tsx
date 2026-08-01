@@ -122,10 +122,9 @@ export default function HeroMailCollector() {
         <div className="relative rounded-2xl border border-white/10 bg-zinc-950/80 p-5 shadow-[0_16px_56px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:p-6">
           <div className="absolute -top-5 left-1/2 -translate-x-1/2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-zinc-900 shadow-lg">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/bn-mark.svg"
-                alt=""
+                src="/bn-mark.png"
+                alt="Blacknook"
                 width={22}
                 height={22}
                 className="h-5 w-5 object-contain"

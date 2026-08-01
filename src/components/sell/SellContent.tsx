@@ -134,7 +134,7 @@ export default function SellContent() {
               alt="Blacknook"
               width={28}
               height={28}
-              className="h-7 w-7 object-contain brightness-0 invert"
+              className="h-7 w-7 object-contain"
               priority
             />
           </div>
