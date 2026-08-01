@@ -35,11 +35,11 @@ export const ACTIVITY_FEED: ActivityItem[] = [
   { id: 'a6', name: 'Zey', action: 'Ghost CMS entegrasyonu', minsAgo: 18 },
 ];
 
-/** Saat bazlı yavaş salınan “aktif” sayısı (7–14 arası) */
+/** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */
 export function getActiveDeveloperCount(now = Date.now()): number {
   const minute = Math.floor(now / 60_000);
-  const wave = Math.sin(minute / 7) * 3.2 + Math.cos(minute / 11) * 1.4;
-  return Math.max(7, Math.min(14, Math.round(10 + wave)));
+  const wave = Math.sin(minute / 7) * 2.2 + Math.cos(minute / 11) * 1.2;
+  return Math.max(2, Math.min(8, Math.round(5 + wave)));
 }
 
 export function getRecentActivity(now = Date.now()): ActivityItem {

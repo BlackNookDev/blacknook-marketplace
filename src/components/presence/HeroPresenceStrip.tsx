@@ -13,7 +13,7 @@ import { duration, easePremium } from '@/components/motion/tokens';
 /** Hero altında soluk avatar stack + aktivite satırı */
 export default function HeroPresenceStrip() {
   const reduce = useReducedMotion();
-  const [active, setActive] = useState(10);
+  const [active, setActive] = useState(2);
   const [activity, setActivity] = useState(() => getRecentActivity());
 
   useEffect(() => {
@@ -34,11 +34,11 @@ export default function HeroPresenceStrip() {
       transition={{ delay: 0.45, duration: duration.base, ease: easePremium }}
     >
       <div className="flex items-center gap-2.5 rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 backdrop-blur-sm">
-        <DeveloperAvatars count={4} size="sm" />
+        <DeveloperAvatars count={active} size="sm" />
         <p className="text-[11px] text-zinc-500">
           <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 align-middle" />
           <span className="font-medium text-zinc-300">{active}</span>
-          <span className="text-zinc-500"> mühendis · çevrimiçi</span>
+          <span className="text-zinc-500"> geliştirici · çevrimiçi</span>
         </p>
       </div>
 

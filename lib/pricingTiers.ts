@@ -26,7 +26,7 @@ function hashSlug(slug: string): number {
   return hash;
 }
 
-/** AppSumo tarzı 4 lisans aşaması — slug’a göre deterministik */
+/** 4 lisans aşaması — slug’a göre deterministik */
 export function getServicePricingPlan(slug: string): ServicePricingPlan {
   const deal = getServiceDealMeta(slug, 0);
   const h = hashSlug(slug);

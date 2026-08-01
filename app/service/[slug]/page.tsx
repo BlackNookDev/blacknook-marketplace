@@ -1,11 +1,16 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { Check } from 'lucide-react';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
-import ServicePricingTable from '@/components/ServicePricingTable';
+import JsonLd from '@/components/seo/JsonLd';
 import { getAllServiceSlugs, getServiceBySlug } from '../../../lib/data';
-import { getServicePricingPlan } from '../../../lib/pricingTiers';
+import {
+  breadcrumbJsonLd,
+  buildPageMetadata,
+  softwareApplicationJsonLd,
+} from '@/lib/seo';
 import ServiceDetailActions from './ServiceDetailActions';
 
 type PageProps = {
@@ -16,24 +21,48 @@ export function generateStaticParams() {
   return getAllServiceSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: PageProps) {
+export function generateMetadata({ params }: PageProps): Metadata {
   const service = getServiceBySlug(params.slug);
-  if (!service) return { title: 'Servis bulunamadı' };
-  return {
-    title: `${service.name} — BlackNOOK`,
+  if (!service) {
+    return buildPageMetadata({
+      title: 'Servis bulunamadı',
+      description: 'Aradığınız servis Blacknook kataloğunda yok.',
+      path: `/service/${params.slug}`,
+      noIndex: true,
+    });
+  }
+
+  const title = `${service.name} | Blacknook`.slice(0, 60);
+  return buildPageMetadata({
+    title,
     description: service.description,
-  };
+    path: `/service/${service.slug}`,
+  });
 }
 
 export default function ServiceDetailPage({ params }: PageProps) {
   const service = getServiceBySlug(params.slug);
   if (!service) notFound();
-  const pricingPlan = getServicePricingPlan(service.slug);
 
   return (
     <main className="min-h-screen bg-transparent pb-24 pt-28">
+      <JsonLd
+        data={[
+          softwareApplicationJsonLd({
+            name: service.name,
+            description: service.description,
+            slug: service.slug,
+            category: service.category,
+          }),
+          breadcrumbJsonLd([
+            { name: 'Ana sayfa', path: '/' },
+            { name: 'Servisler', path: '/services' },
+            { name: service.name, path: `/service/${service.slug}` },
+          ]),
+        ]}
+      />
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <nav className="mb-12 text-sm text-zinc-500" aria-label="Breadcrumb">
+        <nav className="mb-12 text-sm text-zinc-500" aria-label="Sayfa konumu">
           <ol className="flex flex-wrap items-center gap-2">
             <li>
               <Link
@@ -48,7 +77,7 @@ export default function ServiceDetailPage({ params }: PageProps) {
             </li>
             <li>
               <Link
-                href="/#service-grid"
+                href="/services"
                 className="transition-colors duration-premium ease-premium hover:text-zinc-300"
               >
                 Servisler
@@ -57,7 +86,9 @@ export default function ServiceDetailPage({ params }: PageProps) {
             <li aria-hidden className="text-zinc-700">
               /
             </li>
-            <li className="text-zinc-300">{service.name}</li>
+            <li className="text-zinc-300" aria-current="page">
+              {service.name}
+            </li>
           </ol>
         </nav>
 
@@ -85,13 +116,15 @@ export default function ServiceDetailPage({ params }: PageProps) {
 
         <div className="mt-14 flex flex-col gap-14 lg:flex-row lg:gap-16">
           <div className="w-full space-y-12 lg:w-[62%]">
-            <section>
-              <h2 className="mb-4 font-display text-2xl font-semibold text-white">Genel bakış</h2>
+            <section aria-labelledby="overview-heading">
+              <h2 id="overview-heading" className="mb-4 font-display text-2xl font-semibold text-white">
+                Genel bakış
+              </h2>
               <p className="leading-relaxed text-zinc-400">{service.about}</p>
             </section>
 
-            <section>
-              <h2 className="mb-6 font-display text-2xl font-semibold text-white">
+            <section aria-labelledby="features-heading">
+              <h2 id="features-heading" className="mb-6 font-display text-2xl font-semibold text-white">
                 Öne çıkan özellikler
               </h2>
               <ul className="space-y-3">
@@ -108,8 +141,8 @@ export default function ServiceDetailPage({ params }: PageProps) {
               </ul>
             </section>
 
-            <section>
-              <h2 className="mb-6 font-display text-2xl font-semibold text-white">
+            <section aria-labelledby="usecases-heading">
+              <h2 id="usecases-heading" className="mb-6 font-display text-2xl font-semibold text-white">
                 Kullanım senaryoları
               </h2>
               <ul className="space-y-4">
@@ -125,13 +158,13 @@ export default function ServiceDetailPage({ params }: PageProps) {
             </section>
           </div>
 
-          <aside className="w-full lg:w-[38%]">
+          <aside className="w-full lg:w-[38%]" aria-labelledby="integrate-heading">
             <div className="sticky top-24 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-xl">
-              <h3 className="mb-3 font-display text-lg font-semibold text-white">
+              <h2 id="integrate-heading" className="mb-3 font-display text-lg font-semibold text-white">
                 Projeye entegre et
-              </h3>
+              </h2>
               <p className="mb-6 text-sm leading-relaxed text-zinc-500">
-                {service.name} servisini BlackNOOK üzerinden projenize ekleyin.
+                {service.name} servisini Blacknook üzerinden projenize ekleyin.
               </p>
               <Suspense fallback={null}>
                 <ServiceDetailActions serviceName={service.name} serviceSlug={service.slug} />
@@ -153,8 +186,6 @@ export default function ServiceDetailPage({ params }: PageProps) {
             </div>
           </aside>
         </div>
-
-        <ServicePricingTable serviceName={service.name} plan={pricingPlan} />
       </div>
     </main>
   );

@@ -7,7 +7,6 @@ import { Loader2, Sparkles, X } from 'lucide-react';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { DEVELOPERS, getActiveDeveloperCount } from '../../lib/developerPresence';
-import { apiFetch } from '@/lib/apiUrl';
 
 type Phase = 'ask' | 'typing' | 'matching' | 'done';
 
@@ -25,8 +24,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
   const [need, setNeed] = useState('');
   const [scanIndex, setScanIndex] = useState(0);
   const [scanned, setScanned] = useState(0);
-  const [activeCount, setActiveCount] = useState(10);
-  const [error, setError] = useState('');
+  const [activeCount, setActiveCount] = useState(2);
 
   useEffect(() => {
     setMounted(true);
@@ -44,7 +42,6 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
       setNeed('');
       setScanIndex(0);
       setScanned(0);
-      setError('');
       return;
     }
 
@@ -80,36 +77,11 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
     return () => window.clearInterval(pulse);
   }, [phase]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!need.trim() || phase === 'matching' || phase === 'done') return;
-    setError('');
     setPhase('matching');
-
-    const animationMin = new Promise((resolve) => window.setTimeout(resolve, 3200));
-
-    try {
-      const [res] = await Promise.all([
-        apiFetch('/api/match-request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ need }),
-        }),
-        animationMin,
-      ]);
-
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) {
-        setPhase('ask');
-        setError(data.error || 'Talep gönderilemedi.');
-        return;
-      }
-
-      setPhase('done');
-    } catch {
-      setPhase('ask');
-      setError('Bağlantı hatası. Lütfen tekrar deneyin.');
-    }
+    window.setTimeout(() => setPhase('done'), 3200);
   };
 
   if (!mounted) return null;
@@ -167,11 +139,6 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
 
               {phase !== 'matching' && phase !== 'done' && (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {error ? (
-                    <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                      {error}
-                    </p>
-                  ) : null}
                   <textarea
                     value={need}
                     onChange={(e) => setNeed(e.target.value)}

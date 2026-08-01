@@ -1,6 +1,8 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import LogoLoop from '@/components/LogoLoop';
+import { isPartnerPortalPath } from '@/lib/partnerPortal';
 import { SiReact, SiNextdotjs, SiTypescript, SiTailwindcss } from 'react-icons/si';
 
 const techLogos = [
@@ -11,6 +13,9 @@ const techLogos = [
 ];
 
 export default function TechLogoLoop() {
+  const pathname = usePathname();
+  if (isPartnerPortalPath(pathname)) return null;
+
   return (
     <section
       className="relative overflow-hidden border-t border-white/[0.06] py-12"
@@ -27,7 +32,7 @@ export default function TechLogoLoop() {
           hoverSpeed={0}
           scaleOnHover
           fadeOut
-          fadeOutColor="#050505"
+          fadeOutColor="#161618"
           ariaLabel="Technology partners"
         />
       </div>

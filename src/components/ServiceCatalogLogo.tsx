@@ -62,9 +62,10 @@ export default function ServiceCatalogLogo({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={resolved.src}
-      alt=""
+      alt={`${name} logosu`}
       className={`${dim} object-contain ${className}`}
       loading="lazy"
+      decoding="async"
       onError={() => setImgFailed(true)}
     />
   );

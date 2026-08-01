@@ -1,19 +1,19 @@
 # PROJECT_SPEC.md — BlackNOOK Digital Marketplace
 
 > **Cursor AI Reference Document**
-> Bu doküman, BlackNOOK / AppSumo tarzı dijital pazaryeri projesinin tüm teknik mimarisini, sayfa spesifikasyonlarını, bileşen yapılarını ve veritabanı şemasını kapsar. Tüm dosya yolları projenin gerçek ağacıyla birebir eşleşmektedir.
+> Bu doküman, BlackNOOK dijital pazaryeri projesinin tüm teknik mimarisini, sayfa spesifikasyonlarını, bileşen yapılarını ve veritabanı şemasını kapsar. Tüm dosya yolları projenin gerçek ağacıyla birebir eşleşmektedir.
 
 ---
 
 ## 1. Proje Genel Bakış
 
-**BlackNOOK**, AppSumo modelini referans alan, çok satıcılı (multi-vendor) bir dijital yazılım pazaryeridir. Satıcılar ürünlerini listeleyebilir, adminler onay/red işlemi yapabilir ve kullanıcılar ömür boyu lisans (lifetime deal) satın alabilir.
+**BlackNOOK**, çok satıcılı (multi-vendor) bir dijital yazılım pazaryeridir. Satıcılar ürünlerini listeleyebilir, adminler onay/red işlemi yapabilir ve kullanıcılar ömür boyu lisans (lifetime deal) satın alabilir.
 
 ### Temel Özellikler
 
 - Çok satıcılı (vendor/user/admin) rol tabanlı sistem
 - Ürün onay/moderasyon iş akışı (`pending → approved / rejected`)
-- AppSumo tarzı Tier (katman) tabanlı lisanslama
+- Tier (katman) tabanlı lisanslama
 - Base64 ile sunucu tarafı depolama (harici CDN yok)
 - Spline ile 3D hero alanı
 - NextAuth.js session tabanlı kimlik doğrulama
@@ -86,7 +86,7 @@ MARKETPLACE/
 │   │   └── page.tsx               # Giriş Sayfası
 │   ├── products/
 │   │   ├── [slug]/
-│   │   │   └── page.tsx           # AppSumo Tarzı Ürün Detay Sayfası
+│   │   │   └── page.tsx           # Ürün Detay Sayfası
 │   │   └── page.tsx               # Kategori Filtreli Ürün Listeleme
 │   ├── profile/
 │   │   └── page.tsx               # Kullanıcı / Satıcı / Admin Profil Sayfası
@@ -505,7 +505,7 @@ export default async function HomePage() {
 
 ### 7.4 `app/products/[slug]/page.tsx` — Ürün Detay Sayfası
 
-**Görev:** AppSumo tarzı iki kolonlu ürün detay sayfası.
+**Görev:** İki kolonlu ürün detay sayfası.
 
 **Layout Spesifikasyonu:**
 

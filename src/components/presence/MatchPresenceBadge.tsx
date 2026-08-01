@@ -9,7 +9,7 @@ type Props = {
 
 /** Navbar Eşleş yanındaki mini presence */
 export default function MatchPresenceBadge({ className = '' }: Props) {
-  const [active, setActive] = useState(10);
+  const [active, setActive] = useState(2);
 
   useEffect(() => {
     const tick = () => setActive(getActiveDeveloperCount());

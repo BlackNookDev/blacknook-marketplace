@@ -99,12 +99,7 @@ export default function ServicePricingTable({ serviceName, plan }: Props) {
                     )}
                     <p className="mt-3 text-sm font-semibold text-zinc-200">{tier.name}</p>
                     <p className="mt-2 flex items-baseline justify-center gap-2">
-                      <span className="font-display text-3xl font-bold text-white">
-                        ${tier.price}
-                      </span>
-                      <span className="text-sm text-zinc-500 line-through">
-                        ${tier.originalPrice}
-                      </span>
+                      <span className="font-display text-3xl font-bold text-white">Ücretsiz</span>
                     </p>
                     <button
                       type="button"

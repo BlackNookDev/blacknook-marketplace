@@ -12,6 +12,7 @@ export default function BrandLogo({ className, iconClassName, textClassName }: P
   return (
     <Link
       href="/"
+      aria-label="Blacknook ana sayfa"
       className={cn(
         'inline-flex items-center gap-2 transition-opacity duration-premium ease-premium hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70',
         className

@@ -15,9 +15,9 @@ const config: Config = {
           700: '#3f3f46',
         },
         bn: {
-          bg: '#050505',
-          surface: '#0c0c0e',
-          elevated: '#141416',
+          bg: '#161618',
+          surface: '#1c1c1f',
+          elevated: '#242428',
         },
       },
       fontFamily: {

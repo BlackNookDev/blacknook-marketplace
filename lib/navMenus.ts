@@ -9,7 +9,7 @@ export type BrowseCategory = {
   match: string[];
 };
 
-/** AppSumo tarzı üst kategori listesi (Servisler dropdown) */
+/** Üst kategori listesi (Servisler dropdown) */
 export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'marketing',
@@ -121,16 +121,16 @@ export const NAV_MENUS: NavMenuConfig[] = [
 export const ECOSYSTEM_NAV = {
   label: 'Ekosistem',
   href: '/services',
-  browseAllLabel: 'Tüm deal’leri gör',
+  browseAllLabel: 'Tüm ürünleri gör',
   categories: BROWSE_CATEGORIES.map((c) => ({
     label: c.label,
     href: `/services?category=${c.id}`,
   })),
   trending: [
     {
-      title: 'Yakında bitiyor',
-      description: 'Kaçırmadan yakala — süresi dolmak üzere olan deal’ler.',
-      href: '/services',
+      title: 'Yeni eklenenler',
+      description: 'Kataloğa yeni giren araçları keşfet.',
+      href: '/services?sort=name-asc',
     },
     {
       title: 'AI stack',
@@ -138,25 +138,25 @@ export const ECOSYSTEM_NAV = {
       href: '/services?category=build-code',
     },
     {
-      title: 'Müşteri favorileri',
-      description: '4.9+ puan alan, en çok tercih edilen araçlar.',
+      title: 'Popüler kategoriler',
+      description: 'Backend, CMS ve otomasyon araçları.',
       href: '/services',
     },
     {
-      title: 'BlackNOOK özel',
-      description: 'Yalnızca üyelerimize özel seçilmiş deal’ler.',
+      title: 'Blacknook seçkisi',
+      description: 'Özenle seçilmiş yazılım ve servisler.',
       href: '/services',
     },
     {
       title: 'CRM & Satış araçları',
-      description: 'Sekmeleri değil, anlaşmaları kapat.',
+      description: 'Satış ve lead süreçlerini hızlandır.',
       href: '/services?category=sales-leads',
       badge: 'YENİ' as const,
     },
   ],
   featured: {
-    title: 'SEO Yazılımı',
-    description: 'Daha yüksek sıralama, daha az maliyet.',
+    title: 'Pazarlama araçları',
+    description: 'Analitik ve e-posta çözümlerini keşfet.',
     href: '/services?category=marketing',
     cta: 'Keşfet',
   },

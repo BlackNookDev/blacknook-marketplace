@@ -1118,19 +1118,10 @@ export type ServiceDealMeta = {
   price: number;
   originalPrice: number;
   reviews: number;
-  endsIn?: string;
 };
 
-const ENDS_IN_BY_INDEX: Record<number, string> = {
-  3: 'Ends in 29 mins',
-  5: 'Ends in 2 days',
-  6: 'Ends in 6 days',
-  8: 'Ends in 12 hours',
-  10: 'Ends in 3 days',
-};
-
-/** AppSumo tarzı vitrin meta — deterministik mock fiyat/rating */
-export function getServiceDealMeta(slug: string, index: number): ServiceDealMeta {
+/** Vitrin meta — deterministik mock fiyat/rating */
+export function getServiceDealMeta(slug: string, _index = 0): ServiceDealMeta {
   let hash = 0;
   for (let i = 0; i < slug.length; i++) hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
   const priceOptions = [39, 49, 59, 69, 79, 89, 99];
@@ -1141,7 +1132,6 @@ export function getServiceDealMeta(slug: string, index: number): ServiceDealMeta
     price,
     originalPrice,
     reviews,
-    endsIn: ENDS_IN_BY_INDEX[index],
   };
 }
 
