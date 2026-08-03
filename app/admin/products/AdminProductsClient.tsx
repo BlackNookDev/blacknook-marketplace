@@ -1,66 +1,39 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import StatusBadge from '@/components/demo/StatusBadge';
-import { getDemoUser } from '@/lib/demoAuth';
 import {
-  getDemoRole,
   getProducts,
   seedDemoAdminData,
-  setDemoRole,
   setProductStatus,
   type DemoVendorProduct,
   VENDOR_EVENT,
 } from '@/lib/demoVendor';
 
 export default function AdminProductsClient() {
+  const { data: session } = useSession();
   const [products, setProducts] = useState<DemoVendorProduct[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [role, setRole] = useState('user');
+  const isAdmin = session?.user?.role === 'admin';
 
   useEffect(() => {
     seedDemoAdminData();
-    const tick = () => {
-      setProducts(getProducts());
-      const r = getDemoRole();
-      setRole(r);
-      setIsAdmin(r === 'admin');
-    };
+    const tick = () => setProducts(getProducts());
     tick();
     window.addEventListener(VENDOR_EVENT, tick);
     return () => window.removeEventListener(VENDOR_EVENT, tick);
   }, []);
 
-  const enableAdmin = () => {
-    setDemoRole('admin');
-    const user = getDemoUser();
-    if (user) {
-      try {
-        const map = JSON.parse(
-          window.localStorage.getItem('bn_demo_role_by_email') || '{}'
-        ) as Record<string, string>;
-        map[user.email] = 'admin';
-        window.localStorage.setItem('bn_demo_role_by_email', JSON.stringify(map));
-      } catch {
-        /* ignore */
-      }
-    }
-  };
-
   if (!isAdmin) {
     return (
       <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
         <p className="text-sm text-zinc-400">
-          Admin görünümü için demo yetkisi gerekir. Mevcut rol:{' '}
-          <span className="text-zinc-200">{role}</span>
+          Bu sayfa yalnızca admin hesabı ile açılır. Mevcut rol:{' '}
+          <span className="text-zinc-200">{session?.user?.role || 'user'}</span>
         </p>
-        <button
-          type="button"
-          onClick={enableAdmin}
-          className="mt-4 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:opacity-90"
-        >
-          Demo: Admin olarak devam et
-        </button>
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+          pgAdmin’de role = admin yapıp yeniden giriş yapın.
+        </p>
       </div>
     );
   }

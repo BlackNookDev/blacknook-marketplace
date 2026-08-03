@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
+import FooterSellColumn from '@/components/FooterSellColumn';
 
 const ACCOUNT_LINKS = [
   { href: '/account', label: 'Profil' },
@@ -12,14 +13,6 @@ const COMPANY_LINKS = [
   { href: '/about', label: 'Hakkımızda' },
   { href: '/careers', label: 'Kariyer' },
   { href: '/services', label: 'Ekosistem' },
-];
-
-const SELL_LINKS = [
-  { href: '/select', label: 'Blacknook Select' },
-  { href: '/sell', label: 'Partner programı' },
-  { href: '/partners/overview', label: 'Partner Portal' },
-  { href: '/partners/self-submission', label: 'Ürününü listele' },
-  { href: '/partners/status', label: 'Başvuru durumu' },
 ];
 
 const LEARN_LINKS = [
@@ -107,7 +100,7 @@ export default function Footer() {
 
         <FooterColumn title="Hesap" links={ACCOUNT_LINKS} ariaLabel="Hesap sayfaları" />
         <FooterColumn title="Blacknook" links={COMPANY_LINKS} ariaLabel="Blacknook sayfaları" />
-        <FooterColumn title="Satış" links={SELL_LINKS} ariaLabel="Satış ve partner sayfaları" />
+        <FooterSellColumn />
         <FooterColumn title="Öğren" links={LEARN_LINKS} ariaLabel="Öğrenme kaynakları" />
       </div>
 

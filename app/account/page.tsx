@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { Eye, EyeOff, ExternalLink, Upload } from 'lucide-react';
 import AccountSection from '@/components/account/AccountSection';
-import { getDemoUser, type DemoUser } from '@/lib/demoAuth';
 
 export default function AccountProfilePage() {
-  const [user, setUser] = useState<DemoUser | null>(null);
+  const { data: session } = useSession();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [smsOptIn, setSmsOptIn] = useState(false);
@@ -15,13 +15,10 @@ export default function AccountProfilePage() {
   const [bio, setBio] = useState('');
 
   useEffect(() => {
-    const u = getDemoUser();
-    setUser(u);
-    if (u) {
-      setEmail(u.email);
-      setDisplayName(u.name);
-    }
-  }, []);
+    if (!session?.user) return;
+    setEmail(session.user.email || '');
+    setDisplayName(session.user.name || '');
+  }, [session]);
 
   return (
     <div>
@@ -39,15 +36,21 @@ export default function AccountProfilePage() {
             E-posta ayarları yalnızca sizin tarafınızdan görülebilir.
           </p>
 
-          {user?.email ? (
+          {session?.user?.email ? (
             <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="text-sm font-medium text-zinc-200">{user.email}</span>
+              <span className="text-sm font-medium text-zinc-200">{session.user.email}</span>
               <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-300">
                 Doğrulandı
               </span>
-              <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-[11px] font-semibold text-sky-300">
-                Birincil
-              </span>
+              {session.user.role === 'admin' ? (
+                <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-300">
+                  Admin
+                </span>
+              ) : (
+                <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-[11px] font-semibold text-sky-300">
+                  Birincil
+                </span>
+              )}
             </div>
           ) : null}
 

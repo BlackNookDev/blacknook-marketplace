@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
-import { loginDemo, randomUsername } from '@/lib/demoAuth';
 
 function GoogleIcon() {
   return (
@@ -39,9 +38,6 @@ export default function LoginForm() {
     if (isLoading) return;
     setError('');
     setIsLoading(true);
-    // Partner portal demo state ile uyum için lokal oturum da açılır
-    const name = randomUsername();
-    loginDemo(`${name}@blacknook.com`, name);
     void signIn(provider, { callbackUrl });
   };
 
@@ -64,7 +60,6 @@ export default function LoginForm() {
       }
 
       await getSession();
-      loginDemo(email);
       router.push(callbackUrl || '/account');
       router.refresh();
     } catch {

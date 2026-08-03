@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import AuthGate from '@/components/auth/AuthGate';
 import SelectContent from '@/components/select/SelectContent';
 import JsonLd from '@/components/seo/JsonLd';
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
@@ -21,9 +22,9 @@ const selectJsonLd = {
 
 export default function SelectPage() {
   return (
-    <>
+    <AuthGate fallbackHref="/login" loadingLabel="Select yükleniyor…">
       <JsonLd data={selectJsonLd} />
       <SelectContent />
-    </>
+    </AuthGate>
   );
 }

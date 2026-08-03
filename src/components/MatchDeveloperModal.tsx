@@ -6,9 +6,11 @@ import { AnimatePresence, m } from 'framer-motion';
 import { Loader2, Sparkles, X } from 'lucide-react';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { duration, easePremium } from '@/components/motion/tokens';
+import { apiFetch } from '@/lib/apiUrl';
+import { getAuthIdentity } from '@/lib/authIdentity';
 import { DEVELOPERS, getActiveDeveloperCount } from '../../lib/developerPresence';
 
-type Phase = 'ask' | 'typing' | 'matching' | 'done';
+type Phase = 'ask' | 'typing' | 'matching' | 'done' | 'error';
 
 type Props = {
   open: boolean;
@@ -16,6 +18,7 @@ type Props = {
 };
 
 const AI_PROMPT = 'Neye ihtiyacınız var?';
+const MATCH_ANIMATION_MS = 3200;
 
 export default function MatchDeveloperModal({ open, onClose }: Props) {
   const [mounted, setMounted] = useState(false);
@@ -25,6 +28,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
   const [scanIndex, setScanIndex] = useState(0);
   const [scanned, setScanned] = useState(0);
   const [activeCount, setActiveCount] = useState(2);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -42,6 +46,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
       setNeed('');
       setScanIndex(0);
       setScanned(0);
+      setSubmitError('');
       return;
     }
 
@@ -79,9 +84,47 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!need.trim() || phase === 'matching' || phase === 'done') return;
+    const text = need.trim();
+    if (!text || phase === 'matching' || phase === 'done') return;
+
+    setSubmitError('');
     setPhase('matching');
-    window.setTimeout(() => setPhase('done'), 3200);
+
+    const identity = getAuthIdentity();
+    const startedAt = Date.now();
+
+    void (async () => {
+      let ok = false;
+      let errorMessage = 'Talep iletilemedi. Lütfen tekrar deneyin.';
+
+      try {
+        const res = await apiFetch('/api/match-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            need: text,
+            name: identity?.name || undefined,
+            email: identity?.email || undefined,
+          }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        ok = res.ok;
+        if (!res.ok && data.error) errorMessage = data.error;
+      } catch {
+        ok = false;
+      }
+
+      const elapsed = Date.now() - startedAt;
+      const wait = Math.max(0, MATCH_ANIMATION_MS - elapsed);
+      await new Promise((r) => window.setTimeout(r, wait));
+
+      if (ok) {
+        setPhase('done');
+      } else {
+        setSubmitError(errorMessage);
+        setPhase('error');
+      }
+    })();
   };
 
   if (!mounted) return null;
@@ -157,7 +200,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                 </form>
               )}
 
-              {(phase === 'matching' || phase === 'done') && (
+              {(phase === 'matching' || phase === 'done' || phase === 'error') && (
                 <m.div
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center"
                   initial={{ opacity: 0, y: 10 }}
@@ -190,7 +233,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                         />
                       </div>
                     </>
-                  ) : (
+                  ) : phase === 'done' ? (
                     <>
                       <div className="mb-4 flex justify-center">
                         <DeveloperAvatars count={3} size="md" />
@@ -208,6 +251,25 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                         className="mt-6 h-11 rounded-xl border border-white/15 px-6 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/5"
                       >
                         Kapat
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-display text-lg font-semibold text-white">
+                        Talep iletilemedi
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                        {submitError || 'Lütfen biraz sonra tekrar deneyin.'}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSubmitError('');
+                          setPhase('ask');
+                        }}
+                        className="mt-6 h-11 rounded-xl bg-white px-6 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+                      >
+                        Tekrar dene
                       </button>
                     </>
                   )}

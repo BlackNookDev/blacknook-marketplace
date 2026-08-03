@@ -13,7 +13,7 @@ import {
   type ListingStepId,
 } from '@/lib/listingDraft';
 import { addProduct, getDemoRole, slugify, submitApplication } from '@/lib/demoVendor';
-import { getDemoUser } from '@/lib/demoAuth';
+import { getAuthIdentity } from '@/lib/authIdentity';
 import StepBasic from '@/components/partners/steps/StepBasic';
 import StepMedia from '@/components/partners/steps/StepMedia';
 import StepFeatures from '@/components/partners/steps/StepFeatures';
@@ -65,7 +65,7 @@ export default function ListingWizard() {
     if (!draft || submitting) return;
     setSubmitting(true);
     window.setTimeout(() => {
-      const user = getDemoUser();
+      const user = getAuthIdentity();
       const currentRole = getDemoRole();
       const isApprovedSeller = currentRole === 'vendor' || currentRole === 'admin';
 

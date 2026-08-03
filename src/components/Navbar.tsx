@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Bell, Cpu, User, Users } from 'lucide-react';
+import { Bell, ShoppingCart, User, Users } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import BrandLogo from '@/components/BrandLogo';
 import MatchDeveloperModal from '@/components/MatchDeveloperModal';
@@ -11,7 +11,7 @@ import NavDropdown from '@/components/NavDropdown';
 import MatchPresenceBadge from '@/components/presence/MatchPresenceBadge';
 import PresenceDock from '@/components/presence/PresenceDock';
 import { duration, easePremium } from '@/components/motion/tokens';
-import { AUTH_EVENT, clearDemoUser, getDemoUser, type DemoUser } from '@/lib/demoAuth';
+import { signOut, useSession } from 'next-auth/react';
 import { ACCOUNT_NAV } from '@/components/account/accountNav';
 import { isPartnerPortalPath } from '@/lib/partnerPortal';
 
@@ -35,8 +35,8 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const [matchOpen, setMatchOpen] = useState(false);
-  const [user, setUser] = useState<DemoUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [cartCount] = useState(1);
@@ -45,13 +45,8 @@ export default function Navbar() {
 
   const openMatch = () => setMatchOpen(true);
   const hideChrome = isPartnerPortalPath(pathname);
-
-  useEffect(() => {
-    const sync = () => setUser(getDemoUser());
-    sync();
-    window.addEventListener(AUTH_EVENT, sync);
-    return () => window.removeEventListener(AUTH_EVENT, sync);
-  }, []);
+  const user = status === 'authenticated' ? session?.user : null;
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     if (hideChrome) return;
@@ -80,9 +75,8 @@ export default function Navbar() {
   }, [menuOpen, notifOpen]);
 
   const handleLogout = () => {
-    clearDemoUser();
     setMenuOpen(false);
-    router.push('/');
+    void signOut({ callbackUrl: '/' });
   };
 
   if (hideChrome) {
@@ -176,7 +170,7 @@ export default function Navbar() {
                 aria-label={`Yazılım sepeti${cartCount ? `, ${cartCount} öğe` : ''}`}
                 title="Yazılım sepeti"
               >
-                <Cpu className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+                <ShoppingCart className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
                 {cartCount > 0 ? (
                   <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
                     {cartCount}
@@ -219,6 +213,16 @@ export default function Navbar() {
                           {item.label}
                         </Link>
                       ))}
+                      {isAdmin ? (
+                        <Link
+                          href="/admin/developers"
+                          role="menuitem"
+                          onClick={() => setMenuOpen(false)}
+                          className="block px-3 py-2 text-right text-sm text-emerald-300 transition-colors hover:bg-white/[0.05]"
+                        >
+                          Admin
+                        </Link>
+                      ) : null}
                       <button
                         type="button"
                         role="menuitem"

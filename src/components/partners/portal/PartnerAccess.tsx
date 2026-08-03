@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Clock, Lock, ShieldX } from 'lucide-react';
-import { AUTH_EVENT, getDemoUser } from '@/lib/demoAuth';
+import { AUTH_IDENTITY_EVENT, getAuthIdentity } from '@/lib/authIdentity';
 import {
   getDemoRole,
   getMyApplication,
@@ -27,7 +27,7 @@ export function usePartnerAccess(): PartnerAccessState {
 
   useEffect(() => {
     const tick = () => {
-      if (!getDemoUser()) {
+      if (!getAuthIdentity()) {
         setReady(false);
         return;
       }
@@ -36,10 +36,10 @@ export function usePartnerAccess(): PartnerAccessState {
       setReady(true);
     };
     tick();
-    window.addEventListener(AUTH_EVENT, tick);
+    window.addEventListener(AUTH_IDENTITY_EVENT, tick);
     window.addEventListener(VENDOR_EVENT, tick);
     return () => {
-      window.removeEventListener(AUTH_EVENT, tick);
+      window.removeEventListener(AUTH_IDENTITY_EVENT, tick);
       window.removeEventListener(VENDOR_EVENT, tick);
     };
   }, []);

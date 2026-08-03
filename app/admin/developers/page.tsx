@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import DemoGate from '@/components/demo/DemoGate';
+import AuthGate from '@/components/auth/AuthGate';
 import PanelNav from '@/components/demo/PanelNav';
 import { buildPageMetadata } from '@/lib/seo';
 import AdminDevelopersClient from './AdminDevelopersClient';
@@ -13,7 +13,7 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function AdminDevelopersPage() {
   return (
-    <DemoGate>
+    <AuthGate fallbackHref="/login">
       <main className="mx-auto w-full max-w-4xl px-4 pb-24 pt-28 sm:px-6">
         <PanelNav variant="admin" />
         <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -27,6 +27,6 @@ export default function AdminDevelopersPage() {
           <AdminDevelopersClient />
         </div>
       </main>
-    </DemoGate>
+    </AuthGate>
   );
 }

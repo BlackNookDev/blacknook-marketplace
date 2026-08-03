@@ -1,23 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   CreditCard,
   Gift,
   Grid2X2,
   LogOut,
+  MessageSquare,
   Plus,
   User,
   Users,
   Coins,
 } from 'lucide-react';
-import { clearDemoUser } from '@/lib/demoAuth';
+import { signOut } from 'next-auth/react';
 import { ACCOUNT_NAV, type AccountNavIcon } from '@/components/account/accountNav';
 import { cn } from '@/lib/utils';
 
 const ICONS: Record<AccountNavIcon, typeof User> = {
   user: User,
+  requests: MessageSquare,
   grid: Grid2X2,
   card: CreditCard,
   coins: Coins,
@@ -28,14 +30,12 @@ const ICONS: Record<AccountNavIcon, typeof User> = {
 
 export default function AccountSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const isActive = (href: string) =>
     href === '/account' ? pathname === '/account' : pathname.startsWith(href);
 
   const handleLogout = () => {
-    clearDemoUser();
-    router.push('/');
+    void signOut({ callbackUrl: '/' });
   };
 
   return (

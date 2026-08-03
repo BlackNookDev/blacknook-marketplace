@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 import { apiFetch } from '@/lib/apiUrl';
-import { loginDemo } from '@/lib/demoAuth';
 
 function GoogleIcon() {
   return (
@@ -79,7 +78,6 @@ export default function RegisterEarlyAccessForm() {
       }
 
       await getSession();
-      loginDemo(email, name || undefined);
       router.push(callbackUrl || '/account');
       router.refresh();
     } catch {

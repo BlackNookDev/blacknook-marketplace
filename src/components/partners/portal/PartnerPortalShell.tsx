@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Lock, LogOut, Menu, X } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
-import { clearDemoUser } from '@/lib/demoAuth';
+import { signOut } from 'next-auth/react';
 import { usePartnerAccess } from '@/components/partners/portal/PartnerAccess';
 import { PARTNER_PORTAL_NAV } from '@/lib/partnerPortal';
 import { cn } from '@/lib/utils';
@@ -17,13 +17,11 @@ type Props = {
 
 export default function PartnerPortalShell({ title, children }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { canManage } = usePartnerAccess();
 
   const logout = () => {
-    clearDemoUser();
-    router.push('/');
+    void signOut({ callbackUrl: '/' });
   };
 
   return (

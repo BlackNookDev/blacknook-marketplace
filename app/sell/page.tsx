@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import AuthGate from '@/components/auth/AuthGate';
 import SellContent from '@/components/sell/SellContent';
 import JsonLd from '@/components/seo/JsonLd';
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
@@ -21,9 +22,9 @@ const sellJsonLd = {
 
 export default function SellPage() {
   return (
-    <>
+    <AuthGate fallbackHref="/login" loadingLabel="Partner programı yükleniyor…">
       <JsonLd data={sellJsonLd} />
       <SellContent />
-    </>
+    </AuthGate>
   );
 }

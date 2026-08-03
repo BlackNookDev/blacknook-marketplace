@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Download } from 'lucide-react';
-import AccountSection from '@/components/account/AccountSection';
 
 export default function AccountProductsPage() {
   return (
@@ -36,13 +35,6 @@ export default function AccountProductsPage() {
             şimdi keşfet
           </Link>
         </p>
-      </div>
-
-      <div className="mt-4">
-        <AccountSection
-          title="Kurulum talepleri"
-          description="Servis detayından gönderdiğiniz kurulum talepleri burada listelenir."
-        />
       </div>
     </div>
   );

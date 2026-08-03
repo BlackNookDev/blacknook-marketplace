@@ -1,6 +1,6 @@
 /** Demo vendor / başvuru state — localStorage, DB yok */
 
-import { getDemoUser } from '@/lib/demoAuth';
+import { getAuthIdentity } from '@/lib/authIdentity';
 
 export const VENDOR_EVENT = 'bn-vendor-change';
 
@@ -76,6 +76,9 @@ function writeJson(key: string, value: unknown) {
 
 export function getDemoRole(): DemoRole {
   if (typeof window === 'undefined') return 'user';
+  const identity = getAuthIdentity();
+  if (identity?.role === 'admin') return 'admin';
+  if (identity?.role === 'vendor') return 'vendor';
   const raw = window.localStorage.getItem(ROLE_KEY);
   if (raw === 'pending' || raw === 'vendor' || raw === 'admin') return raw;
   return 'user';
@@ -98,7 +101,7 @@ export function getApplications(): DevApplication[] {
 }
 
 export function getMyApplication(): DevApplication | null {
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (!user) return null;
   const apps = getApplications();
   return apps.find((a) => a.email === user.email) ?? null;
@@ -112,7 +115,7 @@ export function submitApplication(input: {
   productFocus: string;
   portfolioUrl: string;
 }): DevApplication | null {
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (!user) return null;
 
   const apps = getApplications().filter((a) => a.email !== user.email);
@@ -146,7 +149,7 @@ export function approveApplication(id: string) {
   map[approved.email] = 'vendor';
   writeJson('bn_demo_role_by_email', map);
 
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (user && approved.email === user.email && getDemoRole() !== 'admin') {
     setDemoRole('vendor');
   }
@@ -157,7 +160,7 @@ export function rejectApplication(id: string, reason = 'Başvuru kriterleri kar�
     a.id === id ? { ...a, status: 'rejected' as const, rejectReason: reason } : a
   );
   writeJson(APPS_KEY, apps);
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   const rejected = apps.find((a) => a.id === id);
   if (user && rejected && rejected.email === user.email) {
     setDemoRole('user');
@@ -166,7 +169,7 @@ export function rejectApplication(id: string, reason = 'Başvuru kriterleri kar�
 
 /** Girişte email’e özel rol haritasını uygula */
 export function syncRoleFromEmail() {
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (!user) return;
   const map = readJson<Record<string, DemoRole>>('bn_demo_role_by_email', {});
   const mapped = map[user.email];
@@ -185,13 +188,13 @@ export function getProducts(): DemoVendorProduct[] {
 }
 
 export function getMyProducts(): DemoVendorProduct[] {
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (!user) return [];
   return getProducts().filter((p) => p.vendorEmail === user.email);
 }
 
 export function addProduct(input: Omit<DemoVendorProduct, 'id' | 'vendorEmail' | 'vendorName' | 'status' | 'createdAt'>): DemoVendorProduct | null {
-  const user = getDemoUser();
+  const user = getAuthIdentity();
   if (!user) return null;
   const product: DemoVendorProduct = {
     ...input,
