@@ -242,7 +242,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                         Eşleşme talebi alındı
                       </p>
                       <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                        “{need}” için uygun geliştiriciye iletildi. En kısa sürede dönüş
+                        “{need}” için uygun geliştiriciye iletildi. En kısa sürede size dönüş
                         yapılacak.
                       </p>
                       <button

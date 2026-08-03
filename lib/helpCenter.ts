@@ -54,7 +54,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'founder-story',
         title: '“Kurucudan” / hikâye bölümünü nasıl yazarım?',
         summary: 'Güven, bağlam ve dürüst anlatım ipuçları.',
-        body: 'Kısa tutul: kim olduğunuz, sorunu neden çözdüğünüz, ürünün bugünkü durumu. Abartmadan sosyal kanıt (kullanıcı, GitHub, lansman) ekleyebilirsiniz. Bu bölüm alıcı güvenini artırır; pazarlama sloganı yerine samimi ve somut bir anlatım tercih edin.',
+        body: 'Kısa tutun: kim olduğunuz, sorunu neden çözdüğünüz, ürünün bugünkü durumu. Abartmadan sosyal kanıt (kullanıcı, GitHub, lansman) ekleyebilirsiniz. Bu bölüm alıcı güvenini artırır; pazarlama sloganı yerine samimi ve somut bir anlatım tercih edin.',
       },
       {
         id: 'honest-reviews',
@@ -77,7 +77,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: 'support-ready',
         title: 'Lansman için destek ekibim hazır mı?',
-        summary: 'Yanıt süresi, bilinen hatalar ve escalation.',
+        summary: 'Yanıt süresi, bilinen hatalar ve escalation (üst birime aktarım).',
         body: 'Yayın öncesi: bilinen hatalar listesi, kurulum rehberi, fatura/lisans SSS’leri hazır olsun. Yoğun günde gecikme riskine karşı şablon yanıtlar kullanın. Blacknook arabuluculuk yapabilir ama birinci hat ürün desteği sizdedir.',
       },
       {
@@ -182,7 +182,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'password',
         title: 'Şifremi unuttum',
         summary: 'Demo ortamında sıfırlama ve destek yolu.',
-        body: 'Şimdilik demo ortamında şifre sıfırlama e-postası gönderilmez. Destek için contact@blacknook.com adresine hesabınızın e-postasını yazarak ulaşın.',
+        body: 'Giriş sayfasındaki “Şifrenizi mi unuttunuz?” bağlantısından e-postanıza sıfırlama linki isteyin. Bağlantı bir saat geçerlidir. Mail gelmezse spam klasörünü kontrol edin veya contact@blacknook.com adresine yazın.',
       },
       {
         id: 'profile',

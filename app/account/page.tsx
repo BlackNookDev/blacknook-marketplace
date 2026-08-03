@@ -105,17 +105,17 @@ export default function AccountProfilePage() {
               </label>
             </div>
 
-            <div className="rounded-2xl border border-violet-400/20 bg-violet-500/[0.08] p-5">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
               <h3 className="text-sm font-semibold text-zinc-100">Şifre sıfırlama gerekir mi?</h3>
               <p className="mt-1 text-sm text-zinc-400">
                 Size şifre sıfırlama bağlantısı içeren bir e-posta göndereceğiz.
               </p>
-              <button
-                type="button"
-                className="mt-4 rounded-xl border border-white/15 bg-white px-4 py-2 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+              <Link
+                href="/forgot-password"
+                className="mt-4 inline-flex rounded-xl border border-white/15 bg-white px-4 py-2 text-sm font-semibold text-black transition-opacity hover:opacity-90"
               >
                 Şifreyi sıfırla
-              </button>
+              </Link>
             </div>
           </div>
         </AccountSection>
@@ -153,7 +153,7 @@ export default function AccountProfilePage() {
             </div>
             <div>
               <label htmlFor="bio" className="mb-2 block text-sm font-medium text-zinc-300">
-                Kısa bio
+                Kısa bio / hakkında
               </label>
               <textarea
                 id="bio"

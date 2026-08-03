@@ -13,7 +13,7 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function AdminProductsPage() {
   return (
-    <AuthGate fallbackHref="/login">
+    <AuthGate allowRoles={['admin']} fallbackHref="/account">
       <main className="mx-auto w-full max-w-4xl px-4 pb-24 pt-28 sm:px-6">
         <PanelNav variant="admin" />
         <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">

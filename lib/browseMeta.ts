@@ -23,11 +23,14 @@ const BEST_FOR_BY_CATEGORY: Record<string, BestForId[]> = {
   'Yapay Zeka': ['developers', 'startups', 'creators'],
   'Otomasyon & İş Akışı': ['agencies', 'ops', 'marketers'],
   'Yayın & CMS': ['creators', 'marketers', 'agencies'],
+  'Dokümantasyon & Wiki': ['creators', 'ops', 'agencies'],
   'Analitik & Ürün': ['marketers', 'startups', 'ops'],
   'E-posta & Pazarlama': ['marketers', 'agencies', 'creators'],
+  'E-posta Altyapısı': ['ops', 'developers', 'agencies'],
   'BI & Görselleştirme': ['ops', 'marketers'],
   'Arama': ['developers', 'startups'],
   'İletişim & Destek': ['agencies', 'ops', 'startups'],
+  'Planlama & Randevu': ['agencies', 'ops', 'startups'],
   'Kimlik & Güvenlik': ['developers', 'ops'],
   'Gözlemlenebilirlik': ['developers', 'ops'],
   'İzleme & Güvenilirlik': ['ops', 'developers'],
@@ -125,7 +128,7 @@ export function countBySubcategory(list: ServiceCatalogEntry[]): { label: string
 export function browseHeading(categoryId: string): string {
   const browse = getBrowseCategory(categoryId);
   if (!browse) return 'Ürünleri keşfet';
-  return `${browse.label} keşfet`;
+  return `${browse.label} ürünlerini keşfet`;
 }
 
 export function getShopByLinks(categoryId: string) {

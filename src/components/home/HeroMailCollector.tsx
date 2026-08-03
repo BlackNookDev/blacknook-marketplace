@@ -25,7 +25,7 @@ const FLOATING = getFeaturedServices(8).map((s, i) => ({
 }));
 
 const TRUST = [
-  { icon: Sparkles, label: '60 gün para iade garantisi' },
+  { icon: Sparkles, label: '60 gün para iadesi garantisi' },
   { icon: Shield, label: 'Doğrulanmış sağlayıcılar' },
   { icon: Check, label: '50+ araç tek pazaryerinde' },
 ];
@@ -149,7 +149,7 @@ export default function HeroMailCollector() {
               </p>
             ) : null}
             <label htmlFor="hero-email" className="sr-only">
-              Email
+              E-posta
             </label>
             <input
               id="hero-email"
@@ -158,7 +158,7 @@ export default function HeroMailCollector() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === 'loading' || status === 'done'}
-              placeholder="Email"
+              placeholder="E-posta"
               className="h-9 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-500 focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-60"
             />
             <button

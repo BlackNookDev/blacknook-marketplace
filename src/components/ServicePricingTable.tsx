@@ -50,7 +50,7 @@ export default function ServicePricingTable({ serviceName, plan }: Props) {
           Size en uygun planı seçin
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500 sm:text-base">
-          BlackNOOK&apos;un 60 günlük para iade garantisi ile {serviceName} lisansını güvenle
+          Blacknook&apos;un 60 günlük para iadesi garantisi ile {serviceName} lisansını güvenle
           satın alın.
         </p>
       </div>

@@ -14,7 +14,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'marketing',
     label: 'Marketing',
-    match: ['E-posta & Pazarlama', 'Analitik & Ürün'],
+    match: ['E-posta & Pazarlama', 'E-posta Altyapısı', 'Analitik & Ürün'],
   },
   {
     id: 'sales-leads',
@@ -24,7 +24,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'media-design',
     label: 'Media & Design',
-    match: ['Yayın & CMS'],
+    match: ['Yayın & CMS', 'Dokümantasyon & Wiki'],
   },
   {
     id: 'operations',
@@ -52,7 +52,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'customer-engagement',
     label: 'Customer Engagement',
-    match: ['İletişim & Destek', 'Kimlik & Güvenlik'],
+    match: ['İletişim & Destek', 'Planlama & Randevu', 'Kimlik & Güvenlik'],
   },
 ];
 
@@ -73,11 +73,14 @@ export const NAV_MENUS: NavMenuConfig[] = [
     href: '/services?type=saas',
     filterCategories: [
       'Yayın & CMS',
+      'Dokümantasyon & Wiki',
       'Backend & BaaS',
       'Analitik & Ürün',
       'BI & Görselleştirme',
       'İletişim & Destek',
+      'Planlama & Randevu',
       'E-posta & Pazarlama',
+      'E-posta Altyapısı',
       'Platform & Dağıtım',
     ],
     dropdownItems: [],

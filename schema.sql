@@ -104,3 +104,46 @@ CREATE TABLE IF NOT EXISTS match_requests (
 
 CREATE INDEX IF NOT EXISTS idx_match_requests_email ON match_requests (email);
 CREATE INDEX IF NOT EXISTS idx_match_requests_status ON match_requests (status);
+
+-- Kullanıcı bildirimleri
+CREATE TABLE IF NOT EXISTS user_notifications (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       VARCHAR(255) NOT NULL,
+  body        TEXT,
+  href        VARCHAR(500),
+  is_read     BOOLEAN DEFAULT FALSE,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_notifications_user
+  ON user_notifications (user_id, created_at DESC);
+
+-- Sepet
+CREATE TABLE IF NOT EXISTS cart_items (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  tier_id     INTEGER REFERENCES product_tiers(id) ON DELETE SET NULL,
+  quantity    INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, product_id, tier_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_cart_items_user ON cart_items (user_id);
+
+-- Şifre sıfırlama tokenları
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash  VARCHAR(64) NOT NULL UNIQUE,
+  expires_at  TIMESTAMP NOT NULL,
+  used_at     TIMESTAMP,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user
+  ON password_reset_tokens (user_id);
+
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires
+  ON password_reset_tokens (expires_at);

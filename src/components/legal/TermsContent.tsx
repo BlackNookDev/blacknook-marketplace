@@ -90,7 +90,7 @@ export default function TermsContent() {
       <h3>A. İade</h3>
       <p>
         Ürüne özel iade süresi içinde, ürün sayfasında belirtilen koşullara göre iade talep
-        edebilirsiniz. Süreler ürüne göre değişir (örneğin bazı tekliflerde 30 veya 60 gün). Digital
+        edebilirsiniz. Süreler ürüne göre değişir (örneğin bazı tekliflerde 30 veya 60 gün). Dijital
         kitap gibi bazı kategorilerde iade mümkün olmayabilir.
       </p>
       <h3>B. İade sınırları</h3>

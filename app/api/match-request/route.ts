@@ -26,22 +26,15 @@ async function resolveUserId(email: string | null): Promise<number | null> {
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const url = new URL(req.url);
-    const queryEmail = url.searchParams.get('email')?.trim().toLowerCase() || '';
     const sessionEmail = session?.user?.email?.trim().toLowerCase() || '';
 
-    const email = sessionEmail || queryEmail;
-    if (!email || !isValidEmail(email)) {
-      return NextResponse.json({ error: 'E-posta gerekli.' }, { status: 400 });
+    if (!sessionEmail || !isValidEmail(sessionEmail)) {
+      return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
     }
 
-    // Session varsa yalnızca kendi taleplerini görsün
-    if (sessionEmail && queryEmail && sessionEmail !== queryEmail) {
-      return NextResponse.json({ error: 'Yetkisiz.' }, { status: 403 });
-    }
-
+    const url = new URL(req.url);
     const status = url.searchParams.get('status')?.trim() || 'active';
-    const params: any[] = [email];
+    const params: any[] = [sessionEmail];
     let sql =
       'SELECT id, name, email, need, status, created_at FROM match_requests WHERE LOWER(email) = ?';
 
@@ -108,6 +101,23 @@ export async function POST(req: NextRequest) {
         { error: 'Talep kaydedilemedi. Lütfen tekrar deneyin.' },
         { status: 500 }
       );
+    }
+
+    if (userId != null) {
+      try {
+        await pool.query(
+          `INSERT INTO user_notifications (user_id, title, body, href, is_read)
+           VALUES (?, ?, ?, ?, FALSE)`,
+          [
+            userId,
+            'Eşleşme talebiniz alındı',
+            need.length > 120 ? `${need.slice(0, 117)}…` : need,
+            '/account/requests',
+          ]
+        );
+      } catch (notifError) {
+        console.error('[match-request] Bildirim kaydı hatası:', notifError);
+      }
     }
 
     const mailResult = await sendPlatformEmail({

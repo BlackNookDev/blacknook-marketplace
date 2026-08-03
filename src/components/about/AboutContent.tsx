@@ -153,7 +153,7 @@ export default function AboutContent() {
       <section className="border-t border-white/[0.06] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Nasıl çalışır
+            Nasıl çalışır?
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {HOW.map(({ icon: Icon, title, body }) => (
@@ -173,7 +173,7 @@ export default function AboutContent() {
       <section className="border-t border-white/[0.06] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Kimler için
+            Kimler için?
           </h2>
           <p className="mt-4 max-w-xl text-base text-zinc-400">
             İki taraf, tek platform: üretenler ve arayanlar.

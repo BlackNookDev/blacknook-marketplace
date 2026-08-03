@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Bell, ShoppingCart, User, Users } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
@@ -15,20 +15,13 @@ import { signOut, useSession } from 'next-auth/react';
 import { ACCOUNT_NAV } from '@/components/account/accountNav';
 import { isPartnerPortalPath } from '@/lib/partnerPortal';
 
-const NOTIFICATIONS = [
-  {
-    id: 'n1',
-    title: 'Yeni araç eklendi',
-    body: 'Ekosistemde keşfedebileceğin yeni bir ürün yayında.',
-    href: '/services',
-  },
-  {
-    id: 'n2',
-    title: 'Partner programı',
-    body: 'Ürününüzü Blacknook’ta yayınlamak için başvurabilirsiniz.',
-    href: '/sell',
-  },
-];
+type NavNotification = {
+  id: number;
+  title: string;
+  body: string;
+  href: string;
+  isRead: boolean;
+};
 
 export default function Navbar() {
   const reduce = useReducedMotion();
@@ -39,7 +32,9 @@ export default function Navbar() {
   const [matchOpen, setMatchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [cartCount] = useState(1);
+  const [cartCount, setCartCount] = useState(0);
+  const [notifications, setNotifications] = useState<NavNotification[]>([]);
+  const [unread, setUnread] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +49,38 @@ export default function Navbar() {
   const hideChrome = isPartnerPortalPath(pathname);
   const user = status === 'authenticated' ? session?.user : null;
   const isAdmin = user?.role === 'admin';
+
+  const refreshNavData = useCallback(async () => {
+    if (status !== 'authenticated') {
+      setCartCount(0);
+      setNotifications([]);
+      setUnread(0);
+      return;
+    }
+    try {
+      const [cartRes, notifRes] = await Promise.all([
+        fetch('/api/cart', { cache: 'no-store' }),
+        fetch('/api/notifications', { cache: 'no-store' }),
+      ]);
+      if (cartRes.ok) {
+        const cart = await cartRes.json();
+        setCartCount(Number(cart.count) || 0);
+      }
+      if (notifRes.ok) {
+        const data = await notifRes.json();
+        setNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+        setUnread(Number(data.unread) || 0);
+      }
+    } catch {
+      setCartCount(0);
+      setNotifications([]);
+      setUnread(0);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    void refreshNavData();
+  }, [refreshNavData]);
 
   useEffect(() => {
     if (hideChrome) return;
@@ -72,7 +99,6 @@ export default function Navbar() {
     const onOpen = () => openMatch();
     window.addEventListener('bn-open-match', onOpen);
     return () => window.removeEventListener('bn-open-match', onOpen);
-    // openMatch depends on status/router
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideChrome, status]);
 
@@ -115,7 +141,7 @@ export default function Navbar() {
                 type="button"
                 onClick={openMatch}
                 className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 px-2 text-[11px] font-semibold text-black shadow-[0_0_12px_rgba(45,212,191,0.28)] transition-[filter,transform] duration-premium ease-premium hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 active:scale-[0.98]"
-                aria-label="Geliştiriciler ile eşleş"
+                aria-label="Geliştiricilerle eşleş"
                 title="Şu an eşleşmeye hazır geliştiriciler"
               >
                 <Users className="h-3 w-3" aria-hidden />
@@ -139,15 +165,29 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => {
-                    setNotifOpen((v) => !v);
+                    const opening = !notifOpen;
+                    setNotifOpen(opening);
                     setMenuOpen(false);
+                    if (opening) {
+                      void refreshNavData();
+                      if (status === 'authenticated') {
+                        void fetch('/api/notifications', { method: 'PATCH' }).then(() => {
+                          setUnread(0);
+                          setNotifications((prev) =>
+                            prev.map((n) => ({ ...n, isRead: true }))
+                          );
+                        });
+                      }
+                    }
                   }}
                   className={iconBtn}
                   aria-label="Bildirimler"
                   aria-expanded={notifOpen}
                 >
                   <Bell className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
-                  <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-zinc-900/80" />
+                  {unread > 0 ? (
+                    <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-zinc-900/80" />
+                  ) : null}
                 </button>
 
                 {notifOpen ? (
@@ -159,29 +199,55 @@ export default function Navbar() {
                     <div className="border-b border-white/[0.06] px-4 py-3">
                       <p className="font-display text-sm font-semibold text-white">Bildirimler</p>
                     </div>
-                    <ul className="max-h-72 overflow-y-auto py-1">
-                      {NOTIFICATIONS.map((n) => (
-                        <li key={n.id}>
-                          <Link
-                            href={n.href}
-                            onClick={() => setNotifOpen(false)}
-                            className="block px-4 py-3 transition-colors hover:bg-white/[0.04]"
-                          >
-                            <p className="text-sm font-medium text-zinc-100">{n.title}</p>
-                            <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">{n.body}</p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                    {status !== 'authenticated' ? (
+                      <div className="px-4 py-8 text-center">
+                        <p className="text-sm text-zinc-500">Bildirimleri görmek için giriş yapın.</p>
+                        <Link
+                          href="/login"
+                          onClick={() => setNotifOpen(false)}
+                          className="mt-3 inline-block text-sm font-medium text-sky-400 hover:text-sky-300"
+                        >
+                          Giriş Yap
+                        </Link>
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <p className="px-4 py-8 text-center text-sm text-zinc-500">
+                        Şu an bildirim yok
+                      </p>
+                    ) : (
+                      <ul className="max-h-72 overflow-y-auto py-1">
+                        {notifications.map((n) => (
+                          <li key={n.id}>
+                            <Link
+                              href={n.href}
+                              onClick={() => setNotifOpen(false)}
+                              className="block px-4 py-3 transition-colors hover:bg-white/[0.04]"
+                            >
+                              <p className="text-sm font-medium text-zinc-100">{n.title}</p>
+                              {n.body ? (
+                                <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">
+                                  {n.body}
+                                </p>
+                              ) : null}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ) : null}
               </div>
 
               <Link
-                href="/account/products"
+                href={
+                  status === 'authenticated'
+                    ? '/account/products'
+                    : '/login?callbackUrl=%2Faccount%2Fproducts'
+                }
                 className={iconBtn}
                 aria-label={`Yazılım sepeti${cartCount ? `, ${cartCount} öğe` : ''}`}
                 title="Yazılım sepeti"
+                onClick={() => void refreshNavData()}
               >
                 <ShoppingCart className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
                 {cartCount > 0 ? (
@@ -261,7 +327,13 @@ export default function Navbar() {
       </m.div>
 
       <PresenceDock />
-      <MatchDeveloperModal open={matchOpen} onClose={() => setMatchOpen(false)} />
+      <MatchDeveloperModal
+        open={matchOpen}
+        onClose={() => {
+          setMatchOpen(false);
+          void refreshNavData();
+        }}
+      />
     </>
   );
 }

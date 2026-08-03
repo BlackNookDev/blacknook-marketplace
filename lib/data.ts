@@ -22,12 +22,12 @@ export const SERVICES: ServiceCatalogEntry[] = [
     features: [
       'Markdown ve zengin editör ile yazım deneyimi',
       'Üyelik, abonelik ve Stripe ile ücretli içerik',
-      'SEO, AMP ve sitemap desteği',
+      'SEO ve sitemap desteği',
       'REST Content API ve Admin API',
-      'Tema sistemi ve Handlebars şablonları',
+      'ActivityPub (sosyal web) ve yerleşik analitik',
     ],
     about:
-      'Ghost, 2013\'ten beri geliştirilen açık kaynaklı bir yayıncılık platformudur; blog, bülten ve üyelik tabanlı medya sitelerini tek bir Node.js uygulamasında birleştirir. Kurumsal CMS karmaşıklığı yerine yazar odaklı arayüz, yerleşik e-posta bülteni (Ghost Mail) ve yerel analitik sunar. Self-host veya Ghost(Pro) bulut hizmeti ile çalışabilir.',
+      'Ghost, 2013\'ten beri geliştirilen açık kaynaklı bir yayıncılık platformudur; blog, bülten ve üyelik tabanlı medya sitelerini tek bir Node.js uygulamasında birleştirir. Ghost 6 ile ActivityPub üzerinden Fediverse\'e yayın, Tinybird ortaklığıyla yerleşik analitik ve Stripe tabanlı üyelikler sunulur. Yerleşik newsletter/e-posta, Docker Compose ile self-host veya Ghost(Pro) / Ghost.org barındırma ile çalışabilir.',
     useCases: [
       'Bağımsız blog ve kişisel marka siteleri',
       'Ücretli abonelikli haber bültenleri',
@@ -49,7 +49,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'REST, GraphQL ve çoklu SDK desteği',
     ],
     about:
-      'Appwrite, geliştiricilerin kendi altyapılarında barındırabileceği bir Backend-as-a-Service platformudur. Docker ile kurulur; kullanıcı yönetimi, veritabanı, depolama ve sunucu tarafı mantığı tek panelden yönetilir. Veri egemenliği ve self-host önceliği ile Firebase benzeri deneyim sunar.',
+      'Appwrite, geliştiricilerin kendi altyapılarında barındırabileceği bir Backend-as-a-Service platformudur. Auth, veritabanı, depolama ve Functions tek panelden yönetilir; REST, GraphQL ve resmi SDK\'lar ile istemci uygulamalarına bağlanır. Docker ile kurulur; veri egemenliği ve self-host önceliğiyle Firebase benzeri deneyim sunar.',
     useCases: [
       'Mobil uygulama backend\'i self-host ortamında',
       'Hızlı MVP ve prototip geliştirme',
@@ -65,13 +65,13 @@ export const SERVICES: ServiceCatalogEntry[] = [
     brandColor: '#3FCF8E',
     features: [
       'Yönetilen PostgreSQL ve otomatik REST (PostgREST)',
-      'Gerçek zamanlı değişiklik dinleme',
-      'GoTrue ile kimlik ve satır düzeyinde güvenlik (RLS)',
-      'Edge Functions ve depolama bucket\'ları',
-      'Dashboard, SQL editörü ve migration araçları',
+      'Auth ve satır düzeyinde güvenlik (RLS)',
+      'Realtime değişiklik dinleme',
+      'Storage bucket\'ları ve Edge Functions',
+      'pgvector ile vektör arama; dashboard ve migration araçları',
     ],
     about:
-      'Supabase, açık kaynaklı bir geliştirici platformudur; çekirdeğinde tam özellikli PostgreSQL bulunur. Auth, depolama, edge fonksiyonları ve vektör arama gibi modern uygulama ihtiyaçları tek ekosistemde toplanır. Self-host veya yönetilen bulut seçenekleri mevcuttur.',
+      'Supabase, açık kaynaklı bir geliştirici platformudur; çekirdeğinde tam özellikli PostgreSQL bulunur. Auth + RLS, Realtime, Storage, Edge Functions ve pgvector gibi modern uygulama ihtiyaçları tek ekosistemde toplanır. Self-host veya yönetilen bulut seçenekleri mevcuttur.',
     useCases: [
       'SaaS uygulamalarında kullanıcı ve veri katmanı',
       'Gerçek zamanlı işbirlikçi uygulamalar',
@@ -87,13 +87,13 @@ export const SERVICES: ServiceCatalogEntry[] = [
     brandColor: '#5850EC',
     features: [
       'Çerez ve kişisel veri toplamadan ziyaret istatistikleri',
-      'Hafif script (~1 KB) ve hızlı yükleme',
+      'Hafif script (~2.5 KB) ve hızlı yükleme',
       'Özel etkinlik ve hedef dönüşüm takibi',
       'E-posta/Slack haftalık raporlar',
-      'Açık kaynak; self-host veya Plausible Cloud',
+      'Community Edition self-host veya Plausible Cloud (AB)',
     ],
     about:
-      'Plausible Analytics, web sitelerinin trafiğini gizlilik odaklı şekilde ölçen Avrupa merkezli bir analitik aracıdır. Google Analytics\'e kıyasla basit paneller, şeffaf metodoloji ve AB veri koruma ilkelerine uyum hedefler. Kaynak kodu GitHub\'da açıktır.',
+      'Plausible Analytics, web sitelerinin trafiğini çerezsiz ve GDPR uyumlu şekilde ölçen Avrupa merkezli bir analitik aracıdır. Google Analytics\'e kıyasla basit paneller, şeffaf metodoloji ve AB veri koruma ilkelerine uyum hedefler. Açık kaynak Community Edition ile self-host veya Plausible Cloud kullanılabilir.',
     useCases: [
       'Kurumsal sitelerde çerez banner\'ı olmadan trafik ölçümü',
       'Blog ve landing page performans takibi',
@@ -102,20 +102,20 @@ export const SERVICES: ServiceCatalogEntry[] = [
   },
   {
     slug: 'n8n',
-    name: 'N8N',
+    name: 'n8n',
     description: 'Görsel düzenleyici ile kod ve no-code otomasyon platformu.',
     icon: 'n8n',
     category: 'Otomasyon & İş Akışı',
     brandColor: '#EA4B71',
     features: [
       '400+ entegrasyon düğümü',
-      'JavaScript/Python kod adımları',
+      'JavaScript ve Python kod adımları',
       'Webhook, cron ve olay tetikleyicileri',
       'Self-host ve n8n Cloud',
       'Hata yönetimi, dallanma ve alt iş akışları',
     ],
     about:
-      'n8n (nodemation), iş akışlarını düğüm tabanlı bir editörde birleştiren açık kaynak otomasyon aracıdır. Zapier/Make benzeri senaryoları kendi sunucunuzda çalıştırarak veri egemenliği sağlar. Fair-code lisansı ile kaynak erişilebilir kalır.',
+      'n8n (nodemation), iş akışlarını düğüm tabanlı bir editörde birleştiren fair-code otomasyon aracıdır. Zapier/Make benzeri senaryoları kendi sunucunuzda veya n8n Cloud\'da çalıştırarak veri egemenliği sağlar; JS/Python kod düğümleriyle özel mantık eklenebilir.',
     useCases: [
       'CRM, e-posta ve Slack arasında veri senkronizasyonu',
       'API birleştirme ve ETL hafif senaryoları',
@@ -137,7 +137,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Kubernetes ve bare-metal dağıtım',
     ],
     about:
-      'MinIO, bulut nesne depolama iş yükleri için tasarlanmış açık kaynak yazılımdır. Yedekleme, medya arşivleri ve veri gölleri için S3 protokolü kullanan uygulamalarla doğrudan uyumludur. Yüksek throughput ve düşük gecikme hedeflenir.',
+      'MinIO, bulut nesne depolama iş yükleri için tasarlanmış S3 uyumlu yazılımdır; kaynak kodu AGPLv3 ile sunulur. Yedekleme, medya arşivleri ve veri gölleri için S3 kullanan uygulamalarla doğrudan uyumludur. Kurumsal yol AIStor (ticari) ürün ailesiyle devam eder.',
     useCases: [
       'Uygulama dosya ve medya yüklemeleri',
       'Yedekleme hedefi ve off-site replikasyon',
@@ -152,14 +152,14 @@ export const SERVICES: ServiceCatalogEntry[] = [
     category: 'Depolama & Veritabanı',
     brandColor: '#FF4438',
     features: [
-      'String, hash, list, set, sorted set veri tipleri',
+      'String, hash, list, set, sorted set çekirdek tipleri',
       'TTL ile otomatik anahtar sona erdirme',
       'Pub/Sub ve Redis Streams',
-      'Redis Stack: JSON, arama, time series',
-      'Replikasyon, Sentinel ve Cluster modları',
+      'Redis 8: JSON, Query Engine ve time series çekirdekte',
+      'Cluster ve Sentinel ile yüksek erişilebilirlik',
     ],
     about:
-      'Redis, bellekte çalışan açık kaynak bir veri deposudur; önbellek, oturum saklama, rate limiting ve gerçek zamanlı skor tabloları için endüstri standardı haline gelmiştir. Kalıcılık (RDB/AOF) ile bellek hızı disk güvenilirliğiyle birleştirilebilir.',
+      'Redis, bellekte çalışan bir veri deposudur; önbellek, oturum saklama, rate limiting ve gerçek zamanlı skor tabloları için endüstri standardıdır. Redis 8 ile JSON, Query Engine ve time series çekirdeğe alındı; lisans seçenekleri RSALv2, SSPLv1 ve AGPLv3\'tür. Kalıcılık (RDB/AOF) ile bellek hızı disk güvenilirliğiyle birleştirilebilir.',
     useCases: [
       'Web uygulaması oturum ve API önbelleği',
       'Sıra ve iş dağıtımı (task queue)',
@@ -247,7 +247,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'WooCommerce ile e-ticaret',
     ],
     about:
-      'WordPress, PHP tabanlı açık kaynak bir CMS\'dir; internetteki sitelerin önemli bir kısmını güçlendirir. Blogdan kurumsal siteye, üyelik portalından mağazaya genişletilebilir. Topluluk ve ticari eklenti/tema pazarı olgunlaşmıştır.',
+      'WordPress, PHP tabanlı açık kaynak bir CMS\'dir; internetteki sitelerin önemli bir kısmını güçlendiren lider içerik yönetim sistemidir. Blogdan kurumsal siteye, üyelik portalından mağazaya genişletilebilir. Topluluk ve ticari eklenti/tema pazarı olgunlaşmıştır.',
     useCases: [
       'Kurumsal web sitesi ve landing page',
       'Haber portalı ve dergi yayını',
@@ -335,7 +335,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Rol tabanlı erişim ve audit log',
     ],
     about:
-      'Directus, veritabanınızı doğrudan içerik ve veri katmanına dönüştüren açık kaynak bir veri platformudur. Geliştiriciler şema üzerinde tam kontrolü korurken editörler dost arayüzle kayıt yönetir. Self-host ve Directus Cloud seçenekleri mevcuttur.',
+      'Directus, veritabanınızı doğrudan içerik ve veri katmanına dönüştüren açık kaynak bir veri platformudur. Geliştiriciler şema üzerinde tam kontrolü korurken editörler dostu bir arayüzle kayıt yönetir. Self-host ve Directus Cloud seçenekleri mevcuttur.',
     useCases: [
       'Headless e-ticaret katalog yönetimi',
       'Mobil uygulama içerik API\'si',
@@ -379,7 +379,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Red Hat tarafından desteklenen açık kaynak proje',
     ],
     about:
-      'Keycloak, kurumsal uygulamalara merkezi kimlik doğrulama eklemek için kullanılan açık kaynak bir IAM çözümüdür. Realm, client ve rol kavramlarıyla çoklu uygulama tek oturum açma deneyimi sağlar. Quarkus tabanlı modern sürümler yüksek ölçeklenebilirlik hedefler.',
+      'Keycloak, kurumsal uygulamalara merkezi kimlik doğrulama eklemek için kullanılan açık kaynak bir IAM çözümüdür. Realm, client ve rol kavramlarıyla çoklu uygulamada tek oturum açma (SSO) deneyimi sağlar. Quarkus tabanlı modern sürümler yüksek ölçeklenebilirlik hedefler.',
     useCases: [
       'Şirket içi uygulamalarda SSO',
       'B2B müşteri portalı kimlik yönetimi',
@@ -401,7 +401,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'SQLite, MySQL veya PostgreSQL backend',
     ],
     about:
-      'Vaultwarden (eski adıyla bitwarden_rs), resmi Bitwarden sunucusunun alternatifi olarak geliştirilen açık kaynak bir uygulamadır. Kişisel veya küçük ekip parola yönetimini kendi altyapınızda barındırmanızı sağlar; resmi Bitwarden mobil ve tarayıcı eklentileriyle çalışır.',
+      'Vaultwarden (eski adıyla bitwarden_rs), resmi Bitwarden sunucusunun Bitwarden API uyumlu alternatifi olarak geliştirilen açık kaynak bir uygulamadır. Kişisel veya küçük ekip parola yönetimini kendi altyapınızda barındırmanızı sağlar; resmi Bitwarden mobil ve tarayıcı eklentileriyle çalışır.',
     useCases: [
       'Aile ve küçük ekip parola paylaşımı',
       'Self-host gizlilik odaklı kasa',
@@ -477,7 +477,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
   {
     slug: 'traefik',
     name: 'Traefik',
-    description: 'Bulut native dinamik reverse proxy ve yük dengeleyici.',
+    description: 'Cloud-native dinamik reverse proxy ve yük dengeleyici.',
     icon: 'traefikproxy',
     category: 'Konteyner & Ağ',
     brandColor: '#24A1C1',
@@ -511,7 +511,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Docker ile kolay kurulum',
     ],
     about:
-      'Nginx Proxy Manager, Nginx\'i teknik olmayan kullanıcılar için sadeleştiren açık kaynak bir yönetim katmanıdır. Ev lab ve küçük sunucularda çoklu web uygulamasını tek IP üzerinden yönlendirmek için yaygın kullanılır. Arka planda OpenResty/Nginx çalışır.',
+      'Nginx Proxy Manager, Nginx\'i teknik olmayan kullanıcılar için sadeleştiren açık kaynak bir yönetim katmanıdır. Homelab ve küçük sunucularda çoklu web uygulamasını tek IP üzerinden yönlendirmek için yaygın kullanılır. Arka planda OpenResty/Nginx çalışır.',
     useCases: [
       'Ev sunucusunda çoklu subdomain yönlendirme',
       'Internal servislere güvenli dış erişim',
@@ -571,13 +571,13 @@ export const SERVICES: ServiceCatalogEntry[] = [
     brandColor: '#000000',
     features: [
       'Olay tabanlı product analytics',
-      'Feature flags ve multivariate testler',
-      'Session recording ve heatmap',
-      'Data warehouse sync',
+      'Feature flags ve multivariate deneyler',
+      'Session replay ve heatmap',
+      'ClickHouse tabanlı analitik motor',
       'Açık kaynak self-host ve PostHog Cloud',
     ],
     about:
-      'PostHog, mühendis odaklı ekipler için birleşik bir ürün işletim sistemidir. Amplitude ve LaunchDarkly benzeri yetenekleri tek platformda toplar. ClickHouse tabanlı analitik motoru yüksek hacimli olayları işleyebilir.',
+      'PostHog, mühendis odaklı ekipler için birleşik bir ürün analitiği platformudur: product analytics, feature flags, session replay ve experiments tek yerde toplanır. ClickHouse tabanlı motor yüksek hacimli olayları işler; self-host veya bulut seçenekleri vardır.',
     useCases: [
       'Feature rollout ve kill switch',
       'Dönüşüm hunisi ve retention analizi',
@@ -589,7 +589,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Cal.com',
     description: 'Açık kaynak randevu planlama ve toplantı altyapısı.',
     icon: 'caldotcom',
-    category: 'İletişim & Destek',
+    category: 'Planlama & Randevu',
     brandColor: '#292929',
     features: [
       'Takvim entegrasyonları (Google, Outlook, CalDAV)',
@@ -611,7 +611,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Outline',
     description: 'Ekip wiki, bilgi tabanı ve gerçek zamanlı dokümanlar.',
     icon: 'outline',
-    category: 'Yayın & CMS',
+    category: 'Dokümantasyon & Wiki',
     brandColor: '#000000',
     features: [
       'Markdown tabanlı zengin doküman editörü',
@@ -633,7 +633,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Notion',
     description: 'Blok tabanlı notlar, wiki, veritabanı ve proje yönetimi.',
     icon: 'notion',
-    category: 'Yayın & CMS',
+    category: 'Dokümantasyon & Wiki',
     brandColor: '#000000',
     features: [
       'Blok editörü: metin, tablo, kanban, takvim',
@@ -721,7 +721,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Mailcow',
     description: 'Docker ile tam özellikli self-host e-posta sunucusu paketi.',
     icon: 'mailcow',
-    category: 'E-posta & Pazarlama',
+    category: 'E-posta Altyapısı',
     brandColor: '#D01C3B',
     features: [
       'Postfix, Dovecot, SOGo groupware',
@@ -771,7 +771,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Milisaniye altı arama gecikmesi',
       'Faceting, filtering ve sorting',
       'Geo search ve vector arama',
-      'Rafts tabanlı yüksek erişilebilirlik kümesi',
+      'Raft tabanlı yüksek erişilebilirlik kümesi',
       'Typesense Cloud ve self-host',
     ],
     about:
@@ -790,14 +790,14 @@ export const SERVICES: ServiceCatalogEntry[] = [
     category: 'Arama',
     brandColor: '#005571',
     features: [
-      'Inverted index ve full-text sorgular',
+      'Apache Lucene tabanlı inverted index ve full-text sorgular',
       'Aggregations ile analitik',
       'Elastic Stack: Kibana, Logstash, Beats',
       'Cluster sharding ve replikasyon',
       'Elastic Cloud ve self-managed',
     ],
     about:
-      'Elasticsearch, Apache Lucene tabanlı dağıtık bir arama ve analitik motorudur. Log analytics (ELK), site search ve güvenlik SIEM senaryolarında endüstri standardıdır. Elastic NV ticari lisans ve açık kaynak bileşenleri birlikte yönetir.',
+      'Elasticsearch, Elastic tarafından geliştirilen Lucene tabanlı dağıtık bir arama ve analitik motorudur. Log analytics (ELK), site search ve güvenlik SIEM senaryolarında yaygındır. Elastic License ve source-available bileşenlerle yönetilir; yığının tamamı saf OSS değildir.',
     useCases: [
       'Merkezi uygulama log arama',
       'E-ticaret katalog indeksleme',
@@ -815,11 +815,11 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'BSON doküman modeli',
       'Aggregation pipeline',
       'Replica set ve sharded cluster',
-      'Atlas yönetilen bulut ve Community Edition',
+      'Community Server ve MongoDB Atlas',
       'Change streams ve transaction desteği',
     ],
     about:
-      'MongoDB, JSON benzeri dokümanları doğrudan saklayan popüler bir NoSQL veritabanıdır. Hızlı iterasyon gerektiren uygulamalarda esnek şema avantajı sağlar. Sürücüler çoğu programlama dili için mevcuttur.',
+      'MongoDB, JSON benzeri dokümanları doğrudan saklayan popüler bir NoSQL veritabanıdır. Community Server güncel sürümleri SSPL ile lisanslanır; yönetilen yol MongoDB Atlas\'tır. Hızlı iterasyon gerektiren uygulamalarda esnek şema avantajı sağlar.',
     useCases: [
       'İçerik yönetimi ve katalog verisi',
       'IoT telemetri ve time-series benzeri yükler',
@@ -856,7 +856,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     category: 'Depolama & Veritabanı',
     brandColor: '#FFCC01',
     features: [
-      'Sütunar depolama ve vektörleştirilmiş sorgular',
+      'Sütun tabanlı depolama ve vektörleştirilmiş sorgular',
       'Gerçek zamanlı veri ingest',
       'Materialized view ve projection',
       'Replikasyon ve sharding',
@@ -922,14 +922,14 @@ export const SERVICES: ServiceCatalogEntry[] = [
     category: 'Yapay Zeka',
     brandColor: '#000000',
     features: [
-      'Llama, Mistral, Gemma vb. model çekme ve çalıştırma',
+      'Llama, Mistral, Gemma, Phi vb. model çekme ve çalıştırma',
       'REST API ile chat ve generate',
       'Modelfile ile özelleştirme',
       'macOS, Linux ve Windows desteği',
       'GPU hızlandırma (CUDA, Metal)',
     ],
     about:
-      'Ollama, geliştiricilerin LLM\'leri tek komutla indirip yerel olarak çalıştırmasını sağlayan açık kaynak bir araçtır. Docker benzeri basit CLI deneyimi sunar. Verinin cihazdan çıkmadan AI denemeleri yapılmasına olanak tanır.',
+      'Ollama, geliştiricilerin LLM\'leri CLI ve API ile yerel olarak indirip çalıştırmasını sağlayan açık kaynak bir araçtır. Llama, Mistral, Gemma gibi yaygın modeller tek komutla çekilir. Verinin cihazdan çıkmadan AI denemeleri yapılmasına olanak tanır.',
     useCases: [
       'Offline kod asistanı ve chatbot',
       'Geliştirme ortamında prompt testi',
@@ -938,20 +938,20 @@ export const SERVICES: ServiceCatalogEntry[] = [
   },
   {
     slug: 'openwebui',
-    name: 'OpenWebUI',
+    name: 'Open WebUI',
     description: 'Ollama ve OpenAI uyumlu modeller için ChatGPT benzeri arayüz.',
     icon: 'openwebui',
     category: 'Yapay Zeka',
     brandColor: '#000000',
     features: [
-      'Çoklu model ve sağlayıcı desteği',
+      'Ollama ve OpenAI uyumlu sağlayıcı desteği',
       'RAG: doküman yükleme ve vektör arama',
       'Kullanıcı rolleri ve paylaşımlı sohbetler',
       'Python function calling ve araç entegrasyonu',
       'Docker ile self-host',
     ],
     about:
-      'Open WebUI (OpenWebUI), yerel ve uzak LLM backend\'lerine tek web arayüzünden erişim sağlayan açık kaynak bir projedir. Ollama ile sık eşleştirilir; kurumsal ekiplerin internal AI portalı olarak dağıtılır.',
+      'Open WebUI, yerel ve uzak LLM backend\'lerine tek web arayüzünden erişim sağlayan açık kaynak bir projedir. Ollama ve OpenAI uyumlu API\'lerle çalışır; RAG ile doküman sohbeti destekler. Kurumsal ekiplerin internal AI portalı olarak dağıtılır.',
     useCases: [
       'Şirket içi ChatGPT alternatifi',
       'PDF ve wiki üzerinde RAG sohbet',
@@ -973,7 +973,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Self-host ve Langfuse Cloud',
     ],
     about:
-      'Langfuse, Almanya merkezli açık kaynak bir LLM engineering platformudur. Production\'daki zincirleme çağrıları, token maliyetini ve gecikmeyi görünür kılar. LangChain, OpenAI SDK ve diğer framework\'lerle entegre olur.',
+      'Langfuse, Almanya merkezli açık kaynak bir LLM observability platformudur. Production\'daki izler (traces), prompt yönetimi ve değerlendirme (evals) ile token maliyeti ve gecikmeyi görünür kılar. LangChain, OpenAI SDK ve diğer framework\'lerle entegre olur.',
     useCases: [
       'Chatbot kalite izleme',
       'Prompt A/B test ve versiyon yönetimi',
@@ -1012,12 +1012,12 @@ export const SERVICES: ServiceCatalogEntry[] = [
     features: [
       'Git push ile otomatik deploy',
       'Docker Compose ve Dockerfile desteği',
-      'Let\'s Encrypt, wildcard domain',
+      'Let\'s Encrypt, wildcard domain (SSL)',
       'Sunucu ve multi-server yönetimi',
       'Veritabanı ve servis one-click kurulum',
     ],
     about:
-      'Coolify, Andras Bacsai tarafından geliştirilen açık kaynak bir deployment platformudur. Kendi VPS veya bare-metal sunucunuzda uygulama barındırmayı Heroku deneyimine yaklaştırır. DigitalOcean, Hetzner ve diğer sağlayıcılarda yaygın kullanılır.',
+      'Coolify, Andras Bacsai tarafından geliştirilen açık kaynak bir self-host PaaS\'tır. Git deploy, Docker ve SSL ile kendi VPS veya bare-metal sunucunuzda uygulama barındırmayı Heroku deneyimine yaklaştırır. DigitalOcean, Hetzner ve diğer sağlayıcılarda yaygın kullanılır.',
     useCases: [
       'Freelancer müşteri projelerini tek panelden host etme',
       'Startup MVP production deploy',
@@ -1039,7 +1039,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'Açık kaynak, tek bash/Go bileşenleri',
     ],
     about:
-      'Dokku, Jeff Croft tarafından başlatılan açık kaynak bir mini PaaS\'tır. `git push dokku main` ile uygulama build ve release edilir. Küçük VPS\'lerde düşük maliyetli production ortamı kurmak isteyen geliştiriciler için klasik çözümdür.',
+      'Dokku, Jeff Lindsay tarafından başlatılan açık kaynak bir mini PaaS\'tır. `git push dokku main` ile uygulama build ve release edilir. Küçük VPS\'lerde düşük maliyetli production ortamı kurmak isteyen geliştiriciler için klasik çözümdür.',
     useCases: [
       'Side project production hosting',
       'Staging ortamı hızlı klonlama',

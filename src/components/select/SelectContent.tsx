@@ -133,8 +133,8 @@ export default function SelectContent() {
             Blacknook Select · 2026
           </p>
           <h1 className="font-display text-[clamp(2.25rem,5.8vw,4rem)] font-bold leading-[1.05] tracking-tight text-white">
-            Daha hızlı ölçeklen.
-            <span className="mt-1 block text-zinc-400">Doğru kitleye çık.</span>
+            Daha hızlı ölçeklenin.
+            <span className="mt-1 block text-zinc-400">Doğru kitleye çıkın.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-zinc-500 sm:text-lg">
             Blacknook Select; seçilmiş SaaS ve yazılım ürünleri için özel lansman, strateji ve

@@ -25,7 +25,7 @@ export default function HeroPremium() {
             onMount
             delay={reduce ? 0 : 0.12}
             className="font-display text-[clamp(1.75rem,4.5vw,3.25rem)] font-semibold leading-snug tracking-[-0.02em] text-zinc-100"
-            lines={['Ekosisteminizi beraber inşa edin']}
+            lines={['Ekosisteminizi birlikte inşa edin']}
           />
         </m.div>
       </m.div>

@@ -67,9 +67,7 @@ export default function ActiveRequestsSection() {
     setLoading(true);
     setError('');
     try {
-      const res = await apiFetch(
-        `/api/match-request?email=${encodeURIComponent(user.email)}&status=active`
-      );
+      const res = await apiFetch('/api/match-request?status=active');
       const data = (await res.json().catch(() => ({}))) as {
         requests?: MatchRequest[];
         error?: string;
