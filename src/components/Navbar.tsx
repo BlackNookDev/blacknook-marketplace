@@ -43,7 +43,14 @@ export default function Navbar() {
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const openMatch = () => setMatchOpen(true);
+  const openMatch = () => {
+    if (status === 'loading') return;
+    if (status !== 'authenticated') {
+      router.push(`/login?callbackUrl=${encodeURIComponent('/?match=1')}`);
+      return;
+    }
+    setMatchOpen(true);
+  };
   const hideChrome = isPartnerPortalPath(pathname);
   const user = status === 'authenticated' ? session?.user : null;
   const isAdmin = user?.role === 'admin';
@@ -51,17 +58,23 @@ export default function Navbar() {
   useEffect(() => {
     if (hideChrome) return;
     if (searchParams.get('match') !== '1') return;
-    openMatch();
+    if (status === 'loading') return;
+    if (status !== 'authenticated') {
+      router.replace(`/login?callbackUrl=${encodeURIComponent('/?match=1')}`);
+      return;
+    }
+    setMatchOpen(true);
     router.replace('/', { scroll: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, hideChrome]);
+  }, [searchParams, hideChrome, status, router]);
 
   useEffect(() => {
     if (hideChrome) return;
     const onOpen = () => openMatch();
     window.addEventListener('bn-open-match', onOpen);
     return () => window.removeEventListener('bn-open-match', onOpen);
-  }, [hideChrome]);
+    // openMatch depends on status/router
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hideChrome, status]);
 
   useEffect(() => {
     if (!menuOpen && !notifOpen) return;
