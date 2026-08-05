@@ -17,7 +17,7 @@ const DEPARTMENTS = [
   },
   {
     title: 'Tasarım',
-    body: 'Marka, ürün arayüzü ve katalog vitrinini net, sakin bir görsel dilde tutuyorsun.',
+    body: 'Marka, ürün arayüzü ve hub vitrinini net, sakin bir görsel dilde tutuyorsun.',
   },
   {
     title: 'Operasyon & Destek',

@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
-  formatMinsAgo,
   getActiveDeveloperCount,
-  getRecentActivity,
+  getRotatingPlatformHint,
 } from '../../../lib/developerPresence';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { duration, easePremium } from '@/components/motion/tokens';
@@ -14,12 +13,12 @@ import { duration, easePremium } from '@/components/motion/tokens';
 export default function HeroPresenceStrip() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(2);
-  const [activity, setActivity] = useState(() => getRecentActivity());
+  const [hint, setHint] = useState(() => getRotatingPlatformHint());
 
   useEffect(() => {
     const tick = () => {
       setActive(getActiveDeveloperCount());
-      setActivity(getRecentActivity());
+      setHint(getRotatingPlatformHint());
     };
     tick();
     const id = window.setInterval(tick, 20_000);
@@ -44,14 +43,14 @@ export default function HeroPresenceStrip() {
 
       <AnimatePresence mode="wait">
         <m.p
-          key={activity.id}
+          key={hint.id}
           className="max-w-sm text-center text-[11px] text-zinc-600"
           initial={reduce ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.35 }}
         >
-          {activity.name} · {activity.action} · {formatMinsAgo(activity.minsAgo)}
+          {hint.message}
         </m.p>
       </AnimatePresence>
     </m.div>

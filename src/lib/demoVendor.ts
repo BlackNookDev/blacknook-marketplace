@@ -230,59 +230,8 @@ export function slugify(title: string): string {
 }
 
 export function seedDemoAdminData() {
-  if (typeof window === 'undefined') return;
-  if (window.localStorage.getItem('bn_demo_seeded') === '1') return;
-
-  const sampleApps: DevApplication[] = [
-    {
-      id: 'app_sample_1',
-      name: 'Ayşe Kaya',
-      email: 'ayse.demo@blacknook.com',
-      github: 'https://github.com/ayse',
-      linkedin: 'https://linkedin.com/in/ayse',
-      bio: 'Full-stack geliştirici, SaaS ve otomasyon.',
-      productFocus: 'Geliştirici araçları',
-      portfolioUrl: 'https://ayse.dev',
-      status: 'pending',
-      submittedAt: new Date(Date.now() - 86400000).toISOString(),
-    },
-  ];
-
-  const sampleProducts: DemoVendorProduct[] = [
-    {
-      id: 'prod_sample_1',
-      vendorEmail: 'mert.demo@blacknook.com',
-      vendorName: 'Mert Yılmaz',
-      title: 'FlowKit Automations',
-      slug: 'flowkit-automations',
-      category: 'Otomasyon',
-      shortDescription: 'n8n tabanlı hazır iş akışı paketleri.',
-      longDescription: 'Satış, destek ve içerik ekipleri için hazır otomasyon şablonları.',
-      features: ['20+ hazır workflow', 'Webhook entegrasyonu', 'Dokümantasyon'],
-      tiers: [
-        {
-          id: 't1',
-          name: 'Starter',
-          price: 0,
-          originalPrice: 49,
-          features: ['5 workflow', 'Topluluk desteği'],
-        },
-        {
-          id: 't2',
-          name: 'Pro',
-          price: 79,
-          originalPrice: 199,
-          features: ['Tüm workflow’lar', 'Öncelikli destek', 'Güncellemeler'],
-        },
-      ],
-      status: 'pending',
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-    },
-  ];
-
-  if (getApplications().length === 0) writeJson(APPS_KEY, sampleApps);
-  if (getProducts().length === 0) writeJson(PRODUCTS_KEY, sampleProducts);
-  window.localStorage.setItem('bn_demo_seeded', '1');
+  // Sahte örnek başvuru / ürün seed’i kaldırıldı.
+  return;
 }
 
 export const PRODUCT_CATEGORIES = [

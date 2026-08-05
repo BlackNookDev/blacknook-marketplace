@@ -19,20 +19,18 @@ export const DEVELOPERS: DevPresence[] = [
   { id: 'd8', initials: 'DC', color: '#2dd4bf', role: 'Infra' },
 ];
 
-export type ActivityItem = {
+export type PlatformHint = {
   id: string;
-  name: string;
-  action: string;
-  minsAgo: number;
+  message: string;
 };
 
-export const ACTIVITY_FEED: ActivityItem[] = [
-  { id: 'a1', name: 'Ayşe', action: 'Supabase kurulumuna yanıt verdi', minsAgo: 2 },
-  { id: 'a2', name: 'Mert', action: 'Next.js deploy eşleşmesi', minsAgo: 4 },
-  { id: 'a3', name: 'Elif', action: 'Auth + billing talebini aldı', minsAgo: 7 },
-  { id: 'a4', name: 'Sara', action: 'n8n otomasyonuna atandı', minsAgo: 11 },
-  { id: 'a5', name: 'Tan', action: 'AI agent kurulumu', minsAgo: 14 },
-  { id: 'a6', name: 'Zey', action: 'Ghost CMS entegrasyonu', minsAgo: 18 },
+/** Hero alt satır — platform değer önerisi (sahte aktivite yok) */
+export const PLATFORM_HINTS: PlatformHint[] = [
+  { id: 'h1', message: 'Kurulum ve deploy desteği talep edilebilir' },
+  { id: 'h2', message: 'Self-host ve SaaS projelerinde eşleşme' },
+  { id: 'h3', message: 'Auth, billing ve entegrasyon talepleri kabul ediliyor' },
+  { id: 'h4', message: 'Teknik ekip talepleri inceliyor' },
+  { id: 'h5', message: 'Eşleşme talepleri 24 saat içinde yanıtlanır' },
 ];
 
 /** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */
@@ -42,12 +40,7 @@ export function getActiveDeveloperCount(now = Date.now()): number {
   return Math.max(2, Math.min(8, Math.round(5 + wave)));
 }
 
-export function getRecentActivity(now = Date.now()): ActivityItem {
-  const idx = Math.floor(now / 45_000) % ACTIVITY_FEED.length;
-  return ACTIVITY_FEED[idx];
-}
-
-export function formatMinsAgo(mins: number): string {
-  if (mins <= 1) return 'az önce';
-  return `${mins} dk önce`;
+export function getRotatingPlatformHint(now = Date.now()): PlatformHint {
+  const idx = Math.floor(now / 45_000) % PLATFORM_HINTS.length;
+  return PLATFORM_HINTS[idx];
 }

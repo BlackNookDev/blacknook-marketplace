@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronDown, Filter, Search, X } from 'lucide-react';
 import BrowseProductCard from '@/components/services/BrowseProductCard';
+import ComingSoonCatalog from '@/components/services/ComingSoonCatalog';
 import {
   BROWSE_CATEGORIES,
   NAV_MENUS,
@@ -11,20 +12,9 @@ import {
   getNavMenuServices,
   getServicesForBrowseCategory,
 } from '../../../lib/navMenus';
+import { getComingSoonCopy, isComingSoonMenuId } from '../../../lib/catalogChannels';
 import { SERVICES, type ServiceCatalogEntry } from '../../../lib/data';
-import {
-  BEST_FOR_OPTIONS,
-  INTEGRATION_OPTIONS,
-  browseHeading,
-  countByBestFor,
-  countByIntegration,
-  countBySubcategory,
-  getBrowseBadge,
-  getServiceBestFor,
-  getServiceIntegrations,
-  type BestForId,
-  type IntegrationId,
-} from '../../../lib/browseMeta';
+import { browseHeading, countBySubcategory } from '../../../lib/browseMeta';
 import { cn } from '@/lib/utils';
 
 type SortKey = 'recommended' | 'name-asc' | 'name-desc' | 'category';
@@ -48,11 +38,6 @@ function sortList(list: ServiceCatalogEntry[], sort: SortKey) {
   return next;
 }
 
-function parseList(raw: string | null): string[] {
-  if (!raw) return [];
-  return raw.split(',').map((s) => s.trim()).filter(Boolean);
-}
-
 export default function ServicesBrowse() {
   const router = useRouter();
   const pathname = usePathname();
@@ -62,17 +47,11 @@ export default function ServicesBrowse() {
   const [q, setQ] = useState(searchParams.get('q') ?? '');
   const [debouncedQ, setDebouncedQ] = useState(q);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [showAllBestFor, setShowAllBestFor] = useState(false);
-  const [showAllIntegrations, setShowAllIntegrations] = useState(false);
 
   const category = searchParams.get('category') ?? '';
   const type = searchParams.get('type') ?? '';
   const cat = searchParams.get('cat') ?? '';
   const sort = (searchParams.get('sort') as SortKey) || 'recommended';
-  const badgeFilter = searchParams.get('badge') ?? ''; // select | new
-  const bestFor = parseList(searchParams.get('best'));
-  const integrations = parseList(searchParams.get('int'));
-  const plan = searchParams.get('plan') ?? 'all';
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedQ(q.trim()), 220);
@@ -90,6 +69,8 @@ export default function ServicesBrowse() {
         if (!value) params.delete(key);
         else params.set(key, value);
       });
+      // Eski / sahte filtre parametrelerini temizle
+      ['badge', 'best', 'int', 'plan'].forEach((k) => params.delete(k));
       const qs = params.toString();
       startTransition(() => {
         router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
@@ -104,13 +85,16 @@ export default function ServicesBrowse() {
     pushParams({ q: debouncedQ || null });
   }, [debouncedQ, pushParams, searchParams]);
 
+  const comingSoon = isComingSoonMenuId(type) ? getComingSoonCopy(type) : null;
+
   const basePool = useMemo(() => {
+    if (comingSoon) return [];
     const browse = category ? getBrowseCategory(category) : undefined;
     const menu = NAV_MENUS.find((m) => m.id === type);
     if (browse) return getServicesForBrowseCategory(browse.id);
     if (menu) return getNavMenuServices(menu);
     return SERVICES;
-  }, [category, type]);
+  }, [category, type, comingSoon]);
 
   const filtered = useMemo(() => {
     let list = basePool;
@@ -127,48 +111,25 @@ export default function ServicesBrowse() {
       );
     }
 
-    if (badgeFilter === 'select' || badgeFilter === 'new') {
-      list = list.filter((s) => getBrowseBadge(s) === badgeFilter);
-    }
-
-    if (bestFor.length) {
-      list = list.filter((s) =>
-        bestFor.some((id) => getServiceBestFor(s).includes(id as BestForId))
-      );
-    }
-
-    if (integrations.length) {
-      list = list.filter((s) =>
-        integrations.some((id) => getServiceIntegrations(s).includes(id as IntegrationId))
-      );
-    }
-
-    // plan: all | free — katalog şu an ücretsiz
-    if (plan === 'lifetime' || plan === 'annual') {
-      list = [];
-    }
-
     return sortList(list, SORT_OPTIONS.some((o) => o.id === sort) ? sort : 'recommended');
-  }, [basePool, cat, debouncedQ, badgeFilter, bestFor, integrations, plan, sort]);
+  }, [basePool, cat, debouncedQ, sort]);
 
   const subcats = useMemo(() => countBySubcategory(basePool), [basePool]);
-  const bestCounts = useMemo(() => countByBestFor(basePool), [basePool]);
-  const intCounts = useMemo(() => countByIntegration(basePool), [basePool]);
 
   const heading = category
     ? browseHeading(category)
     : type
       ? `${NAV_MENUS.find((m) => m.id === type)?.label ?? ''} keşfet`
-      : 'Ürünleri keşfet';
+      : 'Servisleri keşfet';
 
-  const hasActiveFilters = Boolean(
-    category || type || cat || debouncedQ || badgeFilter || bestFor.length || integrations.length || plan !== 'all'
-  );
+  const hasActiveFilters = Boolean(category || type || cat || debouncedQ);
 
-  const toggleCsv = (key: string, current: string[], id: string) => {
-    const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
-    pushParams({ [key]: next.length ? next.join(',') : null });
-  };
+  const isAreaEmpty =
+    !comingSoon &&
+    filtered.length === 0 &&
+    Boolean(category) &&
+    !debouncedQ &&
+    !cat;
 
   const clearAll = () => {
     setQ('');
@@ -176,209 +137,85 @@ export default function ServicesBrowse() {
     setFiltersOpen(false);
   };
 
-  const visibleBestFor = showAllBestFor ? BEST_FOR_OPTIONS : BEST_FOR_OPTIONS.slice(0, 5);
-  const visibleIntegrations = showAllIntegrations
-    ? INTEGRATION_OPTIONS
-    : INTEGRATION_OPTIONS.slice(0, 5);
-
   const FilterPanel = (
-    <div className="space-y-7 text-sm">
-      {/* Shop by */}
+    <div className="space-y-6 text-sm">
       <section>
         <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
           Kategoriye göre
         </h2>
-        <ul className="space-y-1">
-          {category
-            ? subcats.map((item) => (
-                <li key={item.label}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      pushParams({ cat: cat === item.label ? null : item.label });
-                      setFiltersOpen(false);
-                    }}
-                    className={cn(
-                      'w-full rounded-md px-1 py-1.5 text-left text-sm transition-colors',
-                      cat === item.label
-                        ? 'font-semibold text-white'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    )}
-                  >
-                    {item.label}
-                    <span className="ml-1 text-zinc-600">({item.count})</span>
-                  </button>
-                </li>
-              ))
-            : BROWSE_CATEGORIES.map((c) => (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      pushParams({ category: c.id, type: null, cat: null });
-                      setFiltersOpen(false);
-                    }}
-                    className="w-full rounded-md px-1 py-1.5 text-left text-sm text-zinc-400 transition-colors hover:text-zinc-200"
-                  >
-                    {c.label}
-                  </button>
-                </li>
-              ))}
+        <ul className="space-y-0.5">
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                pushParams({ category: null, type: null, cat: null });
+                setFiltersOpen(false);
+              }}
+              className={cn(
+                'w-full rounded-md px-1 py-1.5 text-left text-sm transition-colors',
+                !category && !type
+                  ? 'font-semibold text-white'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              )}
+            >
+              Tümü
+              <span className="ml-1 text-zinc-600">({SERVICES.length})</span>
+            </button>
+          </li>
+          {BROWSE_CATEGORIES.map((c) => {
+            const active = category === c.id;
+            const count = getServicesForBrowseCategory(c.id).length;
+            return (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    pushParams({ category: c.id, type: null, cat: null });
+                    setFiltersOpen(false);
+                  }}
+                  className={cn(
+                    'w-full rounded-md px-1 py-1.5 text-left text-sm transition-colors',
+                    active ? 'font-semibold text-white' : 'text-zinc-400 hover:text-zinc-200'
+                  )}
+                >
+                  {c.label}
+                  <span className="ml-1 text-zinc-600">({count})</span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
-      {/* Badges */}
-      <section>
-        <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
-          Öne çıkan
-        </h2>
-        <ul className="space-y-2">
-          {(
-            [
-              { id: 'select', label: 'Blacknook Select' },
-              { id: 'new', label: 'Yeni eklenenler' },
-            ] as const
-          ).map((item) => (
-            <li key={item.id}>
-              <label className="flex cursor-pointer items-center gap-2.5 text-zinc-300">
-                <input
-                  type="checkbox"
-                  checked={badgeFilter === item.id}
-                  onChange={() =>
-                    pushParams({ badge: badgeFilter === item.id ? null : item.id })
-                  }
-                  className="h-4 w-4 rounded border-white/20 bg-transparent"
-                />
-                <span className="text-sm">{item.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Best for */}
-      <section>
-        <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
-          Kimler için
-        </h2>
-        <ul className="space-y-2">
-          {visibleBestFor.map((o) => (
-            <li key={o.id}>
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-400">
-                <input
-                  type="checkbox"
-                  checked={bestFor.includes(o.id)}
-                  onChange={() => toggleCsv('best', bestFor, o.id)}
-                  className="h-4 w-4 rounded border-white/20 bg-transparent"
-                />
-                <span>
-                  {o.label}{' '}
-                  <span className="text-zinc-600">({bestCounts[o.id]})</span>
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
-        {BEST_FOR_OPTIONS.length > 5 ? (
-          <button
-            type="button"
-            onClick={() => setShowAllBestFor((v) => !v)}
-            className="mt-2 text-sm font-medium text-zinc-300 hover:text-white"
-          >
-            {showAllBestFor ? 'Daha az' : 'Tümünü göster'}
-          </button>
-        ) : null}
-      </section>
-
-      {/* Integrations */}
-      <section>
-        <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
-          Entegrasyonlar
-        </h2>
-        <ul className="space-y-2">
-          {visibleIntegrations.map((o) => (
-            <li key={o.id}>
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-400">
-                <input
-                  type="checkbox"
-                  checked={integrations.includes(o.id)}
-                  onChange={() => toggleCsv('int', integrations, o.id)}
-                  className="h-4 w-4 rounded border-white/20 bg-transparent"
-                />
-                <span>
-                  {o.label}{' '}
-                  <span className="text-zinc-600">({intCounts[o.id]})</span>
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
-        <button
-          type="button"
-          onClick={() => setShowAllIntegrations((v) => !v)}
-          className="mt-2 text-sm font-medium text-zinc-300 hover:text-white"
-        >
-          {showAllIntegrations ? 'Daha az' : 'Tümünü göster'}
-        </button>
-      </section>
-
-      {/* Plan type */}
-      <section>
-        <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
-          Plan türü
-        </h2>
-        <ul className="space-y-2">
-          {(
-            [
-              { id: 'all', label: 'Tümü' },
-              { id: 'free', label: 'Ücretsiz' },
-              { id: 'lifetime', label: 'Ömür boyu lisans' },
-              { id: 'annual', label: 'Yıllık' },
-            ] as const
-          ).map((o) => (
-            <li key={o.id}>
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-400">
-                <input
-                  type="radio"
-                  name="plan"
-                  checked={plan === o.id}
-                  onChange={() => pushParams({ plan: o.id === 'all' ? null : o.id })}
-                  className="h-4 w-4 border-white/20 bg-transparent"
-                />
-                <span>{o.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Type */}
-      <section>
-        <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
-          Katalog türü
-        </h2>
-        <ul className="space-y-2">
-          {NAV_MENUS.filter((m) => m.id !== 'services').map((t) => (
-            <li key={t.id}>
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-400">
-                <input
-                  type="checkbox"
-                  checked={type === t.id}
-                  onChange={() =>
-                    pushParams({
-                      type: type === t.id ? null : t.id,
-                      category: null,
-                      cat: null,
-                    })
-                  }
-                  className="h-4 w-4 rounded border-white/20 bg-transparent"
-                />
-                <span>{t.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {category && subcats.length > 1 ? (
+        <section>
+          <h2 className="mb-3 font-display text-sm font-semibold tracking-tight text-zinc-100">
+            Alt kategori
+          </h2>
+          <ul className="space-y-0.5">
+            {subcats.map((item) => (
+              <li key={item.label}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    pushParams({ cat: cat === item.label ? null : item.label });
+                    setFiltersOpen(false);
+                  }}
+                  className={cn(
+                    'w-full rounded-md px-1 py-1.5 text-left text-sm transition-colors',
+                    cat === item.label
+                      ? 'font-semibold text-white'
+                      : 'text-zinc-400 hover:text-zinc-200'
+                  )}
+                >
+                  {item.label}
+                  <span className="ml-1 text-zinc-600">({item.count})</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {hasActiveFilters ? (
         <button
@@ -394,7 +231,6 @@ export default function ServicesBrowse() {
 
   return (
     <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
-      {/* Top search strip */}
       <div className="mb-8">
         <label className="relative mx-auto block max-w-2xl">
           <span className="sr-only">Ürün ara</span>
@@ -406,7 +242,7 @@ export default function ServicesBrowse() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={`Ürün ara (${SERVICES.length}+)`}
+            placeholder={`Servis ara (${SERVICES.length})`}
             className="h-12 w-full rounded-full border border-white/15 bg-white/[0.04] py-2 pl-11 pr-10 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10"
           />
           {q ? (
@@ -428,7 +264,7 @@ export default function ServicesBrowse() {
           onClick={clearAll}
           className="mb-4 text-[13px] font-medium text-sky-400 hover:text-sky-300"
         >
-          ← Tüm sonuçlara dön
+          ← Tüm servislere dön
         </button>
       )}
 
@@ -437,70 +273,87 @@ export default function ServicesBrowse() {
           <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             {heading}
           </h1>
-          <p className="mt-1.5 text-sm text-zinc-500">{filtered.length} ürün</p>
+          <p className="mt-1.5 text-sm text-zinc-500">
+            {comingSoon ? 'Yakında' : `${filtered.length} ürün`}
+          </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setFiltersOpen(true)}
-            className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 px-3 text-sm font-semibold text-zinc-200 lg:hidden"
-          >
-            <Filter className="h-4 w-4" aria-hidden />
-            Filtrele
-          </button>
-          <label className="inline-flex items-center gap-2 text-sm text-zinc-500">
-            <span>Sırala:</span>
-            <span className="relative">
-              <select
-                value={sort}
-                onChange={(e) =>
-                  pushParams({
-                    sort: e.target.value === 'recommended' ? null : e.target.value,
-                  })
-                }
-                className="h-10 appearance-none rounded-lg border border-white/15 bg-transparent py-1.5 pl-3 pr-8 text-sm font-medium text-zinc-200 outline-none focus:border-white/30"
-              >
-                {SORT_OPTIONS.map((o) => (
-                  <option key={o.id} value={o.id} className="bg-zinc-900">
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500"
-                aria-hidden
-              />
-            </span>
-          </label>
-        </div>
+        {!comingSoon ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen(true)}
+              className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 px-3 text-sm font-semibold text-zinc-200 lg:hidden"
+            >
+              <Filter className="h-4 w-4" aria-hidden />
+              Kategoriler
+            </button>
+            <label className="inline-flex items-center gap-2 text-sm text-zinc-500">
+              <span>Sırala:</span>
+              <span className="relative">
+                <select
+                  value={sort}
+                  onChange={(e) =>
+                    pushParams({
+                      sort: e.target.value === 'recommended' ? null : e.target.value,
+                    })
+                  }
+                  className="h-10 appearance-none rounded-lg border border-white/15 bg-transparent py-1.5 pl-3 pr-8 text-sm font-medium text-zinc-200 outline-none focus:border-white/30"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.id} value={o.id} className="bg-zinc-900">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500"
+                  aria-hidden
+                />
+              </span>
+            </label>
+          </div>
+        ) : null}
       </header>
 
       <div className="flex gap-8 xl:gap-10">
-        <aside
-          className="hidden w-[220px] shrink-0 border-r border-white/[0.06] pr-6 lg:block"
-          aria-label="Filtreler"
-        >
-          {FilterPanel}
-        </aside>
+        {!comingSoon ? (
+          <aside
+            className="hidden w-[220px] shrink-0 border-r border-white/[0.06] pr-6 lg:block"
+            aria-label="Kategoriler"
+          >
+            {FilterPanel}
+          </aside>
+        ) : null}
 
         <div className="min-w-0 flex-1">
-          {filtered.length === 0 ? (
+          {comingSoon ? (
+            <ComingSoonCatalog copy={comingSoon} />
+          ) : filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-white/15 px-6 py-20 text-center">
-              <p className="text-sm text-zinc-400">Bu filtrelere uygun ürün yok.</p>
+              <p className="text-sm font-medium text-zinc-300">
+                {isAreaEmpty
+                  ? 'Şu an bu alanda ürün bulunmuyor.'
+                  : 'Aramanıza uygun ürün yok.'}
+              </p>
+              <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-zinc-500">
+                {isAreaEmpty
+                  ? 'Başka bir kategoriye bakabilir veya tüm servislere dönebilirsiniz.'
+                  : 'Aramayı temizleyerek veya kategoriyi değiştirerek deneyin.'}
+              </p>
               <button
                 type="button"
                 onClick={clearAll}
-                className="mt-4 text-sm font-medium text-sky-400 hover:text-sky-300"
+                className="mt-5 text-sm font-medium text-sky-400 hover:text-sky-300"
               >
-                Filtreleri sıfırla
+                Tüm servisleri gör
               </button>
             </div>
           ) : (
             <section aria-label={`${heading} listesi`}>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                {filtered.map((service, index) => (
-                  <BrowseProductCard key={service.slug} service={service} index={index} />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filtered.map((service) => (
+                  <BrowseProductCard key={service.slug} service={service} />
                 ))}
               </div>
             </section>
@@ -508,8 +361,8 @@ export default function ServicesBrowse() {
         </div>
       </div>
 
-      {filtersOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal aria-label="Filtreler">
+      {filtersOpen && !comingSoon ? (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal aria-label="Kategoriler">
           <button
             type="button"
             className="absolute inset-0 bg-black/70"
@@ -518,7 +371,7 @@ export default function ServicesBrowse() {
           />
           <div className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bn-bg,#161618)] p-6 pb-12 shadow-2xl">
             <div className="mb-5 flex items-center justify-between">
-              <p className="font-display text-lg font-semibold text-white">Filtreler</p>
+              <p className="font-display text-lg font-semibold text-white">Kategoriler</p>
               <button
                 type="button"
                 onClick={() => setFiltersOpen(false)}

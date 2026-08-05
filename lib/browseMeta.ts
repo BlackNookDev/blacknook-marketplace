@@ -1,9 +1,9 @@
-import { SERVICES, type ServiceCatalogEntry, getServiceDealMeta } from './data';
+import { type ServiceCatalogEntry } from './data';
 import { BROWSE_CATEGORIES, getBrowseCategory } from './navMenus';
 
 export type BrowseBadge = 'select' | 'new' | null;
 
-/** Kitle etiketleri (Best for) */
+/** Kitle etiketleri (Best for) — ileride gerçek etiketler için tutuluyor */
 export const BEST_FOR_OPTIONS = [
   { id: 'developers', label: 'Geliştiriciler' },
   { id: 'startups', label: 'Girişimler' },
@@ -63,12 +63,6 @@ const INTEGRATION_KEYWORDS: Record<IntegrationId, string[]> = {
   api: ['api', 'rest', 'graphql'],
 };
 
-function hashSlug(slug: string): number {
-  let h = 0;
-  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
-  return h;
-}
-
 export function getServiceBestFor(service: ServiceCatalogEntry): BestForId[] {
   return BEST_FOR_BY_CATEGORY[service.category] ?? ['developers', 'startups'];
 }
@@ -80,15 +74,12 @@ export function getServiceIntegrations(service: ServiceCatalogEntry): Integratio
   );
 }
 
-export function getBrowseBadge(service: ServiceCatalogEntry, _index = 0): BrowseBadge {
-  const h = hashSlug(service.slug);
-  if (h % 11 === 0) return 'new';
-  if (h % 5 === 0) return 'select';
+export function getBrowseBadge(_service: ServiceCatalogEntry, _index = 0): BrowseBadge {
   return null;
 }
 
-export function getBrowseReviewCount(service: ServiceCatalogEntry): number {
-  return getServiceDealMeta(service.slug).reviews;
+export function getBrowseReviewCount(_service: ServiceCatalogEntry): number {
+  return 0;
 }
 
 export function countByBestFor(list: ServiceCatalogEntry[]): Record<BestForId, number> {
@@ -127,7 +118,7 @@ export function countBySubcategory(list: ServiceCatalogEntry[]): { label: string
 
 export function browseHeading(categoryId: string): string {
   const browse = getBrowseCategory(categoryId);
-  if (!browse) return 'Ürünleri keşfet';
+  if (!browse) return 'Servisleri keşfet';
   return `${browse.label} ürünlerini keşfet`;
 }
 
@@ -143,9 +134,6 @@ export function getShopByLinks(categoryId: string) {
   return BROWSE_CATEGORIES.map((c) => ({
     label: c.label,
     href: `/services?category=${c.id}`,
-    cat: null as string | null,
-    browseId: c.id,
+    cat: c.id,
   }));
 }
-
-export { SERVICES };

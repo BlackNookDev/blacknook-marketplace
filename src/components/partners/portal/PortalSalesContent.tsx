@@ -41,8 +41,8 @@ export default function PortalSalesContent() {
         <BarChart3 className="mx-auto h-10 w-10 text-zinc-600" aria-hidden />
         <h2 className="mt-4 font-display text-xl font-semibold text-white">Henüz analitik yok</h2>
         <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-          Satış ve analitik, yayındaki listeniz olduğunda burada dolmaya başlar. Demo ortamında onaylı
-          ürünler için örnek siparişler üretilir.
+          Satış ve analitik, yayındaki listeniz olduğunda ve gerçek siparişler geldiğinde burada
+          görünür.
         </p>
         <Link
           href="/partners/self-submission"
@@ -57,8 +57,8 @@ export default function PortalSalesContent() {
   return (
     <div className="space-y-8">
       <p className="text-sm text-zinc-500">
-        Özet metrikler demo verisine dayanır. Canlı ödeme entegrasyonu sonrası gerçek siparişlerle
-        güncellenir.
+        Özet metrikler gerçek sipariş entegrasyonu sonrası dolar. Şimdilik sipariş yoksa sıfır
+        görünür.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-3">

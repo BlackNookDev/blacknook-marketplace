@@ -47,13 +47,18 @@ export default function NavDropdown() {
                         href={item.href}
                         role="menuitem"
                         onMouseEnter={() => setActiveCat(item.href)}
-                        className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                        className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
                           active
                             ? 'bg-sky-500/15 font-medium text-sky-100'
                             : 'text-zinc-300 hover:bg-white/[0.05] hover:text-white'
                         }`}
                       >
-                        {item.label}
+                        <span>{item.label}</span>
+                        {'badge' in item && item.badge ? (
+                          <span className="shrink-0 rounded bg-sky-500/20 px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-sky-300">
+                            {item.badge}
+                          </span>
+                        ) : null}
                       </Link>
                     </li>
                   );

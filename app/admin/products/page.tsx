@@ -20,7 +20,7 @@ export default function AdminProductsPage() {
           Ürün moderasyonu
         </h1>
         <p className="mt-3 text-sm text-zinc-500">
-          Onaylanan ürünler ileride katalogda yayınlanacak (demo: yalnızca durum güncellenir).
+          Onaylanan ürünler ileride hub’da yayınlanacak (demo: yalnızca durum güncellenir).
         </p>
         <div className="mt-10">
           <AdminProductsClient />

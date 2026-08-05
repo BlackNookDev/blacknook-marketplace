@@ -49,19 +49,19 @@ export default function PortalBillingContent() {
   return (
     <div className="space-y-8">
       <p className="max-w-2xl text-sm text-zinc-500">
-        Partner ödemeleri, fatura özetleri ve ödeme yöntemi ayarları. Demo ortamında tutarlar örnek
-        satışlara göre hesaplanır.
+        Partner ödemeleri, fatura özetleri ve ödeme yöntemi ayarları. Gerçek satışlar oluşunca burada
+        görünür.
       </p>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
           <Wallet className="h-5 w-5 text-teal-300/90" aria-hidden />
-          <p className="mt-3 text-xs text-zinc-500">Brüt gelir (demo)</p>
+          <p className="mt-3 text-xs text-zinc-500">Brüt gelir</p>
           <p className="mt-1 font-display text-2xl font-bold text-white">{formatTry(revenue)}</p>
         </div>
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
           <CreditCard className="h-5 w-5 text-zinc-400" aria-hidden />
-          <p className="mt-3 text-xs text-zinc-500">Platform payı (%15 örnek)</p>
+          <p className="mt-3 text-xs text-zinc-500">Platform payı (%15)</p>
           <p className="mt-1 font-display text-2xl font-bold text-white">{formatTry(platformFee)}</p>
         </div>
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
@@ -74,8 +74,8 @@ export default function PortalBillingContent() {
       <section className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6">
         <h2 className="font-display text-lg font-semibold text-white">Ödeme yöntemi</h2>
         <p className="mt-2 text-sm text-zinc-500">
-          Canlı ortamda banka / Stripe Connect bilgilerinizi buradan bağlarsınız. Şimdilik demo
-          placeholder.
+          Canlı ortamda banka / Stripe Connect bilgilerinizi buradan bağlarsınız. Henüz bağlı hesap
+          yok.
         </p>
         <div className="mt-5 rounded-xl border border-dashed border-white/15 bg-zinc-950/40 px-4 py-5">
           <p className="text-sm text-zinc-400">Bağlı hesap yok</p>
@@ -97,7 +97,7 @@ export default function PortalBillingContent() {
             <p className="text-sm text-zinc-500">
               {productCount === 0
                 ? 'İlk satışlarınız oluşunca dönem özetleri burada listelenir.'
-                : 'Onaylı ürün ve demo satış yoksa fatura satırı oluşmaz.'}
+                : 'Henüz dönem özeti yok. Satışlar oluşunca burada listelenir.'}
             </p>
             <Link
               href="/partners/listings"

@@ -8,7 +8,7 @@ import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildPageMetadata({
   title: 'Ekosistem | Blacknook',
   description:
-    'Blacknook ekosistemindeki SaaS, geliştirici araçları ve dijital ürünleri keşfedin. Ara, filtrele ve kurulum talep edin.',
+    'Self-host ve SaaS servislerini keşfedin. Kurulum talep edin; SaaS, Micro-SaaS ve Script stack’leri yakında.',
   path: '/services',
 });
 
@@ -37,7 +37,7 @@ export default function ServicesPage() {
       <Suspense
         fallback={
           <div className="mx-auto max-w-7xl px-6 py-20 text-center text-sm text-zinc-500">
-            Katalog yükleniyor…
+            Hub yükleniyor…
           </div>
         }
       >

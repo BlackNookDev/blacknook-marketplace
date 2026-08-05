@@ -24,7 +24,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'why-partner',
         title: 'Neden Blacknook partneri olmalıyım?',
         summary: 'Görünürlük, erken kullanıcı ve peşin maliyetsiz dağıtım.',
-        body: 'Blacknook, çalışan yazılım ürünlerinizi iş odaklı alıcılara ulaştırır. Peşin listeleme ücreti yoktur; kazandıkça birlikte büyürüz. Moderasyonlu katalog güven verir, Select ise seçilmiş ürünler için özel lansman sunar. Bağımsız ekipler ve erken aşama SaaS için düşük sürtünmeli bir dağıtım kanalıdır.',
+        body: 'Blacknook, çalışan yazılım ürünlerinizi iş odaklı alıcılara ulaştırır. Peşin listeleme ücreti yoktur; kazandıkça birlikte büyürüz. Moderasyonlu hub güven verir, Select ise seçilmiş ürünler için özel lansman sunar. Bağımsız ekipler ve erken aşama SaaS için düşük sürtünmeli bir dağıtım kanalıdır.',
       },
       {
         id: 'how-to-submit',
@@ -108,13 +108,13 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'track-sales',
         title: 'Satış ve iadeleri nasıl takip ederim?',
         summary: 'Partner Portal → Satış ve Analitik.',
-        body: 'Onaylı partnerler /partners/sales üzerinden sipariş özeti, ürüne göre gelir ve sipariş geçmişini görür (demo ortamında örnek veriler). İade talepleri politika ve iyi niyet çerçevesinde işlenir; aşırı iade hesap riski oluşturabilir.',
+        body: 'Onaylı partnerler /partners/sales üzerinden sipariş özeti, ürüne göre gelir ve sipariş geçmişini görür. İade talepleri politika ve iyi niyet çerçevesinde işlenir; aşırı iade hesap riski oluşturabilir.',
       },
       {
         id: 'payouts',
         title: 'Ödemeler nasıl ve ne zaman yapılır?',
         summary: 'Dönemsel ödeme ve faturalandırma ekranı.',
-        body: 'Canlı sistemde partner ödemeleri dönemsel olarak netleştirilir. /partners/billing altında brüt / platform payı / net özet ve dönem satırları yer alır. Ödeme yöntemi bağlama canlıda açılır; demo’da placeholder’dır. Sorular için Partner Portal → Destek veya contact@blacknook.com.',
+        body: 'Canlı sistemde partner ödemeleri dönemsel olarak netleştirilir. /partners/billing altında brüt / platform payı / net özet ve dönem satırları yer alır. Ödeme yöntemi bağlama canlıda açılır. Sorular için Partner Portal → Destek veya contact@blacknook.com.',
       },
       {
         id: 'refund-policy-partner',
@@ -137,8 +137,8 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: 'select-vs-standard',
         title: 'Select ile standart listeleme farkı nedir?',
-        summary: 'Kürasyonlu lansman vs self-serve katalog.',
-        body: 'Standart yol: ürün formunu doldurup katalogda yer almak. Blacknook Select: sınırlı sayıda ürün için strateji, görünürlük ve lansman eşliği. Select’e her başvuru alınmaz; hazır değilseniz standart partner programıyla başlayın. Detay: /select.',
+        summary: 'Kürasyonlu lansman vs self-serve hub.',
+        body: 'Standart yol: ürün formunu doldurup hub’da yer almak. Blacknook Select: sınırlı sayıda ürün için strateji, görünürlük ve lansman eşliği. Select’e her başvuru alınmaz; hazır değilseniz standart partner programıyla başlayın. Detay: /select.',
       },
     ],
   },
@@ -157,7 +157,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'what-is',
         title: 'Blacknook nedir?',
         summary: 'Yazılım ve dijital ürün pazaryerinin kısa tanımı.',
-        body: 'Blacknook; bağımsız geliştiriciler ve erken aşama girişimlerin yazılım ile dijital ürünlerini listelediği, alıcıların ise iş araçlarını keşfettiği bir pazaryeridir. Moderasyonlu katalog, partner portalı ve Select lansman programı aynı ekosistemin parçasıdır.',
+        body: 'Blacknook; bağımsız geliştiriciler ve erken aşama girişimlerin yazılım ile dijital ürünlerini listelediği, alıcıların ise iş araçlarını keşfettiği bir pazaryeridir. Moderasyonlu hub, partner portalı ve Select lansman programı aynı ekosistemin parçasıdır.',
       },
       {
         id: 'tos',

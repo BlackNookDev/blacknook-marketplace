@@ -9,26 +9,26 @@ export type BrowseCategory = {
   match: string[];
 };
 
-/** Üst kategori listesi (Servisler dropdown) */
+/** Üst kategori listesi (Ekosistem + browse filtreleri) */
 export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
-    id: 'marketing',
-    label: 'Marketing',
+    id: 'pazarlama',
+    label: 'Pazarlama & Analitik',
     match: ['E-posta & Pazarlama', 'E-posta Altyapısı', 'Analitik & Ürün'],
   },
   {
-    id: 'sales-leads',
-    label: 'Sales & Leads',
+    id: 'veri-bi',
+    label: 'Veri & BI',
     match: ['BI & Görselleştirme', 'Arama'],
   },
   {
-    id: 'media-design',
-    label: 'Media & Design',
+    id: 'cms-icerik',
+    label: 'CMS & İçerik',
     match: ['Yayın & CMS', 'Dokümantasyon & Wiki'],
   },
   {
-    id: 'operations',
-    label: 'Operations',
+    id: 'operasyon',
+    label: 'Operasyon & Infra',
     match: [
       'İzleme & Güvenilirlik',
       'Gözlemlenebilirlik',
@@ -38,8 +38,8 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
     ],
   },
   {
-    id: 'build-code',
-    label: 'Build & Code',
+    id: 'build-backend',
+    label: 'Build & Backend',
     match: [
       'Backend & BaaS',
       'Kaynak Kodu & DevOps',
@@ -50,8 +50,8 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
     ],
   },
   {
-    id: 'customer-engagement',
-    label: 'Customer Engagement',
+    id: 'destek-kimlik',
+    label: 'Destek & Kimlik',
     match: ['İletişim & Destek', 'Planlama & Randevu', 'Kimlik & Güvenlik'],
   },
 ];
@@ -60,9 +60,13 @@ export type NavMenuConfig = {
   id: NavMenuId;
   label: string;
   href: string;
+  /** Hub kanalı — ürünler bu kanala bağlanır */
+  channel: 'service' | 'saas' | 'micro-saas' | 'script';
+  /** true ise ürün listesi boş; “yakında” yüzeyi gösterilir */
+  comingSoon?: boolean;
   /** Dropdown’da gösterilecek kategori satırları */
   dropdownItems: { label: string; href: string }[];
-  /** Sayfa filtresi için dahili kategori listesi */
+  /** @deprecated kanal modeline geçildi — kullanılmıyor */
   filterCategories?: string[];
 };
 
@@ -71,51 +75,31 @@ export const NAV_MENUS: NavMenuConfig[] = [
     id: 'saas',
     label: 'SaaS',
     href: '/services?type=saas',
-    filterCategories: [
-      'Yayın & CMS',
-      'Dokümantasyon & Wiki',
-      'Backend & BaaS',
-      'Analitik & Ürün',
-      'BI & Görselleştirme',
-      'İletişim & Destek',
-      'Planlama & Randevu',
-      'E-posta & Pazarlama',
-      'E-posta Altyapısı',
-      'Platform & Dağıtım',
-    ],
+    channel: 'saas',
+    comingSoon: true,
     dropdownItems: [],
   },
   {
     id: 'micro-saas',
     label: 'Micro-SaaS',
     href: '/services?type=micro-saas',
-    filterCategories: [
-      'İzleme & Güvenilirlik',
-      'Kimlik & Güvenlik',
-      'Arama',
-      'Gözlemlenebilirlik',
-    ],
+    channel: 'micro-saas',
+    comingSoon: true,
     dropdownItems: [],
   },
   {
     id: 'script',
     label: 'Scriptler',
     href: '/services?type=script',
-    filterCategories: [
-      'Otomasyon & İş Akışı',
-      'Kaynak Kodu & DevOps',
-      'Konteyner & Ağ',
-      'Mesaj Kuyruğu & Akış',
-      'Geliştirme Araçları',
-      'Yapay Zeka',
-      'Depolama & Veritabanı',
-    ],
+    channel: 'script',
+    comingSoon: true,
     dropdownItems: [],
   },
   {
     id: 'services',
     label: 'Servisler',
     href: '/services',
+    channel: 'service',
     dropdownItems: [],
   },
 ];
@@ -124,46 +108,51 @@ export const NAV_MENUS: NavMenuConfig[] = [
 export const ECOSYSTEM_NAV = {
   label: 'Ekosistem',
   href: '/services',
-  browseAllLabel: 'Tüm ürünleri gör',
-  categories: BROWSE_CATEGORIES.map((c) => ({
-    label: c.label,
-    href: `/services?category=${c.id}`,
-  })),
+  browseAllLabel: 'Servisleri keşfet',
+  categories: [
+    ...BROWSE_CATEGORIES.map((c) => ({
+      label: c.label,
+      href: `/services?category=${c.id}`,
+    })),
+    { label: 'SaaS', href: '/services?type=saas', badge: 'Yakında' as const },
+    { label: 'Micro-SaaS', href: '/services?type=micro-saas', badge: 'Yakında' as const },
+    { label: 'Scriptler', href: '/services?type=script', badge: 'Yakında' as const },
+  ],
   trending: [
     {
-      title: 'Yeni eklenenler',
-      description: 'Kataloğa yeni giren araçları keşfet.',
-      href: '/services?sort=name-asc',
+      title: 'Self-host stack',
+      description: 'Coolify, Portainer, Traefik ve sunucu araçları.',
+      href: '/services?category=operasyon',
     },
     {
-      title: 'AI stack',
-      description: 'En iyi yapay zeka araçlarını tek yerde keşfet.',
-      href: '/services?category=build-code',
+      title: 'AI araçları',
+      description: 'Ollama, Flowise, Langfuse ve yerel LLM.',
+      href: `/services?category=build-backend&cat=${encodeURIComponent('Yapay Zeka')}`,
+      badge: 'AI' as const,
     },
     {
-      title: 'Popüler kategoriler',
-      description: 'Backend, CMS ve otomasyon araçları.',
-      href: '/services',
+      title: 'Backend & BaaS',
+      description: 'Supabase, Appwrite, PocketBase, Hasura.',
+      href: `/services?category=build-backend&cat=${encodeURIComponent('Backend & BaaS')}`,
     },
     {
-      title: 'Blacknook seçkisi',
-      description: 'Özenle seçilmiş yazılım ve servisler.',
-      href: '/services',
+      title: 'CMS & yayın',
+      description: 'Ghost, Strapi, Directus, WordPress.',
+      href: `/services?category=cms-icerik&cat=${encodeURIComponent('Yayın & CMS')}`,
     },
     {
-      title: 'CRM & Satış araçları',
-      description: 'Satış ve lead süreçlerini hızlandır.',
-      href: '/services?category=sales-leads',
-      badge: 'YENİ' as const,
+      title: 'Otomasyon & iş akışı',
+      description: 'n8n ve otomasyon araçları.',
+      href: `/services?category=build-backend&cat=${encodeURIComponent('Otomasyon & İş Akışı')}`,
     },
   ],
   featured: {
-    title: 'Pazarlama araçları',
+    title: 'Pazarlama & analitik',
     description: 'Analitik ve e-posta çözümlerini keşfet.',
-    href: '/services?category=marketing',
+    href: '/services?category=pazarlama',
     cta: 'Keşfet',
   },
-} as const;
+};
 
 /** @deprecated — ECOSYSTEM_NAV kullanın */
 export const CATEGORIES_NAV = {
@@ -191,9 +180,12 @@ export function getNavMenuServices(
   menu: NavMenuConfig,
   options?: { cat?: string; limit?: number }
 ): ServiceCatalogEntry[] {
-  let list = menu.filterCategories
-    ? SERVICES.filter((s) => menu.filterCategories!.includes(s.category))
-    : SERVICES;
+  // Yakında kanallar — ürün yok (servis hub’ını yeniden etiketleme)
+  if (menu.comingSoon || menu.channel !== 'service') {
+    return [];
+  }
+
+  let list = SERVICES;
 
   if (options?.cat) {
     list = list.filter((s) => s.category === options.cat);

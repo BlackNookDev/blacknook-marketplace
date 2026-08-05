@@ -10,7 +10,6 @@ import {
   Rocket,
   Sparkles,
   Target,
-  Users,
 } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import { duration, easePremium } from '@/components/motion/tokens';
@@ -18,7 +17,7 @@ import { duration, easePremium } from '@/components/motion/tokens';
 const PILLARS = [
   {
     icon: Layers,
-    title: 'Seçilmiş katalog',
+    title: 'Seçilmiş stack',
     body: 'Blacknook Select, yalnızca güçlü ürün-pazar uyumu gösteren yazılımları özel lansmanla öne çıkarır.',
   },
   {
@@ -77,27 +76,12 @@ const OUTCOMES = [
   {
     icon: Megaphone,
     title: 'Marka görünürlüğü',
-    body: 'Kataloğun ötesinde Select yerleşimleri, duyurular ve partner iletişimiyle ürününüzü tanıtın.',
+    body: 'Hub’ın ötesinde Select yerleşimleri, duyurular ve partner iletişimiyle ürününüzü tanıtın.',
   },
   {
     icon: Rocket,
     title: 'Kategori ivmesi',
     body: 'Hedef alıcı kitlesine kısa sürede ulaşın; kurulum talepleri ve gerçek kullanım sinyali toplayın.',
-  },
-];
-
-const QUOTES = [
-  {
-    quote:
-      'Select süreci listelemeyi hızlandırmadı; mesajımızı da netleştirdi. Doğru alıcılarla konuşmaya başladık.',
-    name: 'Elif K.',
-    role: 'Kurucu · B2B otomasyon',
-  },
-  {
-    quote:
-      'Peşin pazarlama bütçesi olmadan vitrinde yer almak kritik oldu. Geri bildirimler yol haritamızı değiştirdi.',
-    name: 'Mert A.',
-    role: 'Indie geliştirici · Developer tools',
   },
 ];
 
@@ -249,29 +233,6 @@ export default function SelectContent() {
                 <h3 className="mt-4 font-display text-base font-semibold text-white">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-500">{item.body}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/[0.06] px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10 flex items-center justify-center gap-2 text-zinc-500">
-            <Users className="h-4 w-4" aria-hidden />
-            <p className="text-sm font-medium">Partnerlerden notlar</p>
-          </div>
-          <div className="grid gap-5 md:grid-cols-2">
-            {QUOTES.map((q) => (
-              <blockquote
-                key={q.name}
-                className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8"
-              >
-                <p className="text-sm leading-relaxed text-zinc-300 sm:text-base">“{q.quote}”</p>
-                <footer className="mt-5">
-                  <p className="text-sm font-semibold text-white">{q.name}</p>
-                  <p className="text-xs text-zinc-500">{q.role}</p>
-                </footer>
-              </blockquote>
             ))}
           </div>
         </div>

@@ -1120,18 +1120,12 @@ export type ServiceDealMeta = {
   reviews: number;
 };
 
-/** Vitrin meta — deterministik mock fiyat/rating */
-export function getServiceDealMeta(slug: string, _index = 0): ServiceDealMeta {
-  let hash = 0;
-  for (let i = 0; i < slug.length; i++) hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
-  const priceOptions = [39, 49, 59, 69, 79, 89, 99];
-  const price = priceOptions[hash % priceOptions.length];
-  const originalPrice = Math.round(price * (2.2 + (hash % 7) * 0.45));
-  const reviews = (hash % 180) + 2;
+/** Fiyat / inceleme — henüz gerçek deal verisi yok; sıfır döner */
+export function getServiceDealMeta(_slug: string, _index = 0): ServiceDealMeta {
   return {
-    price,
-    originalPrice,
-    reviews,
+    price: 0,
+    originalPrice: 0,
+    reviews: 0,
   };
 }
 

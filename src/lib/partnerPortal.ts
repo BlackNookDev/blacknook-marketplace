@@ -22,30 +22,11 @@ export type PortalSaleRow = {
   status: 'completed' | 'refunded' | 'pending';
 };
 
-/** Ürün listesine göre deterministik demo satış satırları */
+/** Satış satırları — canlı sipariş entegrasyonu gelene kadar boş */
 export function buildDemoSales(
-  products: { id: string; title: string; tiers: { name: string; price: number }[]; status: string }[]
+  _products: { id: string; title: string; tiers: { name: string; price: number }[]; status: string }[]
 ): PortalSaleRow[] {
-  const live = products.filter((p) => p.status === 'approved');
-  if (live.length === 0) return [];
-
-  const rows: PortalSaleRow[] = [];
-  live.forEach((p, pi) => {
-    const tier = p.tiers[0] ?? { name: 'Standart', price: 49 };
-    const count = 2 + (pi % 3);
-    for (let i = 0; i < count; i++) {
-      const day = 3 + pi * 2 + i * 5;
-      rows.push({
-        id: `${p.id}_sale_${i}`,
-        productTitle: p.title,
-        plan: tier.name,
-        amount: tier.price,
-        date: new Date(Date.now() - day * 86400000).toISOString(),
-        status: i === count - 1 && pi === 0 ? 'pending' : 'completed',
-      });
-    }
-  });
-  return rows.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  return [];
 }
 
 export function formatTry(amount: number) {

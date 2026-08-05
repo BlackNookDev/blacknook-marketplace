@@ -186,7 +186,7 @@ export default function ListingWizard() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-500">
             {role === 'vendor' || role === 'admin'
-              ? 'Onaylı partner olarak yeni ürün gönderiyorsunuz. İnceleme sonrası katalogda yayınlanır.'
+              ? 'Onaylı partner olarak yeni ürün gönderiyorsunuz. İnceleme sonrası hub’da yayınlanır.'
               : 'Tek partner yolu: program bilgisinden sonra bu formu doldurup incelemeye gönderin. Onay sonrası partner paneli açılır.'}
           </p>
         </header>

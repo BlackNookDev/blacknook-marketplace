@@ -192,7 +192,7 @@ export default function PortalOverviewContent() {
           { label: 'Toplam ürün', value: String(products.length), icon: Package },
           { label: 'İncelemede', value: String(pending), icon: Clock },
           { label: 'Yayında', value: String(approved), icon: CheckCircle2 },
-          { label: 'Demo gelir', value: formatTry(revenue), icon: TrendingUp },
+          { label: 'Gelir', value: formatTry(revenue), icon: TrendingUp },
         ].map(({ label, value, icon: Icon }) => (
           <div
             key={label}
@@ -254,7 +254,7 @@ export default function PortalOverviewContent() {
           <h2 className="font-display text-lg font-semibold text-white">Son satışlar</h2>
           {sales.length === 0 ? (
             <p className="mt-4 text-sm text-zinc-500">
-              Yayındaki ürünler için demo satışlar burada görünür.
+              Satışlar oluşunca burada görünür.
             </p>
           ) : (
             <ul className="mt-4 space-y-3">

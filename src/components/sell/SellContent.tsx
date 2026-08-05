@@ -45,7 +45,7 @@ const BENEFITS = [
     icon: Shield,
     title: 'Güvenilir vitrin',
     body: 'Doğrulanmış sağlayıcı rozeti ve net ürün sayfalarıyla güven inşa edin.',
-    note: 'Moderasyonlu katalog',
+    note: 'Moderasyonlu hub',
   },
   {
     icon: Rocket,
@@ -176,7 +176,7 @@ export default function SellContent() {
       >
         <div className="mx-auto grid max-w-5xl gap-8 text-center sm:grid-cols-3">
           {[
-            { k: 'Moderasyonlu', v: 'Kalite odaklı katalog' },
+            { k: 'Moderasyonlu', v: 'Kalite odaklı hub' },
             { k: 'Ücretsiz başvuru', v: 'Peşin listeleme ücreti yok' },
             { k: 'Plan esnekliği', v: 'Lifetime, yıllık veya kademeli' },
           ].map((item) => (
@@ -218,7 +218,7 @@ export default function SellContent() {
             Başvurudan gelire dört adım
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-center text-sm text-zinc-500 sm:text-base">
-            Seçiciyiz. Bu yüzden katalogdaki her ürün değer taşır.
+            Seçiciyiz. Bu yüzden hub’daki her ürün değer taşır.
           </p>
           <ol className="mt-14 space-y-0">
             {STEPS.map((step, i) => (
