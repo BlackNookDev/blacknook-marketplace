@@ -11,11 +11,11 @@ const FAQ = [
   },
   {
     q: 'Ödemeler ne zaman yapılır?',
-    a: 'Canlı sistemde partner ödemeleri dönemsel olarak (ör. aylık) netleştirilir. Demo ortamında fatura satırları örnek veridir.',
+    a: 'Canlı satış sonrası ödemeler dönemsel netleştirilecektir. Sipariş entegrasyonu tamamlanana kadar satış/fatura ekranları boş kalabilir. Sorular için contact@blacknook.com.',
   },
   {
     q: 'Select’e nasıl başvururum?',
-    a: 'Blacknook Select özel lansman programıdır. /select sayfasından süreci inceleyip ürün formunu doldurun; ekip uygun ürünleri Select’e davet eder.',
+    a: 'Blacknook Select özel lansman programıdır. Giriş yaptıktan sonra /select sayfasından süreci inceleyin; ekip uygun ürünleri davet eder.',
   },
   {
     q: 'Listeyi güncelleyebilir miyim?',
@@ -36,7 +36,8 @@ export default function PortalSupportContent() {
   return (
     <div className="space-y-8">
       <p className="max-w-2xl text-sm text-zinc-500">
-        Partner portalı desteği: sık sorulanlar, yardım merkezi ve doğrudan talep formu.
+        Partner desteği: sık sorulanlar, yardım merkezi ve e-posta. Aşağıdaki form arayüz denemesidir;
+        gerçek destek için contact@blacknook.com kullanın.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -45,13 +46,13 @@ export default function PortalSupportContent() {
             href: '/help/partner',
             icon: BookOpen,
             title: 'Partner kaynakları',
-            body: 'Başvuru, lansman, ödeme ve Portal rehberi',
+            body: 'Başvuru, Portal ve Select rehberi',
           },
           {
             href: '/help',
             icon: HelpCircle,
             title: 'Yardım merkezi',
-            body: 'Hesap, ödeme ve genel makaleler',
+            body: 'Servisler, hesap ve genel makaleler',
           },
           {
             href: '/select',
@@ -96,12 +97,13 @@ export default function PortalSupportContent() {
           <h2 className="font-display text-lg font-semibold text-white">Destek talebi</h2>
         </div>
         <p className="mt-2 text-sm text-zinc-500">
-          Demo: form gönderimi yalnızca arayüzde onay gösterir; e-posta gönderilmez.
+          Bu form henüz e-posta göndermez. Destek için contact@blacknook.com adresine yazın.
         </p>
 
         {sent ? (
-          <div className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-500/[0.08] px-4 py-5 text-sm text-emerald-100">
-            Talebiniz alındı (demo). Gerçek ortamda destek ekibine düşer.
+          <div className="mt-6 rounded-xl border border-amber-400/20 bg-amber-500/[0.08] px-4 py-5 text-sm text-amber-100">
+            Form kaydedildi (yerel onay). Lütfen aynı mesajı contact@blacknook.com adresine de
+            iletin.
           </div>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-4">

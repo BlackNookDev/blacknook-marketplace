@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Bell, ShoppingCart, User, Users } from 'lucide-react';
+import { Bell, Menu, ShoppingCart, User, Users } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import BrandLogo from '@/components/BrandLogo';
 import MatchDeveloperModal from '@/components/MatchDeveloperModal';
+import MobileNavPanel from '@/components/MobileNavPanel';
 import NavDropdown from '@/components/NavDropdown';
 import MatchPresenceBadge from '@/components/presence/MatchPresenceBadge';
 import PresenceDock from '@/components/presence/PresenceDock';
@@ -31,6 +32,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [matchOpen, setMatchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [notifications, setNotifications] = useState<NavNotification[]>([]);
@@ -103,6 +105,12 @@ export default function Navbar() {
   }, [hideChrome, status]);
 
   useEffect(() => {
+    setMobileNavOpen(false);
+    setMenuOpen(false);
+    setNotifOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     if (!menuOpen && !notifOpen) return;
     const onDoc = (e: MouseEvent) => {
       const t = e.target as Node;
@@ -128,7 +136,7 @@ export default function Navbar() {
   return (
     <>
       <m.div
-        className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4"
+        className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-4 sm:pt-4"
         initial={reduce ? false : { opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: duration.base, ease: easePremium, delay: 0.05 }}
@@ -136,7 +144,7 @@ export default function Navbar() {
         <nav className="relative w-full max-w-5xl" aria-label="Ana navigasyon">
           <div className="relative flex h-12 items-center justify-between gap-2 rounded-full border border-white/[0.1] bg-zinc-900/55 pl-3 pr-2 shadow-[0_8px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl backdrop-saturate-150 sm:pl-4">
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-              <BrandLogo />
+              <BrandLogo textClassName="hidden sm:inline" />
               <button
                 type="button"
                 onClick={openMatch}
@@ -154,12 +162,20 @@ export default function Navbar() {
               <div className="hidden md:block">
                 <NavDropdown />
               </div>
-              <Link
-                href="/services"
-                className="rounded-full px-3 py-1.5 text-sm text-zinc-400 transition-colors hover:text-white md:hidden"
+
+              <button
+                type="button"
+                className={`${iconBtn} md:hidden`}
+                aria-label="Menüyü aç"
+                aria-expanded={mobileNavOpen}
+                onClick={() => {
+                  setMobileNavOpen(true);
+                  setMenuOpen(false);
+                  setNotifOpen(false);
+                }}
               >
-                Ekosistem
-              </Link>
+                <Menu className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+              </button>
 
               <div className="relative" ref={notifRef}>
                 <button
@@ -168,6 +184,7 @@ export default function Navbar() {
                     const opening = !notifOpen;
                     setNotifOpen(opening);
                     setMenuOpen(false);
+                    setMobileNavOpen(false);
                     if (opening) {
                       void refreshNavData();
                       if (status === 'authenticated') {
@@ -264,6 +281,7 @@ export default function Navbar() {
                     onClick={() => {
                       setMenuOpen((v) => !v);
                       setNotifOpen(false);
+                      setMobileNavOpen(false);
                     }}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-zinc-200 transition-colors hover:bg-white/[0.1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40"
                     aria-expanded={menuOpen}
@@ -326,6 +344,7 @@ export default function Navbar() {
         </nav>
       </m.div>
 
+      <MobileNavPanel open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
       <PresenceDock />
       <MatchDeveloperModal
         open={matchOpen}

@@ -62,6 +62,20 @@ export default function ServicesBrowse() {
     setQ(searchParams.get('q') ?? '');
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFiltersOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [filtersOpen]);
+
   const pushParams = useCallback(
     (patch: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -362,14 +376,14 @@ export default function ServicesBrowse() {
       </div>
 
       {filtersOpen && !comingSoon ? (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal aria-label="Kategoriler">
+        <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal aria-label="Kategoriler">
           <button
             type="button"
             className="absolute inset-0 bg-black/70"
             aria-label="Kapat"
             onClick={() => setFiltersOpen(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bn-bg,#161618)] p-6 pb-12 shadow-2xl">
+          <div className="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bn-bg,#161618)] p-6 pb-[max(3rem,env(safe-area-inset-bottom))] shadow-2xl">
             <div className="mb-5 flex items-center justify-between">
               <p className="font-display text-lg font-semibold text-white">Kategoriler</p>
               <button

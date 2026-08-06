@@ -154,7 +154,7 @@ export default function SellContent() {
               href="/partners/self-submission"
               className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-black transition-opacity hover:opacity-90"
             >
-              Başvuruya başla
+              Ürününü listele
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <a
@@ -164,6 +164,22 @@ export default function SellContent() {
               Nasıl çalışır?
             </a>
           </div>
+          <p className="mt-5 text-sm text-zinc-600">
+            Zaten başvurdunuz mu?{' '}
+            <Link
+              href="/partners/status"
+              className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200"
+            >
+              Başvuru durumu
+            </Link>
+            {' · '}
+            <Link
+              href="/partners/overview"
+              className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200"
+            >
+              Partner Portal
+            </Link>
+          </p>
         </m.div>
       </section>
 
@@ -319,13 +335,20 @@ export default function SellContent() {
             href="/partners/self-submission"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-black transition-opacity hover:opacity-90"
           >
-            Başvuruya başla
+            Ürününü listele
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <p className="mt-5 text-sm text-zinc-600">
             Özel lansman mı arıyorsunuz?{' '}
             <Link href="/select" className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200">
               Blacknook Select
+            </Link>
+            {' · '}
+            <Link
+              href="/partners/status"
+              className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200"
+            >
+              Başvuru durumu
             </Link>
             {' · '}
             <Link

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -97,68 +98,100 @@ const TIPS = [
   },
 ];
 
+function GuideImage({
+  src,
+  alt,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+}) {
+  return (
+    <figure className="my-10 overflow-hidden rounded-2xl border border-white/[0.08]">
+      <div className="relative aspect-[16/9] w-full bg-zinc-900">
+        <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
+      </div>
+      {caption ? (
+        <figcaption className="border-t border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-xs text-zinc-500">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
 export default function GuideOnlineBusinessContent() {
   const reduce = useReducedMotion();
 
   return (
     <main className="relative bg-transparent">
-      <section className="relative overflow-hidden px-6 pb-16 pt-32 sm:pb-20 sm:pt-40">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute left-1/2 top-[40%] h-[40vmin] w-[65vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.06)_0%,transparent_68%)] blur-2xl" />
+      <section className="relative min-h-[48svh] overflow-hidden sm:min-h-[64svh]">
+        <Image
+          src="/learn/online-isletme-hero.png"
+          alt="Online işletme çalışma masası"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bn-bg,#161618)] via-black/65 to-black/40" />
+        <div className="relative z-10 mx-auto flex min-h-[48svh] max-w-3xl flex-col justify-end px-4 pb-10 pt-28 sm:min-h-[64svh] sm:px-6 sm:pb-16 sm:pt-32">
+          <m.div
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: duration.scene, ease: easePremium }}
+          >
+            <p className="mb-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-300">
+              <BookOpen className="h-3.5 w-3.5" aria-hidden />
+              Rehber · Öğren
+            </p>
+            <h1 className="font-display text-[clamp(1.65rem,6vw,3.25rem)] font-bold leading-[1.12] tracking-tight text-white">
+              Online işletme nasıl başlatılır
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-300 sm:mt-5 sm:text-base">
+              Freelance, e-ticaret, içerik ve SaaS modellerine odaklanarak online iş kurmanın
+              pratik adımlarını özetler. Blacknook ekosistemindeki geliştiriciler ve erken aşama
+              girişimler için sadeleştirilmiştir.
+            </p>
+            <ul className="mt-5 hidden space-y-2 text-sm text-zinc-300 sm:mt-6 sm:block">
+              <li className="flex gap-2">
+                <span className="text-emerald-400" aria-hidden>
+                  ✓
+                </span>
+                Bugün başlayabileceğin 4 online iş modeli
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-400" aria-hidden>
+                  ✓
+                </span>
+                6 adımlık yüksek seviye yol haritası
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-400" aria-hidden>
+                  ✓
+                </span>
+                SaaS lansmanı ve pazaryeri dağıtımı için pratik notlar
+              </li>
+            </ul>
+          </m.div>
         </div>
-
-        <m.div
-          className="relative z-10 mx-auto max-w-3xl"
-          initial={reduce ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: duration.scene, ease: easePremium }}
-        >
-          <p className="mb-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
-            <BookOpen className="h-3.5 w-3.5" aria-hidden />
-            Rehber
-          </p>
-          <h1 className="font-display text-[clamp(1.85rem,4.5vw,3.25rem)] font-bold leading-[1.12] tracking-tight text-white">
-            Online işletme nasıl başlatılır
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Bu rehber; freelance, e-ticaret, içerik ve SaaS modellerine odaklanarak online iş
-            kurmanın pratik adımlarını özetler. Blacknook ekosistemindeki geliştiriciler ve erken
-            aşama girişimler için sadeleştirilmiştir.
-          </p>
-          <ul className="mt-6 space-y-2 text-sm text-zinc-400">
-            <li className="flex gap-2">
-              <span className="text-emerald-400" aria-hidden>
-                ✓
-              </span>
-              Bugün başlayabileceğin 4 online iş modeli
-            </li>
-            <li className="flex gap-2">
-              <span className="text-emerald-400" aria-hidden>
-                ✓
-              </span>
-              6 adımlık yüksek seviye yol haritası
-            </li>
-            <li className="flex gap-2">
-              <span className="text-emerald-400" aria-hidden>
-                ✓
-              </span>
-              SaaS lansmanı ve pazaryeri dağıtımı için pratik notlar
-            </li>
-          </ul>
-        </m.div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 pb-24 sm:px-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
             İçindekiler
           </p>
-          <nav aria-label="İçindekiler" className="flex flex-col gap-1.5">
+          <nav
+            aria-label="İçindekiler"
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:px-0 lg:pb-0"
+          >
             {TOC.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="rounded-lg px-2.5 py-1.5 text-sm text-zinc-500 transition-colors hover:bg-white/[0.04] hover:text-zinc-200"
+                className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-2 text-sm text-zinc-400 transition-colors hover:border-white/15 hover:text-zinc-200 lg:rounded-lg lg:border-transparent lg:bg-transparent lg:px-2.5 lg:py-1.5 lg:hover:bg-white/[0.04]"
               >
                 {item.label}
               </a>
@@ -207,6 +240,13 @@ export default function GuideOnlineBusinessContent() {
             <p className="mt-4 text-sm leading-relaxed text-zinc-400 sm:text-base">
               Modele özel detaylara girmeden önce yüksek seviye çerçeve:
             </p>
+
+            <GuideImage
+              src="/learn/online-isletme-steps.png"
+              alt="Online işletme yol haritası notları"
+              caption="Fikir → MVP → ilk müşteri → geri bildirim → yasal yapı → büyüme."
+            />
+
             <ol className="mt-8 space-y-5">
               {STEPS.map((step, i) => (
                 <li
@@ -229,6 +269,13 @@ export default function GuideOnlineBusinessContent() {
             <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
               Bugün başlayabileceğin 4 model
             </h2>
+
+            <GuideImage
+              src="/learn/online-isletme-models.png"
+              alt="Freelance, e-ticaret, içerik ve yazılım modelleri"
+              caption="Danışmanlık, e-ticaret, içerik üreticiliği ve SaaS — dört pratik başlangıç modeli."
+            />
+
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {IDEAS.map(({ icon: Icon, title, body }) => (
                 <article
@@ -253,6 +300,13 @@ export default function GuideOnlineBusinessContent() {
               Blacknook’un odaklandığı model budur: bağımsız geliştiriciler ve indie hacker’lar
               ürünlerini pazara sunar; alıcılar yeni araçlara tek noktadan erişir.
             </p>
+
+            <GuideImage
+              src="/learn/online-isletme-saas.png"
+              alt="SaaS ürün lansmanı çalışma ortamı"
+              caption="Çekirdek özellik, erken kullanıcı ve pazaryeri dağıtımı ile lansmanı hızlandırın."
+            />
+
             <ul className="mt-6 space-y-3 text-sm leading-relaxed text-zinc-400">
               <li>
                 <strong className="font-medium text-zinc-200">Çekirdek özellik:</strong> Tek net

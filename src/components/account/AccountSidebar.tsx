@@ -40,7 +40,10 @@ export default function AccountSidebar() {
 
   return (
     <aside className="w-full shrink-0 md:w-56 lg:w-60">
-      <nav aria-label="Hesap menüsü" className="flex flex-col gap-0.5">
+      <nav
+        aria-label="Hesap menüsü"
+        className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:flex-col md:gap-0.5 md:overflow-visible md:px-0 md:pb-0"
+      >
         {ACCOUNT_NAV.map((item) => {
           const Icon = ICONS[item.icon];
           const active = isActive(item.href);
@@ -49,10 +52,10 @@ export default function AccountSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'inline-flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors',
+                'inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition-colors md:rounded-lg md:border-transparent md:px-3 md:py-2.5',
                 active
-                  ? 'bg-emerald-500/15 font-semibold text-emerald-300'
-                  : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100'
+                  ? 'border-emerald-400/30 bg-emerald-500/15 font-semibold text-emerald-300'
+                  : 'border-white/[0.08] text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100 md:border-transparent'
               )}
             >
               <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
@@ -64,7 +67,7 @@ export default function AccountSidebar() {
         <button
           type="button"
           onClick={handleLogout}
-          className="mt-2 inline-flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-zinc-100"
+          className="mt-0 inline-flex shrink-0 items-center gap-2 rounded-full border border-white/[0.08] px-3.5 py-2 text-left text-sm text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-zinc-100 md:mt-2 md:rounded-lg md:border-transparent md:px-3 md:py-2.5"
         >
           <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
           Çıkış yap

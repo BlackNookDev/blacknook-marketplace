@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 const SELL_LINKS = [
-  { href: '/select', label: 'Blacknook Select' },
-  { href: '/sell', label: 'Partner programı' },
+  { href: '/sell', label: 'Satışa başla' },
   { href: '/partners/overview', label: 'Partner Portal' },
-  { href: '/partners/self-submission', label: 'Ürününü listele' },
-  { href: '/partners/status', label: 'Başvuru durumu' },
+  { href: '/select', label: 'Blacknook Select' },
 ] as const;
 
 export default function FooterSellColumn() {

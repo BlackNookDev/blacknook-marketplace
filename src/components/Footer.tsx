@@ -108,12 +108,6 @@ export default function Footer() {
         <p className="text-xs text-zinc-600">
           © {new Date().getFullYear()} BlackNOOK. Tüm hakları saklıdır.
         </p>
-        <a
-          href="mailto:contact@blacknook.com"
-          className="text-xs text-zinc-600 transition-colors hover:text-zinc-400"
-        >
-          contact@blacknook.com
-        </a>
       </div>
     </footer>
   );

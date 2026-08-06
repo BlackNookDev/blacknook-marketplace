@@ -196,7 +196,7 @@ export default function GuideCreatorEconomyContent() {
 
   return (
     <main className="relative bg-transparent">
-      <section className="relative min-h-[58svh] overflow-hidden sm:min-h-[64svh]">
+      <section className="relative min-h-[48svh] overflow-hidden sm:min-h-[64svh]">
         <Image
           src="/learn/creator-economy-hero.png"
           alt="İçerik üreticisi çalışma masası"
@@ -206,7 +206,7 @@ export default function GuideCreatorEconomyContent() {
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bn-bg,#161618)] via-black/65 to-black/40" />
-        <div className="relative z-10 mx-auto flex min-h-[58svh] max-w-3xl flex-col justify-end px-6 pb-14 pt-32 sm:min-h-[64svh] sm:pb-16">
+        <div className="relative z-10 mx-auto flex min-h-[48svh] max-w-3xl flex-col justify-end px-4 pb-10 pt-28 sm:min-h-[64svh] sm:px-6 sm:pb-16 sm:pt-32">
           <m.div
             initial={reduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -216,11 +216,13 @@ export default function GuideCreatorEconomyContent() {
               <BookOpen className="h-3.5 w-3.5" aria-hidden />
               Rehber · Öğren
             </p>
-            <h1 className="font-display text-[clamp(1.9rem,5vw,3.4rem)] font-bold leading-[1.08] tracking-tight text-white">
+            <h1 className="font-display text-[clamp(1.65rem,6vw,3.4rem)] font-bold leading-[1.08] tracking-tight text-white">
               Creator economy nedir?
-              <span className="mt-1 block text-zinc-300">Trendler, gelir modelleri ve pratik ipuçları</span>
+              <span className="mt-1 block text-base text-zinc-300 sm:text-[0.85em]">
+                Trendler, gelir modelleri ve pratik ipuçları
+              </span>
             </h1>
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-300 sm:text-base">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-300 sm:mt-5 sm:text-base">
               Bağımsız üreticiler, bülten yazarları, eğitimciler ve mikro-SaaS kurucuları için
               Blacknook perspektifinden kapsamlı bir başlangıç rehberi.
             </p>

@@ -134,8 +134,8 @@ export default function HeroMailCollector() {
 
           <div className="mt-2 text-center">
             <h1 className="font-display text-xl font-bold leading-tight tracking-tight text-white sm:text-[1.35rem]">
-              SaaS ve self-host araçlar.
-              <span className="mt-0.5 block text-zinc-400">Tek seferlik lisanslarla.</span>
+              Bağımsız yazılım.
+              <span className="mt-0.5 block text-zinc-400">Tek seferlik lisans.</span>
             </h1>
             <p className="mt-2.5 text-xs text-zinc-500 sm:text-sm">
               Erken erişim ve lansman güncellemelerini alın
@@ -177,7 +177,7 @@ export default function HeroMailCollector() {
                   Listeye eklendiniz
                 </>
               ) : (
-                'Erken erişim al'
+                'Erken Erişim Bildirimi Al'
               )}
             </button>
           </form>

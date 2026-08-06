@@ -20,6 +20,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -40,6 +41,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 ::selection {

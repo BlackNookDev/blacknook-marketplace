@@ -8,14 +8,24 @@ import {
   CreditCard,
   Handshake,
   HelpCircle,
+  Layers,
   Package,
   Search,
   Shield,
   UserCog,
+  type LucideIcon,
 } from 'lucide-react';
 import { HELP_CATEGORIES, searchHelp } from '../../../lib/helpCenter';
 
-const ICONS = [HelpCircle, UserCog, CreditCard, Package, Handshake, Shield] as const;
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  genel: HelpCircle,
+  servisler: Layers,
+  hesap: UserCog,
+  odeme: CreditCard,
+  urunler: Package,
+  partner: Handshake,
+  guvenlik: Shield,
+};
 
 export default function HelpCenterContent() {
   const [query, setQuery] = useState('');
@@ -37,7 +47,7 @@ export default function HelpCenterContent() {
           Blacknook Yardım Merkezi
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          Hesap, ödeme, ürün erişimi ve partner süreçleri hakkında hızlı yanıtlar.
+          Servisler, kurulum talepleri, hesap ve partner süreçleri hakkında dürüst yanıtlar.
         </p>
 
         <label className="relative mx-auto mt-8 block max-w-xl">
@@ -50,7 +60,7 @@ export default function HelpCenterContent() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Sorunu yaz… örn. iade, lisans, partner"
+            placeholder="Sorunu yaz… örn. kurulum, eşleşme, partner"
             className="h-12 w-full rounded-full border border-white/10 bg-white/[0.04] pl-11 pr-4 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/25 focus:ring-2 focus:ring-white/10"
           />
         </label>
@@ -90,8 +100,8 @@ export default function HelpCenterContent() {
         </div>
       ) : (
         <div className="relative mx-auto mt-14 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {HELP_CATEGORIES.map((cat, i) => {
-            const Icon = ICONS[i % ICONS.length];
+          {HELP_CATEGORIES.map((cat) => {
+            const Icon = CATEGORY_ICONS[cat.slug] ?? HelpCircle;
             return (
               <Link
                 key={cat.slug}
