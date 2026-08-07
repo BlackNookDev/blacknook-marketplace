@@ -216,12 +216,12 @@ export default function GuideCreatorEconomyContent() {
               <BookOpen className="h-3.5 w-3.5" aria-hidden />
               Rehber · Öğren
             </p>
-            <h1 className="font-display text-[clamp(1.65rem,6vw,3.4rem)] font-bold leading-[1.08] tracking-tight text-white">
+            <h1 className="font-display text-[clamp(1.65rem,5.5vw,3.25rem)] font-bold leading-[1.2] tracking-tight text-white">
               Creator economy nedir?
-              <span className="mt-1 block text-base text-zinc-300 sm:text-[0.85em]">
-                Trendler, gelir modelleri ve pratik ipuçları
-              </span>
             </h1>
+            <p className="mt-3 max-w-xl text-base font-medium leading-snug text-zinc-300 sm:text-lg">
+              Trendler, gelir modelleri ve pratik ipuçları
+            </p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-300 sm:mt-5 sm:text-base">
               Bağımsız üreticiler, bülten yazarları, eğitimciler ve mikro-SaaS kurucuları için
               Blacknook perspektifinden kapsamlı bir başlangıç rehberi.

@@ -28,7 +28,7 @@ export default function NavDropdown() {
       </button>
 
       <div
-        className="invisible absolute right-0 top-[calc(100%+0.4rem)] z-50 w-[min(42rem,calc(100vw-2rem))] origin-top-right scale-[0.98] opacity-0 transition-all duration-premium ease-premium group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-focus-within:visible group-focus-within:scale-100 group-focus-within:opacity-100 xl:w-[46rem]"
+        className="invisible absolute left-0 top-[calc(100%+0.4rem)] z-50 w-[min(42rem,calc(100vw-2rem))] origin-top-left scale-[0.98] opacity-0 transition-all duration-premium ease-premium group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-focus-within:visible group-focus-within:scale-100 group-focus-within:opacity-100 xl:w-[46rem]"
         role="menu"
         aria-label={ECOSYSTEM_NAV.label}
       >

@@ -144,6 +144,19 @@ export default function Navbar() {
         <nav className="relative w-full max-w-5xl" aria-label="Ana navigasyon">
           <div className="relative flex h-12 items-center justify-between gap-2 rounded-full border border-white/[0.1] bg-zinc-900/55 pl-3 pr-2 shadow-[0_8px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl backdrop-saturate-150 sm:pl-4">
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                className={`${iconBtn} -ml-1 md:hidden`}
+                aria-label="Menüyü aç"
+                aria-expanded={mobileNavOpen}
+                onClick={() => {
+                  setMobileNavOpen(true);
+                  setMenuOpen(false);
+                  setNotifOpen(false);
+                }}
+              >
+                <Menu className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+              </button>
               <BrandLogo textClassName="hidden sm:inline" />
               <button
                 type="button"
@@ -156,27 +169,12 @@ export default function Navbar() {
                 <span className="hidden sm:inline">Eşleş</span>
                 <MatchPresenceBadge />
               </button>
-            </div>
-
-            <div className="flex items-center gap-0.5 sm:gap-1">
               <div className="hidden md:block">
                 <NavDropdown />
               </div>
+            </div>
 
-              <button
-                type="button"
-                className={`${iconBtn} md:hidden`}
-                aria-label="Menüyü aç"
-                aria-expanded={mobileNavOpen}
-                onClick={() => {
-                  setMobileNavOpen(true);
-                  setMenuOpen(false);
-                  setNotifOpen(false);
-                }}
-              >
-                <Menu className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
-              </button>
-
+            <div className="flex items-center gap-0.5 sm:gap-1">
               <div className="relative" ref={notifRef}>
                 <button
                   type="button"
@@ -296,7 +294,7 @@ export default function Navbar() {
                       role="menu"
                       className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-zinc-950/95 py-1 shadow-2xl backdrop-blur-xl"
                     >
-                      <div className="border-b border-white/[0.06] px-3 py-2 text-right">
+                      <div className="border-b border-white/[0.06] px-3 py-2 text-left">
                         <p className="truncate text-xs text-zinc-500">{user.email}</p>
                       </div>
                       {ACCOUNT_NAV.slice(0, 4).map((item) => (
@@ -305,7 +303,7 @@ export default function Navbar() {
                           href={item.href}
                           role="menuitem"
                           onClick={() => setMenuOpen(false)}
-                          className="block px-3 py-2 text-right text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+                          className="block px-3 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white"
                         >
                           {item.label}
                         </Link>
@@ -315,7 +313,7 @@ export default function Navbar() {
                           href="/admin/developers"
                           role="menuitem"
                           onClick={() => setMenuOpen(false)}
-                          className="block px-3 py-2 text-right text-sm text-emerald-300 transition-colors hover:bg-white/[0.05]"
+                          className="block px-3 py-2 text-left text-sm text-emerald-300 transition-colors hover:bg-white/[0.05]"
                         >
                           Admin
                         </Link>
@@ -324,7 +322,7 @@ export default function Navbar() {
                         type="button"
                         role="menuitem"
                         onClick={handleLogout}
-                        className="block w-full border-t border-white/[0.06] px-3 py-2 text-right text-sm text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-white"
+                        className="block w-full border-t border-white/[0.06] px-3 py-2 text-left text-sm text-zinc-400 transition-colors hover:bg-white/[0.05] hover:text-white"
                       >
                         Çıkış yap
                       </button>

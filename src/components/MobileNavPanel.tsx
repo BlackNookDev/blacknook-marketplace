@@ -53,8 +53,8 @@ export default function MobileNavPanel({ open, onClose }: Props) {
         aria-label="Menüyü kapat"
         onClick={onClose}
       />
-      <div className="absolute inset-x-0 top-0 max-h-[min(92vh,100%)] overflow-y-auto rounded-b-3xl border-b border-white/10 bg-[var(--bn-bg,#161618)] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-2xl">
-        <div className="flex items-center justify-between px-5 pb-3 pt-4">
+      <div className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col border-r border-white/10 bg-[var(--bn-bg,#161618)] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] shadow-2xl">
+        <div className="flex items-center justify-between px-4 pb-3 pt-3">
           <p className="font-display text-lg font-semibold text-white">Menü</p>
           <button
             type="button"
@@ -66,7 +66,7 @@ export default function MobileNavPanel({ open, onClose }: Props) {
           </button>
         </div>
 
-        <div className="space-y-6 px-5 pb-6">
+        <div className="flex-1 space-y-6 overflow-y-auto px-4 pb-6">
           <section>
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">
               Ekosistem
