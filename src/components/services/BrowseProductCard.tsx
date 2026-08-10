@@ -59,7 +59,7 @@ export default function BrowseProductCard({ service, className }: Props) {
           {service.description}
         </p>
 
-        <p className="mt-3 text-[12px] font-medium text-sky-400/90">Kurulum talep et →</p>
+        <p className="mt-3 text-[12px] font-medium text-sky-400/90">Keşfet →</p>
       </div>
     </Link>
   );

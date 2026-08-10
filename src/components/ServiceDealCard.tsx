@@ -42,7 +42,7 @@ export default function ServiceDealCard({ service, className }: Props) {
         </p>
 
         <p className="mt-2 text-sm text-zinc-300">
-          <span className="font-bold text-white">Ücretsiz</span>
+          <span className="font-medium text-sky-400/90">Keşfet →</span>
         </p>
       </div>
     </Link>
