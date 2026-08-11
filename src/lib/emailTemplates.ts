@@ -1,19 +1,31 @@
 import { escapeHtml } from './mail';
 import { getAppBaseUrl } from './passwordReset';
 
-/** Site ile uyumlu koyu monokrom e-posta şablonları (inline CSS — e-posta istemcileri). */
+/**
+ * Blacknook branded e-posta şablonları.
+ * Site token’ları (--bn-*) ile uyumlu; e-posta istemcileri için inline CSS + tablo layout.
+ */
 
-const COLORS = {
+const C = {
   bg: '#161618',
+  bgDeep: '#121214',
   surface: '#1c1c1f',
   elevated: '#242428',
-  border: 'rgba(255,255,255,0.12)',
+  panel: '#1a1a1d',
+  border: 'rgba(255,255,255,0.09)',
+  borderStrong: 'rgba(255,255,255,0.16)',
   text: '#f4f4f5',
   muted: '#a1a1aa',
   faint: '#71717a',
   accent: '#fafafa',
-  black: '#09090b',
+  ink: '#09090b',
+  glow: 'rgba(255,255,255,0.10)',
 } as const;
+
+const FONT_DISPLAY =
+  "'Syne',Arial,Helvetica,sans-serif";
+const FONT_BODY =
+  "'Source Sans 3','Segoe UI',Arial,Helvetica,sans-serif";
 
 function siteUrl(path = '/') {
   const base = getAppBaseUrl();
@@ -21,30 +33,75 @@ function siteUrl(path = '/') {
   return `${base}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
+function markUrl() {
+  return siteUrl('/bn-mark.png');
+}
+
 function ctaButton(href: string, label: string) {
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 8px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 4px;">
       <tr>
-        <td align="center" style="border-radius:999px;background:${COLORS.accent};">
-          <a href="${escapeHtml(href)}"
-             style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.02em;color:${COLORS.black};text-decoration:none;border-radius:999px;">
-            ${escapeHtml(label)}
-          </a>
+        <td align="left">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" style="border-radius:999px;background:${C.accent};">
+                <a href="${escapeHtml(href)}"
+                   style="display:inline-block;padding:13px 26px;font-family:${FONT_BODY};font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${C.ink};text-decoration:none;border-radius:999px;">
+                  ${escapeHtml(label)}
+                </a>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>`;
 }
 
-function detailRow(label: string, valueHtml: string) {
-  return `
+function detailCard(rows: { label: string; valueHtml: string }[]) {
+  const body = rows
+    .map(
+      (row, i) => `
     <tr>
-      <td style="padding:10px 0;border-bottom:1px solid ${COLORS.border};font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:${COLORS.faint};width:34%;vertical-align:top;">
-        ${escapeHtml(label)}
+      <td style="padding:${i === 0 ? '0' : '14px'} 0 ${i === rows.length - 1 ? '0' : '14px'};${
+        i === rows.length - 1 ? '' : `border-bottom:1px solid ${C.border};`
+      }">
+        <p style="margin:0 0 6px;font-family:${FONT_BODY};font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:${C.faint};">
+          ${escapeHtml(row.label)}
+        </p>
+        <div style="font-family:${FONT_BODY};font-size:15px;line-height:1.5;color:${C.text};">
+          ${row.valueHtml}
+        </div>
       </td>
-      <td style="padding:10px 0;border-bottom:1px solid ${COLORS.border};font-family:Arial,Helvetica,sans-serif;font-size:15px;color:${COLORS.text};vertical-align:top;">
-        ${valueHtml}
-      </td>
-    </tr>`;
+    </tr>`
+    )
+    .join('');
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 8px;background:${C.elevated};border:1px solid ${C.border};border-radius:14px;">
+      <tr>
+        <td style="padding:18px 20px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            ${body}
+          </table>
+        </td>
+      </tr>
+    </table>`;
+}
+
+function quoteBlock(label: string, contentHtml: string) {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:18px 0 6px;">
+      <tr>
+        <td style="padding:0 0 0 14px;border-left:2px solid ${C.borderStrong};">
+          <p style="margin:0 0 8px;font-family:${FONT_BODY};font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:${C.faint};">
+            ${escapeHtml(label)}
+          </p>
+          <div style="font-family:${FONT_BODY};font-size:15px;line-height:1.65;color:${C.muted};">
+            ${contentHtml}
+          </div>
+        </td>
+      </tr>
+    </table>`;
 }
 
 export type BrandEmailPayload = {
@@ -59,55 +116,113 @@ export type BrandEmailPayload = {
 /** Ortak Blacknook HTML zarfı */
 export function renderBrandEmail(payload: BrandEmailPayload): string {
   const home = siteUrl('/');
+  const mark = markUrl();
+  const year = new Date().getFullYear();
+
   const preheader = payload.preheader
-    ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${escapeHtml(payload.preheader)}</div>`
+    ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;">${escapeHtml(payload.preheader)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>`
     : '';
+
   const eyebrow = payload.eyebrow
-    ? `<p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${COLORS.faint};">${escapeHtml(payload.eyebrow)}</p>`
+    ? `<p style="margin:0 0 14px;font-family:${FONT_BODY};font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:${C.faint};">${escapeHtml(payload.eyebrow)}</p>`
     : '';
+
   const cta = payload.cta ? ctaButton(payload.cta.href, payload.cta.label) : '';
+
   const footerNote = payload.footerNote
-    ? `<p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:${COLORS.faint};">${escapeHtml(payload.footerNote)}</p>`
+    ? `<p style="margin:0 0 12px;font-family:${FONT_BODY};font-size:12px;line-height:1.55;color:${C.faint};">${escapeHtml(payload.footerNote)}</p>`
     : '';
 
   return `<!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="supported-color-schemes" content="dark" />
+  <meta name="theme-color" content="${C.bg}" />
   <title>${escapeHtml(payload.title)}</title>
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <!--<![endif]-->
+  <style>
+    :root { color-scheme: dark; supported-color-schemes: dark; }
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+    a { color: ${C.accent}; }
+    @media (max-width: 620px) {
+      .bn-shell { padding: 24px 12px !important; }
+      .bn-card { border-radius: 16px !important; }
+      .bn-pad { padding: 28px 22px !important; }
+      .bn-pad-sm { padding: 20px 22px !important; }
+      .bn-title { font-size: 22px !important; }
+    }
+  </style>
 </head>
-<body style="margin:0;padding:0;background:${COLORS.bg};">
+<body style="margin:0;padding:0;background:${C.bgDeep};">
   ${preheader}
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${COLORS.bg};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.bgDeep};">
     <tr>
-      <td align="center" style="padding:40px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:${COLORS.surface};border:1px solid ${COLORS.border};border-radius:20px;overflow:hidden;">
+      <td align="center" class="bn-shell" style="padding:48px 16px;">
+        <!-- Atmosphere wash -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
           <tr>
-            <td style="padding:28px 32px 20px;border-bottom:1px solid ${COLORS.border};background:${COLORS.elevated};">
-              <a href="${escapeHtml(home)}" style="font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.02em;color:${COLORS.text};text-decoration:none;">
-                Blacknook
-              </a>
+            <td align="center" style="padding:0 0 22px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:0 10px 0 0;vertical-align:middle;">
+                    <a href="${escapeHtml(home)}" style="text-decoration:none;">
+                      <img src="${escapeHtml(mark)}" width="28" height="28" alt="Blacknook" style="display:block;width:28px;height:28px;border:0;filter:brightness(0) invert(1);" />
+                    </a>
+                  </td>
+                  <td style="vertical-align:middle;">
+                    <a href="${escapeHtml(home)}" style="font-family:${FONT_DISPLAY};font-size:16px;font-weight:700;letter-spacing:-0.02em;color:${C.text};text-decoration:none;">
+                      Blacknook
+                    </a>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           <tr>
-            <td style="padding:32px;">
-              ${eyebrow}
-              <h1 style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:1.25;font-weight:800;letter-spacing:-0.03em;color:${COLORS.text};">
-                ${escapeHtml(payload.title)}
-              </h1>
-              <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:${COLORS.muted};">
-                ${payload.bodyHtml}
-              </div>
-              ${cta}
+            <td class="bn-card" style="background:${C.surface};border:1px solid ${C.border};border-radius:20px;overflow:hidden;">
+              <!-- Soft top highlight -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="height:3px;line-height:3px;font-size:0;background:linear-gradient(90deg,rgba(255,255,255,0.28) 0%,rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02) 100%);">&nbsp;</td>
+                </tr>
+              </table>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="bn-pad" style="padding:36px 36px 28px;background:radial-gradient(ellipse 90% 70% at 50% -20%, ${C.glow} 0%, transparent 55%), ${C.surface};">
+                    ${eyebrow}
+                    <h1 class="bn-title" style="margin:0 0 18px;font-family:${FONT_DISPLAY};font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-0.035em;color:${C.text};">
+                      ${escapeHtml(payload.title)}
+                    </h1>
+                    <div style="font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${C.muted};">
+                      ${payload.bodyHtml}
+                    </div>
+                    ${cta}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="bn-pad-sm" style="padding:22px 36px 28px;border-top:1px solid ${C.border};background:${C.panel};">
+                    ${footerNote}
+                    <p style="margin:0;font-family:${FONT_BODY};font-size:12px;line-height:1.5;color:${C.faint};">
+                      © ${year} Blacknook
+                      <span style="color:${C.borderStrong};padding:0 8px;">·</span>
+                      <a href="${escapeHtml(home)}" style="color:${C.muted};text-decoration:none;">blacknook.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 32px 28px;border-top:1px solid ${COLORS.border};background:${COLORS.elevated};">
-              ${footerNote}
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${COLORS.faint};">
-                © ${new Date().getFullYear()} Blacknook ·
-                <a href="${escapeHtml(home)}" style="color:${COLORS.muted};text-decoration:none;">blacknook.com</a>
+            <td align="center" style="padding:22px 8px 0;">
+              <p style="margin:0;font-family:${FONT_BODY};font-size:11px;line-height:1.5;color:${C.faint};">
+                Yazılım pazaryeri · kurulum · eşleşme
               </p>
             </td>
           </tr>
@@ -120,7 +235,11 @@ export function renderBrandEmail(payload: BrandEmailPayload): string {
 }
 
 function p(text: string) {
-  return `<p style="margin:0 0 14px;color:${COLORS.muted};">${text}</p>`;
+  return `<p style="margin:0 0 14px;font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${C.muted};">${text}</p>`;
+}
+
+function strong(text: string) {
+  return `<strong style="color:${C.text};font-weight:600;">${text}</strong>`;
 }
 
 export function welcomeRegisterEmail(params: { name: string; email: string }) {
@@ -131,8 +250,12 @@ export function welcomeRegisterEmail(params: { name: string; email: string }) {
     eyebrow: 'Hoş geldiniz',
     title: `Merhaba ${name}`,
     bodyHtml: [
-      p('Hesabınız başarıyla oluşturuldu. Artık servis kataloğunu gezebilir, kurulum talebi gönderebilir ve geliştirici eşleşmesi isteyebilirsiniz.'),
-      p(`Kayıtlı e-posta: <strong style="color:${COLORS.text};">${escapeHtml(params.email)}</strong>`),
+      p(
+        'Hesabınız hazır. Servis kataloğunu gezebilir, kurulum talebi gönderebilir ve geliştirici eşleşmesi isteyebilirsiniz.'
+      ),
+      detailCard([
+        { label: 'Hesap', valueHtml: strong(escapeHtml(params.email)) },
+      ]),
     ].join(''),
     cta: { href: services, label: 'Servisleri keşfet' },
     footerNote: 'Bu e-postayı kayıt olduğunuz için aldınız.',
@@ -156,11 +279,15 @@ export function waitlistConfirmEmail(params: { email: string }) {
   const home = siteUrl('/');
   const html = renderBrandEmail({
     preheader: 'Early access listesine eklendiniz.',
-    eyebrow: 'Waitlist',
+    eyebrow: 'Early access',
     title: 'Listenize eklendiniz',
     bodyHtml: [
-      p('Blacknook erken erişim listesine kaydınız alındı. Lansman ve önemli güncellemelerde sizi bilgilendireceğiz.'),
-      p(`Adresiniz: <strong style="color:${COLORS.text};">${escapeHtml(params.email)}</strong>`),
+      p(
+        'Blacknook erken erişim listesine kaydınız alındı. Lansman ve önemli güncellemelerde sizi bilgilendireceğiz.'
+      ),
+      detailCard([
+        { label: 'E-posta', valueHtml: strong(escapeHtml(params.email)) },
+      ]),
     ].join(''),
     cta: { href: home, label: 'Ana sayfaya dön' },
     footerNote: 'İstemediyseniz bu e-postayı yok sayabilirsiniz.',
@@ -180,9 +307,12 @@ export function waitlistConfirmEmail(params: { email: string }) {
 export function waitlistTeamEmail(params: { email: string }) {
   const html = renderBrandEmail({
     preheader: `Yeni waitlist: ${params.email}`,
-    eyebrow: 'Ekip bildirimi',
+    eyebrow: 'Ekip',
     title: 'Yeni waitlist kaydı',
-    bodyHtml: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${detailRow('E-posta', escapeHtml(params.email))}${detailRow('Kaynak', 'Ana sayfa hero formu')}</table>`,
+    bodyHtml: detailCard([
+      { label: 'E-posta', valueHtml: strong(escapeHtml(params.email)) },
+      { label: 'Kaynak', valueHtml: 'Ana sayfa hero formu' },
+    ]),
   });
 
   return {
@@ -200,8 +330,12 @@ export function passwordResetEmail(params: { name?: string | null; resetUrl: str
     title: 'Şifrenizi sıfırlayın',
     bodyHtml: [
       p(`${escapeHtml(greeting)},`),
-      p('Şifrenizi sıfırlamak için aşağıdaki düğmeyi kullanın. Bağlantı <strong style="color:#f4f4f5;">1 saat</strong> geçerlidir.'),
-      p(`Bağlantı çalışmazsa: <a href="${escapeHtml(params.resetUrl)}" style="color:#fafafa;word-break:break-all;">${escapeHtml(params.resetUrl)}</a>`),
+      p(
+        `Şifrenizi sıfırlamak için aşağıdaki düğmeyi kullanın. Bağlantı ${strong('1 saat')} geçerlidir.`
+      ),
+      p(
+        `Bağlantı çalışmazsa bu adresi tarayıcıya yapıştırın:<br /><a href="${escapeHtml(params.resetUrl)}" style="color:${C.accent};word-break:break-all;text-decoration:underline;text-underline-offset:3px;">${escapeHtml(params.resetUrl)}</a>`
+      ),
     ].join(''),
     cta: { href: params.resetUrl, label: 'Şifremi sıfırla' },
     footerNote: 'Bu isteği siz yapmadıysanız e-postayı yok sayın.',
@@ -230,7 +364,9 @@ export function passwordChangedEmail(params: { name?: string | null }) {
     title: 'Şifreniz değiştirildi',
     bodyHtml: [
       p(`${escapeHtml(greeting)},`),
-      p('Blacknook hesabınızın şifresi başarıyla güncellendi. Bu işlemi siz yapmadıysanız hemen bizimle iletişime geçin.'),
+      p(
+        'Blacknook hesabınızın şifresi başarıyla güncellendi. Bu işlemi siz yapmadıysanız hemen bizimle iletişime geçin.'
+      ),
     ].join(''),
     cta: { href: login, label: 'Giriş yap' },
   });
@@ -256,15 +392,18 @@ export function installationUserEmail(params: {
   const detail = siteUrl(`/service/${params.serviceSlug}`);
   const html = renderBrandEmail({
     preheader: `${params.serviceName} kurulum talebiniz alındı.`,
-    eyebrow: 'Kurulum talebi',
+    eyebrow: 'Kurulum',
     title: 'Talebiniz alındı',
     bodyHtml: [
       p('Kurulum talebinizi aldık. Ekibimiz en kısa sürede sizinle iletişime geçecek.'),
-      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;">
-        ${detailRow('Servis', escapeHtml(params.serviceName))}
-        ${detailRow('Şirket', escapeHtml(params.companyName))}
-      </table>`,
-      p(`<strong style="color:${COLORS.text};">Talebiniz</strong><br />${escapeHtml(params.requirements).replace(/\n/g, '<br />')}`),
+      detailCard([
+        { label: 'Servis', valueHtml: strong(escapeHtml(params.serviceName)) },
+        { label: 'Şirket', valueHtml: escapeHtml(params.companyName) },
+      ]),
+      quoteBlock(
+        'Talebiniz',
+        escapeHtml(params.requirements).replace(/\n/g, '<br />')
+      ),
     ].join(''),
     cta: { href: detail, label: 'Servis sayfasına dön' },
   });
@@ -292,15 +431,21 @@ export function installationTeamEmail(params: {
 }) {
   const html = renderBrandEmail({
     preheader: `Kurulum: ${params.serviceName}`,
-    eyebrow: 'Ekip bildirimi',
+    eyebrow: 'Ekip',
     title: 'Yeni kurulum talebi',
     bodyHtml: [
-      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-        ${detailRow('Servis', `${escapeHtml(params.serviceName)} <span style="color:${COLORS.faint};">(${escapeHtml(params.serviceSlug)})</span>`)}
-        ${detailRow('Şirket', escapeHtml(params.companyName))}
-        ${detailRow('E-posta', escapeHtml(params.email))}
-      </table>`,
-      p(`<strong style="color:${COLORS.text};">Detay</strong><br />${escapeHtml(params.requirements).replace(/\n/g, '<br />')}`),
+      detailCard([
+        {
+          label: 'Servis',
+          valueHtml: `${strong(escapeHtml(params.serviceName))} <span style="color:${C.faint};">(${escapeHtml(params.serviceSlug)})</span>`,
+        },
+        { label: 'Şirket', valueHtml: escapeHtml(params.companyName) },
+        { label: 'E-posta', valueHtml: escapeHtml(params.email) },
+      ]),
+      quoteBlock(
+        'Detay',
+        escapeHtml(params.requirements).replace(/\n/g, '<br />')
+      ),
     ].join(''),
   });
 
@@ -324,11 +469,18 @@ export function matchUserEmail(params: { name: string; need: string; requestId?:
     eyebrow: 'Eşleşme',
     title: 'Talebiniz kaydedildi',
     bodyHtml: [
-      p(`Merhaba ${escapeHtml(params.name)}, eşleşme talebinizi aldık. Uygun geliştiricilerle bağlantı için sizi bilgilendireceğiz.`),
+      p(
+        `Merhaba ${escapeHtml(params.name)}, eşleşme talebinizi aldık. Uygun geliştiricilerle bağlantı için sizi bilgilendireceğiz.`
+      ),
       params.requestId != null
-        ? p(`Talep no: <strong style="color:${COLORS.text};">#${params.requestId}</strong>`)
+        ? detailCard([
+            {
+              label: 'Talep no',
+              valueHtml: strong(`#${params.requestId}`),
+            },
+          ])
         : '',
-      p(`<strong style="color:${COLORS.text};">İhtiyacınız</strong><br />${escapeHtml(params.need).replace(/\n/g, '<br />')}`),
+      quoteBlock('İhtiyacınız', escapeHtml(params.need).replace(/\n/g, '<br />')),
     ].join(''),
     cta: { href: requests, label: 'Taleplerimi gör' },
   });
@@ -359,15 +511,21 @@ export function matchTeamEmail(params: {
 }) {
   const html = renderBrandEmail({
     preheader: `Eşleşme: ${params.name}`,
-    eyebrow: 'Ekip bildirimi',
+    eyebrow: 'Ekip',
     title: 'Yeni eşleşme talebi',
     bodyHtml: [
-      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-        ${detailRow('Kullanıcı', escapeHtml(params.name))}
-        ${detailRow('E-posta', escapeHtml(params.email || '(belirtilmedi)'))}
-        ${detailRow('Talep ID', escapeHtml(String(params.requestId ?? '-')))}
-      </table>`,
-      p(`<strong style="color:${COLORS.text};">İhtiyaç</strong><br />${escapeHtml(params.need).replace(/\n/g, '<br />')}`),
+      detailCard([
+        { label: 'Kullanıcı', valueHtml: strong(escapeHtml(params.name)) },
+        {
+          label: 'E-posta',
+          valueHtml: escapeHtml(params.email || '(belirtilmedi)'),
+        },
+        {
+          label: 'Talep ID',
+          valueHtml: escapeHtml(String(params.requestId ?? '-')),
+        },
+      ]),
+      quoteBlock('İhtiyaç', escapeHtml(params.need).replace(/\n/g, '<br />')),
     ].join(''),
   });
 
