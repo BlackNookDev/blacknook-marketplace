@@ -1,7 +1,7 @@
 # BlackNOOK Marketplace — Docker Compose
 #
-# Lokal / NPM: app → 127.0.0.1:18080, pgadmin → 127.0.0.1:18081
-# Coolify: domain'i servis portlarına bağla (app:3000, pgadmin:80)
+# Lokal / NPM: app → 127.0.0.1:18080, pgadmin → 127.0.0.1:18081 (sadece localhost)
+# Coolify: domain sadece app:3000 — pgAdmin’e public domain ATAMA
 #
 # PostgreSQL host'a publish EDİLMEZ.
 
@@ -86,10 +86,12 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
       - blacknook_marketplace_pgadmin_data:/var/lib/pgadmin
+    # Sadece host localhost — dış dünyaya / Coolify domain’e açma
     ports:
       - '127.0.0.1:${PGADMIN_PORT:-18081}:80'
-    expose:
-      - '80'
+    labels:
+      - traefik.enable=false
+      - coolify.managed=true
     networks:
       - blacknook_marketplace_internal
 
