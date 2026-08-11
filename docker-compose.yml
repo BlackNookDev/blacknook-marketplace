@@ -1,15 +1,13 @@
 # BlackNOOK Marketplace — Docker Compose
 #
-# Deploy: bu makinede build + Nginx Proxy Manager ile domain bağla.
-#   app     → blacknook.com          → 127.0.0.1:18080 (container 3000)
-#   pgadmin → db.blacknook.com       → 127.0.0.1:18081 (container 80)
+# Lokal / NPM: app → 127.0.0.1:18080, pgadmin → 127.0.0.1:18081
+# Coolify: domain'i servis portlarına bağla (app:3000, pgadmin:80)
 #
-# PostgreSQL host'a publish EDİLMEZ — yerel Postgres ile karışmaz.
+# PostgreSQL host'a publish EDİLMEZ.
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: blacknook-marketplace-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
@@ -18,15 +16,16 @@ services:
     volumes:
       - blacknook_marketplace_postgres_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    # Coolify ilk boot'ta schema init sırasında kısa süre ready olmayabilir;
+    # start_period düşük olursa depends_on "unhealthy" deyip deploy düşer.
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1']
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
+      retries: 30
+      start_period: 60s
     networks:
       - blacknook_marketplace_internal
-    # Bilinçli: ports yok — makinedeki 5432'ye bağlanmaz / karışmaz
 
   app:
     build:
@@ -35,7 +34,6 @@ services:
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_OAUTH: ${NEXT_PUBLIC_GOOGLE_OAUTH:-}
-    container_name: blacknook-marketplace-app
     restart: unless-stopped
     depends_on:
       postgres:
@@ -65,18 +63,19 @@ services:
       SMTP_FROM: ${SMTP_FROM:-BlackNOOK <noreply@blacknook.com>}
     ports:
       - '127.0.0.1:${APP_PORT:-18080}:3000'
+    expose:
+      - '3000'
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/']
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 60s
     networks:
       - blacknook_marketplace_internal
 
   pgadmin:
     image: dpage/pgadmin4:8
-    container_name: blacknook-marketplace-pgadmin
     restart: unless-stopped
     depends_on:
       postgres:
@@ -89,16 +88,15 @@ services:
       - blacknook_marketplace_pgadmin_data:/var/lib/pgadmin
     ports:
       - '127.0.0.1:${PGADMIN_PORT:-18081}:80'
+    expose:
+      - '80'
     networks:
       - blacknook_marketplace_internal
 
 volumes:
   blacknook_marketplace_postgres_data:
-    name: blacknook_marketplace_postgres_data
   blacknook_marketplace_pgadmin_data:
-    name: blacknook_marketplace_pgadmin_data
 
 networks:
   blacknook_marketplace_internal:
-    name: blacknook_marketplace_internal
     driver: bridge
