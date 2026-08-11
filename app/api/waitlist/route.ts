@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { escapeHtml, sendPlatformEmail } from '@/lib/mail';
+import { waitlistConfirmEmail, waitlistTeamEmail } from '@/lib/emailTemplates';
+import { getPlatformMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,18 +25,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const mailResult = await sendPlatformEmail({
-      subject: `Waitlist: ${email}`,
-      replyTo: email,
-      text: [`Yeni waitlist kaydı: ${email}`, '', 'Kaynak: Ana sayfa hero formu'].join('\n'),
-      html: `<p><strong>Yeni waitlist kaydı:</strong> ${escapeHtml(email)}</p><p>Kaynak: Ana sayfa hero formu</p>`,
-    });
-
-    if (!mailResult.ok) {
-      console.warn('[waitlist] SMTP bildirimi gönderilemedi:', mailResult.error);
+    const userMail = waitlistConfirmEmail({ email });
+    const userResult = await sendUserEmail({ to: email, ...userMail });
+    if (!userResult.ok) {
+      console.warn('[waitlist] Kullanıcı onay maili gönderilemedi:', userResult.error);
     }
 
-    return NextResponse.json({ ok: true });
+    const teamMail = waitlistTeamEmail({ email });
+    const teamResult = await sendPlatformEmail({
+      to: getPlatformMailTo(),
+      replyTo: email,
+      ...teamMail,
+    });
+    if (!teamResult.ok) {
+      console.warn('[waitlist] Ekip bildirimi gönderilemedi:', teamResult.error);
+    }
+
+    return NextResponse.json({ ok: true, mailed: userResult.ok });
   } catch (error) {
     console.error('[waitlist] Beklenmeyen hata:', error);
     return NextResponse.json({ error: 'Kayıt alınamadı. Lütfen tekrar deneyin.' }, { status: 500 });

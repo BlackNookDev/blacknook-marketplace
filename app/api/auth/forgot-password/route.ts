@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { normalizeEmail } from '@/lib/authUrl';
-import { escapeHtml, sendPlatformEmail } from '@/lib/mail';
+import { passwordResetEmail } from '@/lib/emailTemplates';
+import { sendUserEmail } from '@/lib/mail';
 import { createResetToken, getAppBaseUrl } from '@/lib/passwordReset';
 
 export const dynamic = 'force-dynamic';
@@ -46,25 +47,8 @@ export async function POST(req: NextRequest) {
     );
 
     const resetUrl = `${getAppBaseUrl()}/reset-password?token=${encodeURIComponent(token)}`;
-
-    const mailResult = await sendPlatformEmail({
-      to: user.email,
-      subject: 'Blacknook şifre sıfırlama',
-      text: [
-        `Merhaba${user.name ? ` ${user.name}` : ''},`,
-        '',
-        'Şifrenizi sıfırlamak için aşağıdaki bağlantıyı kullanın (1 saat geçerli):',
-        resetUrl,
-        '',
-        'Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz.',
-      ].join('\n'),
-      html: `
-        <p>Merhaba${user.name ? ` ${escapeHtml(String(user.name))}` : ''},</p>
-        <p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın. Bağlantı <strong>1 saat</strong> geçerlidir.</p>
-        <p><a href="${escapeHtml(resetUrl)}">Şifremi sıfırla</a></p>
-        <p style="color:#71717a;font-size:13px;">İstek sizden gelmediyse bu e-postayı yok sayın.</p>
-      `,
-    });
+    const mail = passwordResetEmail({ name: user.name, resetUrl });
+    const mailResult = await sendUserEmail({ to: user.email, ...mail });
 
     if (!mailResult.ok) {
       console.error('[forgot-password] SMTP hatası:', mailResult.error, 'resetUrl=', resetUrl);

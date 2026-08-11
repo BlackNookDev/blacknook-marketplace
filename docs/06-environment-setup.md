@@ -92,19 +92,37 @@ http://localhost:3000
 | `DB_SSL` | ⬜ | `true` remote, `false` lokal |
 | `NEXTAUTH_SECRET` | ✅ | Session şifreleme |
 | `NEXTAUTH_URL` | ✅ | `http://localhost:3000` veya prod URL |
-| `SMTP_HOST` | Kurulum talebi için | Mail sunucusu |
+| `SMTP_HOST` | Mail için | `smtp.gmail.com` (Gmail App Password) |
 | `SMTP_PORT` | ⬜ | Varsayılan `587` |
 | `SMTP_SECURE` | ⬜ | `true` port 465 için |
-| `SMTP_USER` | Kurulum talebi için | SMTP kullanıcı |
-| `SMTP_PASSWORD` | Kurulum talebi için | SMTP şifre |
-| `SMTP_FROM` | ⬜ | Gönderen adresi |
+| `SMTP_USER` | Mail için | Gmail adresi |
+| `SMTP_PASSWORD` | Mail için | 16 haneli **uygulama şifresi** (normal şifre değil) |
+| `SMTP_FROM` | ⬜ | `Blacknook <aynı@gmail.com>` |
 | `INSTALLATION_REQUEST_TO` | ⬜ | Varsayılan `dev@blacknook.com` |
+| `MATCH_REQUEST_TO` | ⬜ | Varsayılan `contact@blacknook.com` |
 | `GOOGLE_CLIENT_ID` | ⬜ | OAuth |
 | `GOOGLE_CLIENT_SECRET` | ⬜ | OAuth |
 | `GITHUB_CLIENT_ID` | ⬜ | OAuth |
 | `GITHUB_CLIENT_SECRET` | ⬜ | OAuth |
 
-SMTP tanımlı değilse kurulum talebi `503` döner — auth yine çalışır.
+SMTP tanımlı değilse kurulum talebi `503` döner; kayıt yine tamamlanır (hoş geldin maili log’a düşer).
+
+### Gmail ile gönderme (önerilen basit yol)
+
+1. Google Hesabı → **Güvenlik** → **2 Adımlı Doğrulama** açık olsun  
+2. **Uygulama şifreleri** → Mail → 16 haneli şifre üret  
+3. `.env` içinde:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your@gmail.com
+SMTP_PASSWORD=xxxx xxxx xxxx xxxx
+SMTP_FROM="Blacknook <your@gmail.com>"
+```
+
+Gmail’de `SMTP_FROM` adresi `SMTP_USER` ile aynı hesap olmalı. Değişiklikten sonra container’ı yeniden başlatın.
 
 ---
 

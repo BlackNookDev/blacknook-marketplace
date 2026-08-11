@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
+import { passwordChangedEmail } from '@/lib/emailTemplates';
+import { sendUserEmail } from '@/lib/mail';
 import { hashResetToken } from '@/lib/passwordReset';
 
 export const dynamic = 'force-dynamic';
@@ -55,6 +57,23 @@ export async function POST(req: NextRequest) {
        WHERE user_id = ? AND used_at IS NULL`,
       [row.user_id]
     );
+
+    try {
+      const [users]: any = await pool.query(
+        'SELECT name, email FROM users WHERE id = ? LIMIT 1',
+        [row.user_id]
+      );
+      const user = users?.[0];
+      if (user?.email) {
+        const mail = passwordChangedEmail({ name: user.name });
+        const mailResult = await sendUserEmail({ to: user.email, ...mail });
+        if (!mailResult.ok) {
+          console.warn('[reset-password] Bildirim maili gönderilemedi:', mailResult.error);
+        }
+      }
+    } catch (mailError) {
+      console.warn('[reset-password] Bildirim maili hatası:', mailError);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

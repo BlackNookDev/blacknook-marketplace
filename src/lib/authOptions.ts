@@ -28,26 +28,33 @@ async function ensureOAuthUser(params: {
     email,
   ]);
   if (rows[0]) {
-    return { id: Number(rows[0].id), role: rows[0].role as string };
+    return { id: Number(rows[0].id), role: rows[0].role as string, created: false };
   }
 
   const role = params.role === 'vendor' ? 'vendor' : 'user';
+  const name = params.name?.trim() || email.split('@')[0];
   const placeholderPassword = await bcrypt.hash(
     `oauth:${email}:${getAuthSecret()}`,
     12
   );
   const [result]: any = await pool.query(
     'INSERT INTO users (name, email, password, role, avatar) VALUES (?, ?, ?, ?, ?)',
-    [
-      params.name?.trim() || email.split('@')[0],
-      email,
-      placeholderPassword,
-      role,
-      params.image ?? null,
-    ]
+    [name, email, placeholderPassword, role, params.image ?? null]
   );
 
-  return { id: Number(result.insertId), role };
+  try {
+    const { welcomeRegisterEmail } = await import('./emailTemplates');
+    const { sendUserEmail } = await import('./mail');
+    const welcome = welcomeRegisterEmail({ name, email });
+    const mailResult = await sendUserEmail({ to: email, ...welcome });
+    if (!mailResult.ok) {
+      console.warn('[oauth] Hoş geldin maili gönderilemedi:', mailResult.error);
+    }
+  } catch (mailError) {
+    console.warn('[oauth] Hoş geldin maili hatası:', mailError);
+  }
+
+  return { id: Number(result.insertId), role, created: true };
 }
 
 const providers: AuthOptions['providers'] = [

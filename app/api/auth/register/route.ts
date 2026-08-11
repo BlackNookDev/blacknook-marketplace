@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
 import { normalizeEmail } from '@/lib/authUrl';
+import { welcomeRegisterEmail } from '@/lib/emailTemplates';
+import { sendUserEmail } from '@/lib/mail';
 
 const ALLOWED_ROLES = new Set(['user', 'vendor']);
 
@@ -42,7 +44,16 @@ export async function POST(req: NextRequest) {
       [name, email, hashedPassword, role]
     );
 
-    return NextResponse.json({ id: result.insertId, name, email, role }, { status: 201 });
+    const welcome = welcomeRegisterEmail({ name, email });
+    const mailResult = await sendUserEmail({ to: email, ...welcome });
+    if (!mailResult.ok) {
+      console.warn('[register] Hoş geldin maili gönderilemedi:', mailResult.error);
+    }
+
+    return NextResponse.json(
+      { id: result.insertId, name, email, role, mailed: mailResult.ok },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Kayıt hatası:', error);
     return NextResponse.json({ error: 'Kayıt sırasında bir hata oluştu.' }, { status: 500 });

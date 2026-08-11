@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { escapeHtml, sendPlatformEmail } from '@/lib/mail';
+import { installationTeamEmail, installationUserEmail } from '@/lib/emailTemplates';
+import { getPlatformMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,33 +26,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Geçerli bir e-posta adresi girin.' }, { status: 400 });
     }
 
-    const mailResult = await sendPlatformEmail({
-      subject: `Kurulum talebi: ${serviceName}`,
-      replyTo: fromEmail,
-      text: [
-        `Servis: ${serviceName} (${serviceSlug})`,
-        `Şirket: ${company}`,
-        `İletişim e-postası: ${fromEmail}`,
-        '',
-        'Talep detayı:',
-        reqText,
-      ].join('\n'),
-      html: `
-        <p><strong>Servis:</strong> ${escapeHtml(serviceName)} (<code>${escapeHtml(serviceSlug)}</code>)</p>
-        <p><strong>Şirket:</strong> ${escapeHtml(company)}</p>
-        <p><strong>E-posta:</strong> ${escapeHtml(fromEmail)}</p>
-        <hr />
-        <p><strong>Talep detayı:</strong></p>
-        <p>${escapeHtml(reqText).replace(/\n/g, '<br />')}</p>
-      `,
+    const teamMail = installationTeamEmail({
+      serviceName,
+      serviceSlug,
+      companyName: company,
+      email: fromEmail,
+      requirements: reqText,
     });
 
-    if (!mailResult.ok) {
+    const teamResult = await sendPlatformEmail({
+      to: getPlatformMailTo(),
+      replyTo: fromEmail,
+      ...teamMail,
+    });
+
+    if (!teamResult.ok) {
       console.error('[installation-request] SMTP yapılandırması eksik.');
-      return NextResponse.json({ error: mailResult.error }, { status: 503 });
+      return NextResponse.json({ error: teamResult.error }, { status: 503 });
     }
 
-    return NextResponse.json({ ok: true });
+    const userMail = installationUserEmail({
+      serviceName,
+      serviceSlug,
+      companyName: company,
+      requirements: reqText,
+    });
+    const userResult = await sendUserEmail({ to: fromEmail, ...userMail });
+    if (!userResult.ok) {
+      console.warn('[installation-request] Kullanıcı onay maili gönderilemedi:', userResult.error);
+    }
+
+    return NextResponse.json({ ok: true, mailed: userResult.ok });
   } catch (error) {
     console.error('Kurulum talebi e-posta hatası:', error);
     return NextResponse.json(

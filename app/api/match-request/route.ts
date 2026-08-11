@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import pool from '@/lib/db';
-import { escapeHtml, sendPlatformEmail } from '@/lib/mail';
-
-const MATCH_MAIL_TO =
-  process.env.MATCH_REQUEST_TO?.trim() || 'contact@blacknook.com';
+import { matchTeamEmail, matchUserEmail } from '@/lib/emailTemplates';
+import { getMatchMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -120,37 +118,36 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const mailResult = await sendPlatformEmail({
-      to: MATCH_MAIL_TO,
-      subject: `Geliştirici eşleşme talebi: ${name}`,
+    const teamMail = matchTeamEmail({
+      name,
+      email,
+      need,
+      requestId: insertId,
+    });
+    const teamResult = await sendPlatformEmail({
+      to: getMatchMailTo(),
       replyTo: email || undefined,
-      text: [
-        `Kullanıcı: ${name}`,
-        `E-posta: ${email || '(belirtilmedi)'}`,
-        `Talep ID: ${insertId ?? '-'}`,
-        '',
-        'İhtiyaç:',
-        need,
-      ].join('\n'),
-      html: `
-        <p><strong>Kullanıcı:</strong> ${escapeHtml(name)}</p>
-        <p><strong>E-posta:</strong> ${escapeHtml(email || '(belirtilmedi)')}</p>
-        <p><strong>Talep ID:</strong> ${escapeHtml(String(insertId ?? '-'))}</p>
-        <hr />
-        <p><strong>İhtiyaç:</strong></p>
-        <p>${escapeHtml(need).replace(/\n/g, '<br />')}</p>
-      `,
+      ...teamMail,
     });
 
-    if (!mailResult.ok) {
-      // Talep profilde görünsün; mail altyapısı sonra tamamlanabilir
-      console.error('[match-request] SMTP hatası (talep DB’de):', mailResult.error);
+    if (!teamResult.ok) {
+      console.error('[match-request] Ekip SMTP hatası (talep DB’de):', teamResult.error);
+    }
+
+    let userMailed = false;
+    if (email) {
+      const userMail = matchUserEmail({ name, need, requestId: insertId });
+      const userResult = await sendUserEmail({ to: email, ...userMail });
+      userMailed = userResult.ok;
+      if (!userResult.ok) {
+        console.warn('[match-request] Kullanıcı onay maili gönderilemedi:', userResult.error);
+      }
     }
 
     return NextResponse.json({
       ok: true,
       id: insertId,
-      mailed: mailResult.ok,
+      mailed: teamResult.ok || userMailed,
     });
   } catch (error) {
     console.error('[match-request] Hata:', error);
