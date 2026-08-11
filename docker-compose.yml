@@ -16,14 +16,18 @@ services:
     volumes:
       - blacknook_marketplace_postgres_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-    # Coolify ilk boot'ta schema init sırasında kısa süre ready olmayabilir;
-    # start_period düşük olursa depends_on "unhealthy" deyip deploy düşer.
+    # Coolify $${VAR} / start_period race yüzünden service_healthy kullanmıyoruz.
+    # Healthcheck sadece izleme; deploy app entrypoint ile DB bekler.
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1']
-      interval: 5s
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-blacknook} || exit 1',
+        ]
+      interval: 10s
       timeout: 5s
-      retries: 30
-      start_period: 60s
+      retries: 10
+      start_period: 40s
     networks:
       - blacknook_marketplace_internal
 
@@ -35,9 +39,9 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_OAUTH: ${NEXT_PUBLIC_GOOGLE_OAUTH:-}
     restart: unless-stopped
+    # service_healthy Coolify'de race ile düşüyor; entrypoint.sh zaten pg_isready bekliyor
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -78,8 +82,7 @@ services:
     image: dpage/pgadmin4:8
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@blacknook.com}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?PGADMIN_DEFAULT_PASSWORD is required}
@@ -91,7 +94,6 @@ services:
       - '127.0.0.1:${PGADMIN_PORT:-18081}:80'
     labels:
       - traefik.enable=false
-      - coolify.managed=true
     networks:
       - blacknook_marketplace_internal
 
