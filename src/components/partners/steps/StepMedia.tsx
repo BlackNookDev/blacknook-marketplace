@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus, Trash2 } from 'lucide-react';
 import { charHint, type ListingDraft } from '@/lib/listingDraft';
 import ImageUploadField from '@/components/partners/ImageUploadField';
 
@@ -12,27 +13,35 @@ type Props = {
 };
 
 export default function StepMedia({ draft, update }: Props) {
+  const shots = Math.max(draft.screenshotData.length, draft.screenshotAlts.length, 1);
+  const screenshotData = pad(draft.screenshotData, shots);
+  const screenshotAlts = pad(draft.screenshotAlts, shots);
+  const screenshotNotes = pad(draft.screenshotNotes, shots);
+
+  const setShots = (data: string[], alts: string[], notes: string[]) => {
+    update({ screenshotData: data, screenshotAlts: alts, screenshotNotes: notes });
+  };
+
   return (
     <div className="space-y-8">
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Medya</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Şirket ikonu, wordmark, hero ve ürün ekran görüntülerini yükleyin. Dosyalar bu tarayıcıda
-          taslak olarak saklanır.
+          Logo, kapak ve ürün ekran görüntülerini yükleyin. Dosyalar sunucuya kaydedilir.
         </p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <ImageUploadField
-          label="Şirket ikonu"
-          help="Kare, 512×512 önerilir. Yalnızca logo markası."
+          label="Ürün ikonu"
+          help="Kare, 512×512 önerilir. Yalnızca logo."
           value={draft.companyIconData}
           onChange={(companyIconData) => update({ companyIconData })}
           aspectClass="aspect-square max-h-56"
         />
         <ImageUploadField
-          label="Wordmark (opsiyonel)"
-          help="Yatay logo + isim."
+          label="Yatay logo (opsiyonel)"
+          help="Logo + ürün adı yan yana."
           value={draft.wordmarkData}
           onChange={(wordmarkData) => update({ wordmarkData })}
           aspectClass="aspect-[2.4/1] max-h-40"
@@ -41,8 +50,8 @@ export default function StepMedia({ draft, update }: Props) {
 
       <div>
         <ImageUploadField
-          label="Hero görsel"
-          help="16:9, temiz ürün arayüzü. Cihaz çerçevesi ve ağır yazı katmanı olmasın."
+          label="Kapak görseli"
+          help="16:9, temiz ürün arayüzü. Ağır yazı katmanı olmasın."
           value={draft.heroImageData}
           onChange={(heroImageData) => update({ heroImageData })}
           aspectClass="aspect-video"
@@ -50,7 +59,7 @@ export default function StepMedia({ draft, update }: Props) {
         <div className="mt-3">
           <div className="mb-2 flex items-baseline justify-between gap-2">
             <label htmlFor="hero-alt" className="text-xs text-zinc-500">
-              Hero alt metin
+              Kapak görseli açıklaması
             </label>
             <span className="text-[11px] text-zinc-600">{charHint(draft.heroAlt.length, 255)}</span>
           </div>
@@ -66,33 +75,66 @@ export default function StepMedia({ draft, update }: Props) {
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-medium text-zinc-300">Ürün ekran görüntüleri (4)</p>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-sm font-medium text-zinc-300">Ürün ekran görüntüleri</p>
+          {shots < 8 ? (
+            <button
+              type="button"
+              onClick={() =>
+                setShots([...screenshotData, ''], [...screenshotAlts, ''], [...screenshotNotes, ''])
+              }
+              className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
+            >
+              <Plus className="h-3.5 w-3.5" aria-hidden />
+              Görsel ekle
+            </button>
+          ) : null}
+        </div>
         <p className="mb-4 text-xs text-zinc-600">
-          Her görsel bir özellik hikayesine denk gelsin. Onay için dört görsel hedeflenir.
+          En fazla 8 görsel. Her görsel bir özelliği göstersin.
         </p>
         <div className="grid gap-6 sm:grid-cols-2">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="space-y-3">
+          {screenshotData.map((value, i) => (
+            <div key={`shot-${i}`} className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-zinc-300">Ekran {i + 1}</p>
+                {shots > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShots(
+                        screenshotData.filter((_, idx) => idx !== i),
+                        screenshotAlts.filter((_, idx) => idx !== i),
+                        screenshotNotes.filter((_, idx) => idx !== i)
+                      )
+                    }
+                    className="inline-flex items-center gap-1 text-xs font-medium text-rose-300 hover:text-rose-200"
+                    aria-label={`Ekran ${i + 1} alanını kaldır`}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                    Sil
+                  </button>
+                ) : null}
+              </div>
               <ImageUploadField
-                label={`Ekran ${i + 1}`}
-                value={draft.screenshotData[i] || ''}
+                label=""
+                value={value}
                 onChange={(dataUrl) => {
-                  const screenshotData = [...(draft.screenshotData || ['', '', '', ''])];
-                  while (screenshotData.length < 4) screenshotData.push('');
-                  screenshotData[i] = dataUrl;
-                  update({ screenshotData });
+                  const next = [...screenshotData];
+                  next[i] = dataUrl;
+                  setShots(next, screenshotAlts, screenshotNotes);
                 }}
                 aspectClass="aspect-video"
               />
               <input
-                value={draft.screenshotAlts[i] || ''}
+                value={screenshotAlts[i] || ''}
                 onChange={(e) => {
-                  const screenshotAlts = [...draft.screenshotAlts];
-                  screenshotAlts[i] = e.target.value;
-                  update({ screenshotAlts });
+                  const next = [...screenshotAlts];
+                  next[i] = e.target.value;
+                  setShots(screenshotData, next, screenshotNotes);
                 }}
                 className={field}
-                placeholder={`Alt metin ${i + 1}`}
+                placeholder="Kısa açıklama (alt metin)"
                 maxLength={255}
               />
             </div>
@@ -101,4 +143,10 @@ export default function StepMedia({ draft, update }: Props) {
       </div>
     </div>
   );
+}
+
+function pad(list: string[] | undefined, length: number) {
+  const next = [...(list || [])];
+  while (next.length < length) next.push('');
+  return next.slice(0, length);
 }

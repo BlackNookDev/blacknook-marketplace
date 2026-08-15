@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 import { charHint, LISTING_CATEGORIES, type ListingDraft } from '@/lib/listingDraft';
 
 const field =
@@ -10,12 +11,14 @@ type Props = {
 };
 
 export default function StepBasic({ draft, update }: Props) {
+  const highlights = draft.tldr.length ? draft.tldr : [''];
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Temel bilgiler</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Alıcının ilk gördüğü satırlar. Sonuç odaklı yazın; slogan değil arama dili.
+          Alıcının ilk gördüğü satırlar. Ne işe yaradığını net ve somut yazın.
         </p>
       </div>
 
@@ -30,7 +33,7 @@ export default function StepBasic({ draft, update }: Props) {
           value={draft.productName}
           onChange={(e) => update({ productName: e.target.value })}
           className={field}
-          placeholder="Laneflow"
+          placeholder="Örn. Görev paneli"
         />
       </Field>
 
@@ -50,10 +53,10 @@ export default function StepBasic({ draft, update }: Props) {
       </Field>
 
       <Field
-        label="Tagline"
+        label="Kısa açıklama"
         hint={charHint(draft.tagline.length, 100)}
         htmlFor="tagline"
-        help="SEO satırı: alıcının arayacağı kelimelerle başlayın."
+        help="Tek cümle: ürün kimin için, hangi sorunu çözer."
       >
         <input
           id="tagline"
@@ -61,15 +64,15 @@ export default function StepBasic({ draft, update }: Props) {
           value={draft.tagline}
           onChange={(e) => update({ tagline: e.target.value })}
           className={field}
-          placeholder="Ajanslar için retainer takibi"
+          placeholder="Örn. Ajanslar için görev ve fatura takibi"
         />
       </Field>
 
       <Field
-        label="İkincil tagline"
+        label="Alt başlık"
         hint={charHint(draft.secondaryTagline.length, 140)}
         htmlFor="secondary"
-        help="Kısa CTA, yaklaşık 5–8 kelime."
+        help="İsteğe bağlı ikinci cümle veya kısa çağrı."
       >
         <input
           id="secondary"
@@ -77,15 +80,15 @@ export default function StepBasic({ draft, update }: Props) {
           value={draft.secondaryTagline}
           onChange={(e) => update({ secondaryTagline: e.target.value })}
           className={field}
-          placeholder="Her retainer’ı anlık görün"
+          placeholder="Örn. Tüm işleri tek ekrandan yönetin"
         />
       </Field>
 
       <Field
-        label="Benzersiz satış önerisi (USP)"
+        label="Neden sizi tercih etmeliler?"
         hint={charHint(draft.usp.length, 255)}
         htmlFor="usp"
-        help="Neden alternatiften daha iyi? 30–255 karakter."
+        help="Rakiplerden farkınızı 2–3 cümlede anlatın."
       >
         <textarea
           id="usp"
@@ -94,25 +97,53 @@ export default function StepBasic({ draft, update }: Props) {
           value={draft.usp}
           onChange={(e) => update({ usp: e.target.value })}
           className="w-full resize-none rounded-xl border border-white/15 bg-transparent px-4 py-3 text-sm text-zinc-100 outline-none focus:border-white/30 focus:ring-2 focus:ring-white/10"
+          placeholder="Örn. Self-host kurulum, tek tık yedekleme ve Türkçe destek."
         />
       </Field>
 
       <div>
-        <p className="mb-2 text-sm font-medium text-zinc-300">TL;DR (tam 2 madde)</p>
-        {[0, 1].map((i) => (
-          <input
-            key={i}
-            maxLength={128}
-            value={draft.tldr[i]}
-            onChange={(e) => {
-              const next: [string, string] = [...draft.tldr];
-              next[i] = e.target.value;
-              update({ tldr: next });
-            }}
-            className={`${field} mb-2`}
-            placeholder={i === 0 ? 'Fiille başlayan somut madde' : 'İkinci somut madde'}
-          />
-        ))}
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-sm font-medium text-zinc-300">Öne çıkan faydalar</p>
+          {highlights.length < 4 ? (
+            <button
+              type="button"
+              onClick={() => update({ tldr: [...highlights, ''] })}
+              className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
+            >
+              <Plus className="h-3.5 w-3.5" aria-hidden />
+              Madde ekle
+            </button>
+          ) : null}
+        </div>
+        <p className="mb-3 text-xs text-zinc-600">1–4 kısa madde. Alıcının hemen görmesini istediğiniz sonuçlar.</p>
+        <div className="space-y-2">
+          {highlights.map((item, i) => (
+            <div key={`tldr-${i}`} className="flex gap-2">
+              <input
+                maxLength={128}
+                value={item}
+                onChange={(e) => {
+                  const next = [...highlights];
+                  next[i] = e.target.value;
+                  update({ tldr: next });
+                }}
+                className={field}
+                placeholder={i === 0 ? 'Örn. Dakikalar içinde kendi sunucunuza kurun' : 'Somut bir fayda yazın'}
+              />
+              {highlights.length > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => update({ tldr: highlights.filter((_, idx) => idx !== i) })}
+                  className="inline-flex h-11 shrink-0 items-center gap-1 rounded-xl border border-white/10 px-3 text-xs font-medium text-rose-300 hover:bg-rose-500/10"
+                  aria-label={`Fayda ${i + 1} maddesini kaldır`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                  Sil
+                </button>
+              ) : null}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-3">
@@ -125,7 +156,7 @@ export default function StepBasic({ draft, update }: Props) {
             placeholder="Asana, Monday"
           />
         </Field>
-        <Field label="Entegrasyonlar" htmlFor="int" help="En fazla 4.">
+        <Field label="Entegrasyonlar" htmlFor="int" help="En fazla 4, virgülle.">
           <input
             id="int"
             value={draft.integrations}
@@ -134,7 +165,7 @@ export default function StepBasic({ draft, update }: Props) {
             placeholder="Slack, Stripe"
           />
         </Field>
-        <Field label="Kimler için" htmlFor="best" help="En fazla 3.">
+        <Field label="Kimler için" htmlFor="best" help="En fazla 3, virgülle.">
           <input
             id="best"
             value={draft.bestFor}

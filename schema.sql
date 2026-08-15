@@ -153,3 +153,10 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user
 
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires
   ON password_reset_tokens (expires_at);
+
+-- Partner ürün formu taslağı (hesaba bağlı)
+CREATE TABLE IF NOT EXISTS listing_drafts (
+  user_id     INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  data        JSONB NOT NULL,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

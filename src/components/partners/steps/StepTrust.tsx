@@ -14,16 +14,16 @@ export default function StepTrust({ draft, update }: Props) {
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Güven sinyalleri</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Doğrulama URL’leri. Gerçek linklerinizi yapıştırın; uydurulmuş adres kullanmayın.
+          Alıcının doğrulayabileceği gerçek bağlantılar ekleyin. Hepsi isteğe bağlıdır; ürün sitesi önerilir.
         </p>
       </div>
 
       {(
         [
           ['websiteUrl', 'Ürün / şirket sitesi', 'https://'],
-          ['g2Url', 'G2 (opsiyonel)', 'https://www.g2.com/...'],
-          ['capterraUrl', 'Capterra (opsiyonel)', 'https://www.capterra.com/...'],
-          ['stripeArrUrl', 'Stripe ARR / gelir kanıtı (opsiyonel)', 'https://'],
+          ['g2Url', 'G2 profili (opsiyonel)', 'https://www.g2.com/...'],
+          ['capterraUrl', 'Capterra profili (opsiyonel)', 'https://www.capterra.com/...'],
+          ['stripeArrUrl', 'Gelir veya doğrulama linki (opsiyonel)', 'https://'],
         ] as const
       ).map(([key, label, ph]) => (
         <div key={key}>

@@ -5,7 +5,7 @@ import { ImagePlus, Loader2, Trash2 } from 'lucide-react';
 import { apiFetch } from '@/lib/apiUrl';
 
 type Props = {
-  label: string;
+  label?: string;
   help?: string;
   value: string;
   onChange: (dataUrl: string) => void;
@@ -54,7 +54,7 @@ export default function ImageUploadField({
 
   return (
     <div>
-      <p className="mb-2 text-sm font-medium text-zinc-300">{label}</p>
+      {label ? <p className="mb-2 text-sm font-medium text-zinc-300">{label}</p> : null}
       {help ? <p className="mb-3 text-xs text-zinc-600">{help}</p> : null}
 
       {value ? (

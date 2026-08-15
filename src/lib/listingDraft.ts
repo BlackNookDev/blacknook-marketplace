@@ -1,7 +1,4 @@
-/** Partner ürün taslağı — localStorage demo */
-
-export const LISTING_EVENT = 'bn-listing-change';
-const DRAFT_KEY = 'bn_listing_draft';
+/** Partner ürün taslağı — hesap üzerinden veritabanında saklanır. */
 
 export type PricingModel = 'licensing' | 'codes';
 
@@ -40,7 +37,7 @@ export type ListingDraft = {
   tagline: string;
   secondaryTagline: string;
   usp: string;
-  tldr: [string, string];
+  tldr: string[];
   alternativeTo: string;
   integrations: string;
   bestFor: string;
@@ -118,8 +115,21 @@ export const LISTING_STEPS = [
 
 export type ListingStepId = (typeof LISTING_STEPS)[number]['id'];
 
-function uid(prefix: string) {
+const LEGACY_DRAFT_KEY = 'bn_listing_draft';
+
+export function listingUid(prefix: string) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function asStringList(value: unknown, fallback: string[]): string[] {
+  if (!Array.isArray(value)) return fallback;
+  return value.map((item) => String(item ?? ''));
+}
+
+function padTo(list: string[], length: number) {
+  const next = [...list];
+  while (next.length < length) next.push('');
+  return next.slice(0, length);
 }
 
 export function emptyListingDraft(): ListingDraft {
@@ -140,19 +150,13 @@ export function emptyListingDraft(): ListingDraft {
     heroImageNote: '',
     heroImageData: '',
     heroAlt: '',
-    screenshotNotes: ['', '', '', ''],
-    screenshotData: ['', '', '', ''],
-    screenshotAlts: ['', '', '', ''],
+    screenshotNotes: [''],
+    screenshotData: [''],
+    screenshotAlts: [''],
     featuresSectionHeader: '',
     stories: [
       {
-        id: uid('story'),
-        title: '',
-        bullets: ['', ''],
-        screenshotNote: '',
-      },
-      {
-        id: uid('story'),
+        id: listingUid('story'),
         title: '',
         bullets: ['', ''],
         screenshotNote: '',
@@ -160,18 +164,18 @@ export function emptyListingDraft(): ListingDraft {
     ],
     pricingModel: 'licensing',
     tiers: [
-      { id: uid('tier'), name: 'Solo', price: 49, recommended: false },
-      { id: uid('tier'), name: 'Pro', price: 99, recommended: true },
+      { id: listingUid('tier'), name: 'Başlangıç', price: 49, recommended: false },
+      { id: listingUid('tier'), name: 'Profesyonel', price: 99, recommended: true },
     ],
     matrix: [
       {
-        id: uid('row'),
+        id: listingUid('row'),
         label: 'Kullanıcı sayısı',
         values: ['1', '5'],
         inAllPlans: false,
       },
       {
-        id: uid('row'),
+        id: listingUid('row'),
         label: 'Projeler',
         values: ['3', 'Sınırsız'],
         inAllPlans: false,
@@ -192,50 +196,90 @@ export function emptyListingDraft(): ListingDraft {
     g2Url: '',
     capterraUrl: '',
     stripeArrUrl: '',
-    faqs: [
-      { id: uid('faq'), question: '', answer: '', linkLabel: '', linkUrl: '' },
-    ],
+    faqs: [{ id: listingUid('faq'), question: '', answer: '', linkLabel: '', linkUrl: '' }],
     updatedAt: new Date().toISOString(),
   };
 }
 
-export function getListingDraft(): ListingDraft {
-  if (typeof window === 'undefined') return emptyListingDraft();
+export function normalizeListingDraft(parsed?: Partial<ListingDraft> | null): ListingDraft {
+  const base = emptyListingDraft();
+  if (!parsed || typeof parsed !== 'object') return base;
+
+  const tldrRaw = asStringList(parsed.tldr, base.tldr).slice(0, 6);
+  const screenshotData = asStringList(parsed.screenshotData, ['']).slice(0, 8);
+  const shotCount = Math.max(screenshotData.length, 1);
+  const screenshotAlts = padTo(asStringList(parsed.screenshotAlts, ['']), shotCount).slice(0, 8);
+  const screenshotNotes = padTo(asStringList(parsed.screenshotNotes, ['']), shotCount).slice(0, 8);
+
+  const stories =
+    Array.isArray(parsed.stories) && parsed.stories.length
+      ? parsed.stories.slice(0, 6).map((story) => ({
+          id: String(story?.id || listingUid('story')),
+          title: String(story?.title ?? ''),
+          bullets:
+            Array.isArray(story?.bullets) && story.bullets.length
+              ? story.bullets.map((b) => String(b ?? '')).slice(0, 8)
+              : [''],
+          screenshotNote: String(story?.screenshotNote ?? ''),
+        }))
+      : base.stories;
+
+  const tiers =
+    Array.isArray(parsed.tiers) && parsed.tiers.length
+      ? parsed.tiers.slice(0, 5).map((tier) => ({
+          id: String(tier?.id || listingUid('tier')),
+          name: String(tier?.name ?? ''),
+          price: Number(tier?.price) || 0,
+          recommended: Boolean(tier?.recommended),
+        }))
+      : base.tiers;
+
+  const matrix =
+    Array.isArray(parsed.matrix) && parsed.matrix.length
+      ? parsed.matrix.slice(0, 20).map((row) => ({
+          id: String(row?.id || listingUid('row')),
+          label: String(row?.label ?? ''),
+          values: padTo(asStringList(row?.values, []), tiers.length),
+          inAllPlans: Boolean(row?.inAllPlans),
+        }))
+      : base.matrix.map((row) => ({ ...row, values: padTo(row.values, tiers.length) }));
+
+  const faqs =
+    Array.isArray(parsed.faqs) && parsed.faqs.length
+      ? parsed.faqs.slice(0, 12).map((faq) => ({
+          id: String(faq?.id || listingUid('faq')),
+          question: String(faq?.question ?? ''),
+          answer: String(faq?.answer ?? ''),
+          linkLabel: String(faq?.linkLabel ?? ''),
+          linkUrl: String(faq?.linkUrl ?? ''),
+        }))
+      : base.faqs;
+
+  return {
+    ...base,
+    ...parsed,
+    tldr: tldrRaw.length ? tldrRaw : [''],
+    screenshotData: padTo(screenshotData, shotCount),
+    screenshotAlts,
+    screenshotNotes,
+    stories,
+    tiers,
+    matrix,
+    faqs,
+    maxCodes: Math.min(20, Math.max(1, Number(parsed.maxCodes) || base.maxCodes)),
+    pricingModel: parsed.pricingModel === 'codes' ? 'codes' : 'licensing',
+    updatedAt: parsed.updatedAt || base.updatedAt,
+  };
+}
+
+/** Eski tarayıcı taslağını siler; yeni kayıtlar yalnızca veritabanındadır. */
+export function discardBrowserListingDraft() {
+  if (typeof window === 'undefined') return;
   try {
-    const raw = window.localStorage.getItem(DRAFT_KEY);
-    if (!raw) return emptyListingDraft();
-    const parsed = JSON.parse(raw) as Partial<ListingDraft>;
-    const base = emptyListingDraft();
-    return {
-      ...base,
-      ...parsed,
-      tldr: parsed.tldr ?? base.tldr,
-      screenshotNotes: parsed.screenshotNotes?.length ? parsed.screenshotNotes : base.screenshotNotes,
-      screenshotData: parsed.screenshotData?.length ? parsed.screenshotData : base.screenshotData,
-      screenshotAlts: parsed.screenshotAlts?.length ? parsed.screenshotAlts : base.screenshotAlts,
-      stories: parsed.stories?.length ? parsed.stories : base.stories,
-      tiers: parsed.tiers?.length ? parsed.tiers : base.tiers,
-      matrix: parsed.matrix?.length ? parsed.matrix : base.matrix,
-      faqs: parsed.faqs?.length ? parsed.faqs : base.faqs,
-      companyIconData: parsed.companyIconData ?? '',
-      wordmarkData: parsed.wordmarkData ?? '',
-      heroImageData: parsed.heroImageData ?? '',
-    };
+    window.localStorage.removeItem(LEGACY_DRAFT_KEY);
   } catch {
-    return emptyListingDraft();
+    /* yok say */
   }
-}
-
-export function saveListingDraft(draft: ListingDraft) {
-  const next = { ...draft, updatedAt: new Date().toISOString() };
-  window.localStorage.setItem(DRAFT_KEY, JSON.stringify(next));
-  window.dispatchEvent(new Event(LISTING_EVENT));
-  return next;
-}
-
-export function clearListingDraft() {
-  window.localStorage.removeItem(DRAFT_KEY);
-  window.dispatchEvent(new Event(LISTING_EVENT));
 }
 
 export function charHint(current: number, max: number) {

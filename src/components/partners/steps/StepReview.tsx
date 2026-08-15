@@ -3,29 +3,31 @@ import type { ListingDraft } from '@/lib/listingDraft';
 type Props = { draft: ListingDraft };
 
 export default function StepReview({ draft }: Props) {
+  const highlights = (draft.tldr || []).map((t) => t.trim()).filter(Boolean);
+
   return (
     <div className="space-y-8">
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Gözden geçir</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Göndermeden önce özeti kontrol edin. Taslak localStorage’da kalır; moderasyon paneline
-          ürün + başvuru düşer.
+          Göndermeden önce özeti kontrol edin. Taslak hesabınıza kaydedilir; gönderince admin onayına düşer.
         </p>
       </div>
 
       <Section title="Temel">
         <Row k="Ürün" v={draft.productName || '—'} />
         <Row k="Kategori" v={draft.category} />
-        <Row k="Tagline" v={draft.tagline || '—'} />
-        <Row k="USP" v={draft.usp || '—'} />
+        <Row k="Kısa açıklama" v={draft.tagline || '—'} />
+        <Row k="Neden tercih edilmeli" v={draft.usp || '—'} />
+        <Row k="Öne çıkan faydalar" v={highlights.length ? highlights.join(' · ') : '—'} />
       </Section>
 
       <Section title="Fiyat">
-        <Row k="Model" v={draft.pricingModel === 'codes' ? 'Codes' : 'Licensing'} />
+        <Row k="Model" v={draft.pricingModel === 'codes' ? 'Kullanım kodları' : 'Lisans planları'} />
         {draft.tiers.map((t) => (
           <Row
             key={t.id}
-            k={t.name}
+            k={t.name || 'Plansız'}
             v={`$${t.price}${t.recommended ? ' · önerilen' : ''}`}
           />
         ))}

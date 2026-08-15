@@ -20,7 +20,7 @@ export default function StepStory({ draft, update }: Props) {
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Ürün hikayesi</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Kurucu sesiyle, birinci şahıs. Dürüst ve somut; klişe başlangıç hikayesi değil.
+          Ürünü neden yaptığınızı ve kime hitap ettiğini kendi cümlelerinizle anlatın.
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export default function StepStory({ draft, update }: Props) {
           value={draft.founderNarrative}
           onChange={(e) => update({ founderNarrative: e.target.value })}
           className="w-full resize-y rounded-xl border border-white/15 bg-transparent px-4 py-3 text-sm text-zinc-100 outline-none focus:border-white/30 focus:ring-2 focus:ring-white/10"
-          placeholder="En az iki paragraf: neden yaptım, kim için, nereye gidiyor."
+          placeholder="En az iki paragraf: neden yaptınız, kim için, ürün nereye gidiyor."
         />
       </div>
 
@@ -64,6 +64,7 @@ export default function StepStory({ draft, update }: Props) {
             value={draft.founderName}
             onChange={(e) => update({ founderName: e.target.value })}
             className={field}
+            placeholder="Ad Soyad"
           />
         </div>
         <div>
@@ -72,6 +73,7 @@ export default function StepStory({ draft, update }: Props) {
             value={draft.founderRole}
             onChange={(e) => update({ founderRole: e.target.value })}
             className={field}
+            placeholder="Kurucu"
           />
         </div>
         <div className="sm:col-span-2">

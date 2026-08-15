@@ -1,18 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
-  getListingDraft,
+  discardBrowserListingDraft,
+  emptyListingDraft,
   LISTING_STEPS,
-  saveListingDraft,
+  normalizeListingDraft,
   type ListingDraft,
   type ListingStepId,
 } from '@/lib/listingDraft';
-import { getDemoRole } from '@/lib/demoVendor';
 import { apiFetch } from '@/lib/apiUrl';
 import StepBasic from '@/components/partners/steps/StepBasic';
 import StepMedia from '@/components/partners/steps/StepMedia';
@@ -25,39 +26,94 @@ import StepReview from '@/components/partners/steps/StepReview';
 
 export default function ListingWizard() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [step, setStep] = useState<ListingStepId>('basic');
   const [draft, setDraft] = useState<ListingDraft | null>(null);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
-  const [role, setRole] = useState<'user' | 'pending' | 'vendor' | 'admin'>('user');
+
+  const draftRef = useRef<ListingDraft | null>(null);
+  const loadedRef = useRef(false);
+  const dirtyRef = useRef(false);
+  const submittingRef = useRef(false);
+
+  const role = session?.user?.role || 'user';
 
   useEffect(() => {
-    setDraft(getListingDraft());
-    setRole(getDemoRole());
+    draftRef.current = draft;
+  }, [draft]);
+
+  const persistToDb = useCallback(async (current: ListingDraft, flash: boolean) => {
+    setSaving(true);
+    try {
+      const res = await apiFetch('/api/listing-draft', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listing: current }),
+      });
+      if (!res.ok) return false;
+      dirtyRef.current = false;
+      if (flash) {
+        setSavedFlash(true);
+        window.setTimeout(() => setSavedFlash(false), 1600);
+      }
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setSaving(false);
+    }
   }, []);
 
+  useEffect(() => {
+    discardBrowserListingDraft();
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/listing-draft');
+        const data = (await res.json().catch(() => ({}))) as { draft?: ListingDraft | null };
+        if (cancelled) return;
+        setDraft(data.draft ? normalizeListingDraft(data.draft) : emptyListingDraft());
+      } catch {
+        if (!cancelled) setDraft(emptyListingDraft());
+      } finally {
+        if (!cancelled) loadedRef.current = true;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loadedRef.current || !draft || !dirtyRef.current || submittingRef.current) return;
+    const timer = window.setTimeout(() => {
+      const current = draftRef.current;
+      if (!current || !dirtyRef.current) return;
+      void persistToDb(current, false);
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [draft, persistToDb]);
+
   const update = useCallback((patch: Partial<ListingDraft>) => {
+    dirtyRef.current = true;
     setDraft((prev) => (prev ? { ...prev, ...patch } : prev));
   }, []);
 
   const persist = () => {
-    if (!draft) return;
-    setSaving(true);
-    saveListingDraft(draft);
-    window.setTimeout(() => {
-      setSaving(false);
-      setSavedFlash(true);
-      window.setTimeout(() => setSavedFlash(false), 1600);
-    }, 280);
+    const current = draftRef.current;
+    if (!current) return;
+    dirtyRef.current = true;
+    void persistToDb(current, true);
   };
 
   const stepIndex = LISTING_STEPS.findIndex((s) => s.id === step);
 
   const go = (dir: -1 | 1) => {
-    if (!draft) return;
-    saveListingDraft(draft);
+    const current = draftRef.current;
+    if (current && dirtyRef.current) void persistToDb(current, false);
     const next = LISTING_STEPS[stepIndex + dir];
     if (next) setStep(next.id);
   };
@@ -69,6 +125,7 @@ export default function ListingWizard() {
       setSubmitError('Ürün adı gerekli.');
       return;
     }
+    submittingRef.current = true;
     setSubmitting(true);
     try {
       const res = await apiFetch('/api/products', {
@@ -83,13 +140,12 @@ export default function ListingWizard() {
       };
       if (!res.ok) {
         setSubmitError(data.error || 'Ürün gönderilemedi.');
+        submittingRef.current = false;
         setSubmitting(false);
         return;
       }
-      saveListingDraft({
-        ...draft,
-        submittedAt: new Date().toISOString(),
-      });
+      await apiFetch('/api/listing-draft', { method: 'DELETE' });
+      discardBrowserListingDraft();
       router.push(
         data.status === 'approved' && data.slug
           ? `/service/${data.slug}`
@@ -97,6 +153,7 @@ export default function ListingWizard() {
       );
     } catch {
       setSubmitError('Bağlantı hatası. Tekrar deneyin.');
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
@@ -130,7 +187,8 @@ export default function ListingWizard() {
                 key={s.id}
                 type="button"
                 onClick={() => {
-                  saveListingDraft(draft);
+                  const current = draftRef.current;
+                  if (current && dirtyRef.current) void persistToDb(current, false);
                   setStep(s.id);
                 }}
                 className={cn(
@@ -159,9 +217,11 @@ export default function ListingWizard() {
         </nav>
         <div className="mt-6 hidden text-xs text-zinc-600 lg:block">
           {savedFlash ? (
-            <span className="text-emerald-400">Kaydedildi</span>
+            <span className="text-emerald-400">Hesabınıza kaydedildi</span>
+          ) : saving ? (
+            <span>Kaydediliyor…</span>
           ) : (
-            <span>Taslak tarayıcınızda saklanır</span>
+            <span>Taslak hesabınıza kaydedilir</span>
           )}
         </div>
       </aside>

@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
-import type { FeatureMatrixRow, ListingDraft, ListingTier } from '@/lib/listingDraft';
+import { listingUid, type FeatureMatrixRow, type ListingDraft, type ListingTier } from '@/lib/listingDraft';
 
 const field =
   'h-11 w-full rounded-xl border border-white/15 bg-transparent px-4 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10';
@@ -23,8 +23,7 @@ export default function StepPricing({ draft, update }: Props) {
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Fiyatlandırma</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Önce model seçin, sonra katmanlar ve karşılaştırma satırları. Giriş katmanı $49 veya altı
-          önerilir.
+          Önce modeli seçin, sonra planları ve karşılaştırma satırlarını ekleyin.
         </p>
       </div>
 
@@ -33,13 +32,13 @@ export default function StepPricing({ draft, update }: Props) {
           [
             {
               id: 'licensing' as const,
-              title: 'Licensing',
-              body: 'İsimli katmanlar (Solo, Pro). Yetenekler katmana göre değişir.',
+              title: 'Lisans planları',
+              body: 'İsimli katmanlar (Başlangıç, Profesyonel). Yetenekler plana göre değişir.',
             },
             {
               id: 'codes' as const,
-              title: 'Codes',
-              body: 'Kod yığarak limit artırılır (koltuk, proje, site).',
+              title: 'Kullanım kodları',
+              body: 'Kod ekleyerek limit artar (kullanıcı, proje, site).',
             },
           ] as const
         ).map((m) => (
@@ -61,7 +60,7 @@ export default function StepPricing({ draft, update }: Props) {
 
       {draft.pricingModel === 'codes' ? (
         <div>
-          <label className="mb-2 block text-sm font-medium text-zinc-300">Maks. kod sayısı</label>
+          <label className="mb-2 block text-sm font-medium text-zinc-300">Maksimum kod sayısı</label>
           <input
             type="number"
             min={1}
@@ -75,7 +74,7 @@ export default function StepPricing({ draft, update }: Props) {
 
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm font-semibold text-zinc-200">Katmanlar (1–3)</p>
+          <p className="text-sm font-semibold text-zinc-200">Planlar (1–3)</p>
           {draft.tiers.length < 3 ? (
             <button
               type="button"
@@ -83,17 +82,17 @@ export default function StepPricing({ draft, update }: Props) {
                 setTiers([
                   ...draft.tiers,
                   {
-                    id: `tier_${Date.now()}`,
+                    id: listingUid('tier'),
                     name: `Plan ${draft.tiers.length + 1}`,
                     price: 149,
                     recommended: false,
                   },
                 ])
               }
-              className="inline-flex items-center gap-1 text-xs font-medium text-sky-400"
+              className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
             >
               <Plus className="h-3.5 w-3.5" aria-hidden />
-              Katman
+              Plan ekle
             </button>
           ) : null}
         </div>
@@ -106,13 +105,12 @@ export default function StepPricing({ draft, update }: Props) {
               <input
                 value={tier.name}
                 onChange={(e) => {
-                  const tiers = draft.tiers.map((t, i) =>
-                    i === ti ? { ...t, name: e.target.value } : t
+                  setTiers(
+                    draft.tiers.map((t) => (t.id === tier.id ? { ...t, name: e.target.value } : t))
                   );
-                  setTiers(tiers);
                 }}
                 className={field}
-                placeholder="Katman adı"
+                placeholder="Plan adı"
               />
               <input
                 type="number"
@@ -120,10 +118,11 @@ export default function StepPricing({ draft, update }: Props) {
                 max={9999}
                 value={tier.price}
                 onChange={(e) => {
-                  const tiers = draft.tiers.map((t, i) =>
-                    i === ti ? { ...t, price: Number(e.target.value) } : t
+                  setTiers(
+                    draft.tiers.map((t) =>
+                      t.id === tier.id ? { ...t, price: Number(e.target.value) } : t
+                    )
                   );
-                  setTiers(tiers);
                 }}
                 className={field}
               />
@@ -132,11 +131,12 @@ export default function StepPricing({ draft, update }: Props) {
                   type="checkbox"
                   checked={tier.recommended}
                   onChange={(e) => {
-                    const tiers = draft.tiers.map((t, i) => ({
-                      ...t,
-                      recommended: i === ti ? e.target.checked : false,
-                    }));
-                    setTiers(tiers);
+                    setTiers(
+                      draft.tiers.map((t) => ({
+                        ...t,
+                        recommended: t.id === tier.id ? e.target.checked : false,
+                      }))
+                    );
                   }}
                 />
                 Önerilen
@@ -144,19 +144,19 @@ export default function StepPricing({ draft, update }: Props) {
               {draft.tiers.length > 1 ? (
                 <button
                   type="button"
-                  onClick={() => setTiers(draft.tiers.filter((_, i) => i !== ti))}
-                  className="text-rose-300"
-                  aria-label="Katmanı kaldır"
+                  onClick={() => setTiers(draft.tiers.filter((t) => t.id !== tier.id))}
+                  className="inline-flex items-center justify-center gap-1 rounded-lg px-2 text-xs font-medium text-rose-300 hover:bg-rose-500/10"
+                  aria-label={`${tier.name || 'Planı'} sil`}
                 >
                   <Trash2 className="h-4 w-4" />
+                  Sil
                 </button>
               ) : (
                 <span />
               )}
-              {tier.price > 49 && ti === 0 ? (
-                <p className="sm:col-span-4 text-xs text-amber-300/90">
-                  Giriş katmanı $49 üzeri: kabul ve dönüşüm şansı düşebilir. Hacim limiti ile
-                  kapsamayı düşünün.
+              {ti === 0 && tier.price > 199 ? (
+                <p className="sm:col-span-4 text-xs text-zinc-500">
+                  Giriş planını erişilebilir tutmak dönüşümü artırır.
                 </p>
               ) : null}
             </div>
@@ -166,86 +166,96 @@ export default function StepPricing({ draft, update }: Props) {
 
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm font-semibold text-zinc-200">Özellik matrisi</p>
+          <p className="text-sm font-semibold text-zinc-200">Özellik karşılaştırması</p>
           <button
             type="button"
             onClick={() => {
               const row: FeatureMatrixRow = {
-                id: `row_${Date.now()}`,
+                id: listingUid('row'),
                 label: '',
                 values: draft.tiers.map(() => ''),
                 inAllPlans: false,
               };
               update({ matrix: [...draft.matrix, row] });
             }}
-            className="text-xs font-medium text-sky-400"
+            className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
           >
-            + Satır
+            <Plus className="h-3.5 w-3.5" aria-hidden />
+            Satır ekle
           </button>
         </div>
         <p className="mb-4 text-xs text-zinc-600">
-          Somut değerler yazın (5 / 25 / Sınırsız). Aynı olanları “tüm planlarda” işaretleyin.
+          Somut değerler yazın (5 / 25 / Sınırsız). Tüm planlarda aynıysa kutuyu işaretleyin.
         </p>
-        <div className="space-y-3 overflow-x-auto">
-          {draft.matrix.map((row, ri) => (
-            <div key={row.id} className="min-w-[28rem] space-y-2 rounded-xl border border-white/[0.08] p-3">
-              <div className="flex gap-2">
-                <input
-                  value={row.label}
-                  onChange={(e) => {
-                    const matrix = draft.matrix.map((r, i) =>
-                      i === ri ? { ...r, label: e.target.value } : r
-                    );
-                    update({ matrix });
-                  }}
-                  className={field}
-                  placeholder="Özellik etiketi"
-                />
-                <button
-                  type="button"
-                  onClick={() => update({ matrix: draft.matrix.filter((_, i) => i !== ri) })}
-                  className="shrink-0 text-rose-300"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-              {!row.inAllPlans ? (
-                <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${draft.tiers.length}, 1fr)` }}>
-                  {draft.tiers.map((t, ti) => (
-                    <input
-                      key={t.id}
-                      value={row.values[ti] ?? ''}
-                      onChange={(e) => {
-                        const matrix = draft.matrix.map((r, i) => {
-                          if (i !== ri) return r;
-                          const values = [...r.values];
-                          values[ti] = e.target.value;
-                          return { ...r, values };
-                        });
-                        update({ matrix });
-                      }}
-                      className={field}
-                      placeholder={t.name}
-                    />
-                  ))}
+        {draft.matrix.length === 0 ? (
+          <p className="text-sm text-zinc-600">Henüz satır yok. Karşılaştırma için satır ekleyin.</p>
+        ) : (
+          <div className="space-y-3 overflow-x-auto">
+            {draft.matrix.map((row) => (
+              <div key={row.id} className="min-w-[28rem] space-y-2 rounded-xl border border-white/[0.08] p-3">
+                <div className="flex gap-2">
+                  <input
+                    value={row.label}
+                    onChange={(e) => {
+                      update({
+                        matrix: draft.matrix.map((r) =>
+                          r.id === row.id ? { ...r, label: e.target.value } : r
+                        ),
+                      });
+                    }}
+                    className={field}
+                    placeholder="Özellik adı"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => update({ matrix: draft.matrix.filter((r) => r.id !== row.id) })}
+                    className="inline-flex h-11 shrink-0 items-center gap-1 rounded-xl border border-white/10 px-3 text-xs font-medium text-rose-300 hover:bg-rose-500/10"
+                    aria-label="Satırı sil"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Sil
+                  </button>
                 </div>
-              ) : null}
-              <label className="flex items-center gap-2 text-xs text-zinc-500">
-                <input
-                  type="checkbox"
-                  checked={row.inAllPlans}
-                  onChange={(e) => {
-                    const matrix = draft.matrix.map((r, i) =>
-                      i === ri ? { ...r, inAllPlans: e.target.checked } : r
-                    );
-                    update({ matrix });
-                  }}
-                />
-                Tüm planlarda aynı
-              </label>
-            </div>
-          ))}
-        </div>
+                {!row.inAllPlans ? (
+                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${draft.tiers.length}, 1fr)` }}>
+                    {draft.tiers.map((t, ti) => (
+                      <input
+                        key={t.id}
+                        value={row.values[ti] ?? ''}
+                        onChange={(e) => {
+                          update({
+                            matrix: draft.matrix.map((r) => {
+                              if (r.id !== row.id) return r;
+                              const values = [...r.values];
+                              values[ti] = e.target.value;
+                              return { ...r, values };
+                            }),
+                          });
+                        }}
+                        className={field}
+                        placeholder={t.name}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                  <input
+                    type="checkbox"
+                    checked={row.inAllPlans}
+                    onChange={(e) => {
+                      update({
+                        matrix: draft.matrix.map((r) =>
+                          r.id === row.id ? { ...r, inAllPlans: e.target.checked } : r
+                        ),
+                      });
+                    }}
+                  />
+                  Tüm planlarda aynı
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

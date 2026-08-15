@@ -16,7 +16,7 @@ function featuresFromDraft(draft: ListingDraft) {
     s.bullets.map((b) => b.trim()).filter(Boolean)
   );
   if (fromStories.length) return fromStories;
-  return draft.tldr.map((t) => t.trim()).filter(Boolean);
+  return (draft.tldr || []).map((t) => t.trim()).filter(Boolean);
 }
 
 export async function GET(req: NextRequest) {
