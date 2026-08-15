@@ -11,7 +11,19 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@splinetool/react-spline'],
     instrumentationHook: true,
-    serverComponentsExternalPackages: ['pg', 'bcryptjs'],
+    serverComponentsExternalPackages: ['pg', 'pg-connection-string', 'pgpass', 'bcryptjs'],
+  },
+  webpack: (config, { nextRuntime }) => {
+    if (nextRuntime === 'edge') {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        pg: false,
+        'pg-native': false,
+        'pg-connection-string': false,
+        pgpass: false,
+      };
+    }
+    return config;
   },
 };
 
