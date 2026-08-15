@@ -97,13 +97,25 @@ async function seedAdmin() {
       } else {
         console.log(`[seed-admin] Admin hesabı zaten var, atlandı: ${email}`);
       }
+      try {
+        await client.query(
+          `UPDATE users
+           SET match_available = TRUE,
+               match_skills = COALESCE(NULLIF(match_skills, ''), 'Kurulum ve eşleşme')
+           WHERE id = $1`,
+          [rows[0].id]
+        );
+      } catch (err) {
+        console.warn('[seed-admin] Eşleşme havuzu güncellenemedi:', err.message);
+      }
       return { created: false, email };
     }
 
     const hash = await bcrypt.hash(password, 12);
     await client.query(
-      'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)',
-      [name, email, hash, 'admin']
+      `INSERT INTO users (name, email, password, role, match_available, match_skills)
+       VALUES ($1, $2, $3, $4, TRUE, $5)`,
+      [name, email, hash, 'admin', 'Kurulum ve eşleşme']
     );
     console.log(`[seed-admin] Admin hesabı oluşturuldu: ${email}`);
     return { created: true, email };

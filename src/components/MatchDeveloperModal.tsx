@@ -2,15 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
 import { AnimatePresence, m } from 'framer-motion';
 import { Loader2, Sparkles, X } from 'lucide-react';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
+import { useMatchPool } from '@/components/presence/useMatchPool';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { apiFetch } from '@/lib/apiUrl';
-import { getAuthIdentity } from '@/lib/authIdentity';
-import { DEVELOPERS, getActiveDeveloperCount } from '../../lib/developerPresence';
 
 type Phase = 'ask' | 'typing' | 'matching' | 'done' | 'error';
+
+type Assigned = {
+  name: string;
+  skills?: string;
+  initials: string;
+  color: string;
+  role?: string;
+};
 
 type Props = {
   open: boolean;
@@ -18,35 +26,29 @@ type Props = {
 };
 
 const AI_PROMPT = 'Neye ihtiyacınız var?';
-const MATCH_ANIMATION_MS = 3200;
 
 export default function MatchDeveloperModal({ open, onClose }: Props) {
+  const { count, people } = useMatchPool();
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>('ask');
   const [typed, setTyped] = useState('');
   const [need, setNeed] = useState('');
-  const [scanIndex, setScanIndex] = useState(0);
-  const [scanned, setScanned] = useState(0);
-  const [activeCount, setActiveCount] = useState(2);
   const [submitError, setSubmitError] = useState('');
+  const [assigned, setAssigned] = useState<Assigned | null>(null);
+  const [conversationId, setConversationId] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!open) return;
-    setActiveCount(getActiveDeveloperCount());
-  }, [open]);
-
-  useEffect(() => {
     if (!open) {
       setPhase('ask');
       setTyped('');
       setNeed('');
-      setScanIndex(0);
-      setScanned(0);
       setSubmitError('');
+      setAssigned(null);
+      setConversationId(null);
       return;
     }
 
@@ -71,17 +73,6 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
     };
   }, [open]);
 
-  useEffect(() => {
-    if (phase !== 'matching') return;
-    setScanIndex(0);
-    setScanned(0);
-    const pulse = window.setInterval(() => {
-      setScanIndex((i) => (i + 1) % Math.min(6, DEVELOPERS.length));
-      setScanned((n) => n + 1);
-    }, 420);
-    return () => window.clearInterval(pulse);
-  }, [phase]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = need.trim();
@@ -90,38 +81,28 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
     setSubmitError('');
     setPhase('matching');
 
-    const identity = getAuthIdentity();
-    const startedAt = Date.now();
-
     void (async () => {
-      let ok = false;
-      let errorMessage = 'Talep iletilemedi. Lütfen tekrar deneyin.';
-
       try {
         const res = await apiFetch('/api/match-request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            need: text,
-            name: identity?.name || undefined,
-            email: identity?.email || undefined,
-          }),
+          body: JSON.stringify({ need: text }),
         });
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        ok = res.ok;
-        if (!res.ok && data.error) errorMessage = data.error;
-      } catch {
-        ok = false;
-      }
-
-      const elapsed = Date.now() - startedAt;
-      const wait = Math.max(0, MATCH_ANIMATION_MS - elapsed);
-      await new Promise((r) => window.setTimeout(r, wait));
-
-      if (ok) {
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          conversationId?: number | null;
+          assigned?: Assigned | null;
+        };
+        if (!res.ok) {
+          setSubmitError(data.error || 'Talep iletilemedi. Lütfen tekrar deneyin.');
+          setPhase('error');
+          return;
+        }
+        setAssigned(data.assigned || null);
+        setConversationId(data.conversationId ?? null);
         setPhase('done');
-      } else {
-        setSubmitError(errorMessage);
+      } catch {
+        setSubmitError('Talep iletilemedi. Lütfen tekrar deneyin.');
         setPhase('error');
       }
     })();
@@ -152,7 +133,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
               BlackNOOK Match
               <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                {activeCount} çevrimiçi
+                {count > 0 ? `${count} açık` : 'Ekip'}
               </span>
             </div>
             <button
@@ -186,7 +167,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                     value={need}
                     onChange={(e) => setNeed(e.target.value)}
                     rows={4}
-                    placeholder="Örn. SaaS için auth + billing kurulumuna ihtiyacım var…"
+                    placeholder="Örn. Self-host kurulum ve faturalama entegrasyonuna ihtiyacım var…"
                     disabled={phase === 'typing'}
                     className="w-full resize-none rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
                   />
@@ -195,7 +176,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                     disabled={phase === 'typing' || !need.trim()}
                     className="h-12 w-full rounded-xl bg-white text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Geliştirici bul
+                    Eşleş
                   </button>
                 </form>
               )}
@@ -210,48 +191,62 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                   {phase === 'matching' ? (
                     <>
                       <div className="flex justify-center">
-                        <DeveloperAvatars
-                          count={6}
-                          size="md"
-                          pulse
-                          highlightIndex={scanIndex}
-                        />
+                        <DeveloperAvatars people={people} count={Math.min(6, people.length)} size="md" />
                       </div>
                       <Loader2 className="mx-auto mt-5 h-5 w-5 animate-spin text-zinc-400" aria-hidden />
                       <p className="mt-4 font-display text-lg font-semibold text-white">
-                        Geliştiriciyle iletişime geçiliyor…
+                        Uygun kişi aranıyor…
                       </p>
                       <p className="mt-2 text-sm text-zinc-500">
-                        {Math.min(scanned + 3, activeCount)} / {activeCount} profil taranıyor
+                        {count > 0
+                          ? `${count} açık profilden atama yapılıyor`
+                          : 'Ekibe iletiliyor'}
                       </p>
-                      <div className="mx-auto mt-6 h-1 max-w-xs overflow-hidden rounded-full bg-white/10">
-                        <m.div
-                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400"
-                          initial={{ width: '0%' }}
-                          animate={{ width: '100%' }}
-                          transition={{ duration: 3, ease: easePremium }}
-                        />
-                      </div>
                     </>
                   ) : phase === 'done' ? (
                     <>
                       <div className="mb-4 flex justify-center">
-                        <DeveloperAvatars count={3} size="md" />
+                        {assigned ? (
+                          <DeveloperAvatars
+                            people={[
+                              {
+                                id: 'assigned',
+                                initials: assigned.initials,
+                                color: assigned.color,
+                                role: assigned.skills || assigned.role,
+                              },
+                            ]}
+                            size="md"
+                          />
+                        ) : (
+                          <DeveloperAvatars people={people.slice(0, 1)} size="md" />
+                        )}
                       </div>
                       <p className="font-display text-lg font-semibold text-white">
-                        Eşleşme talebi alındı
+                        {assigned ? `${assigned.name} ile eşleştiniz` : 'Talebiniz ekibe iletildi'}
                       </p>
                       <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                        “{need}” için uygun geliştiriciye iletildi. En kısa sürede size dönüş
-                        yapılacak.
+                        {assigned
+                          ? 'Sohbete siteden devam edin. Karşı taraf bildirim ve e-posta alır.'
+                          : 'Şu an açık geliştirici yok. Ekip talebinizi alacak ve dönüş yapacak.'}
                       </p>
-                      <button
-                        type="button"
-                        onClick={onClose}
-                        className="mt-6 h-11 rounded-xl border border-white/15 px-6 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/5"
-                      >
-                        Kapat
-                      </button>
+                      {conversationId ? (
+                        <Link
+                          href={`/account/messages?c=${conversationId}`}
+                          onClick={onClose}
+                          className="mt-6 inline-flex h-11 items-center rounded-xl bg-white px-6 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+                        >
+                          Mesaja git
+                        </Link>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={onClose}
+                          className="mt-6 h-11 rounded-xl border border-white/15 px-6 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/5"
+                        >
+                          Kapat
+                        </button>
+                      )}
                     </>
                   ) : (
                     <>

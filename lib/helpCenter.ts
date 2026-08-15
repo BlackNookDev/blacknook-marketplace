@@ -65,8 +65,8 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: 'match',
         title: 'Geliştirici eşleşmesi nedir?',
-        summary: 'Navbar’daki Eşleş ve ambient presence chip.',
-        body: 'Eşleş, ihtiyacınıza uygun geliştirici veya kurulum desteği bulmanıza yardımcı olur. Navbar’daki “Eşleş” düğmesi veya sağ alttaki aktif geliştirici chip’i ile formu açabilirsiniz. Giriş zorunludur. Gönderilen eşleşme talepleri de Hesap → Talepler altında görünür. Bu bir sohbet odası değil; talep sonrası ekip sizinle iletişime geçer.',
+        summary: 'Navbar’daki Eşleş; gerçek atama ve sitede mesaj.',
+        body: 'Eşleş, ihtiyacınıza uygun bir kişiyle sizi bağlar. Navbar’daki “Eşleş” veya sağ alttaki chip ile formu açın (giriş gerekir). Sistem, eşleşmeye açık hesaplar arasından birini atar; yoksa talep ekibe düşer. Atama olursa Hesap → Mesajlar’da sohbet açılır. Talepler Hesap → Talepler’de de görünür. Eşleşme havuzuna girmek için Profil’den “Eşleşmeye açığım”ı işaretleyin.',
       },
       {
         id: 'track-requests',

@@ -1,22 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getActiveDeveloperCount } from '../../../lib/developerPresence';
+import { useMatchPool } from '@/components/presence/useMatchPool';
 
 type Props = {
   className?: string;
 };
 
-/** Navbar Eşleş yanındaki mini presence */
 export default function MatchPresenceBadge({ className = '' }: Props) {
-  const [active, setActive] = useState(2);
-
-  useEffect(() => {
-    const tick = () => setActive(getActiveDeveloperCount());
-    tick();
-    const id = window.setInterval(tick, 30_000);
-    return () => window.clearInterval(id);
-  }, []);
+  const { count, loaded } = useMatchPool();
+  if (!loaded) return null;
 
   return (
     <span
@@ -24,7 +16,7 @@ export default function MatchPresenceBadge({ className = '' }: Props) {
       aria-hidden
     >
       <span className="h-1 w-1 animate-pulse rounded-full bg-emerald-700" />
-      {active}
+      {count}
     </span>
   );
 }

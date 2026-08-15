@@ -1,27 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
-import {
-  getActiveDeveloperCount,
-  getRotatingPlatformHint,
-} from '../../../lib/developerPresence';
+import { getRotatingPlatformHint } from '../../../lib/developerPresence';
+import { useMatchPool } from '@/components/presence/useMatchPool';
 import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { duration, easePremium } from '@/components/motion/tokens';
+import { useEffect, useState } from 'react';
 
-/** Hero altında soluk avatar stack + aktivite satırı */
 export default function HeroPresenceStrip() {
   const reduce = useReducedMotion();
-  const [active, setActive] = useState(2);
+  const { count, people } = useMatchPool();
   const [hint, setHint] = useState(() => getRotatingPlatformHint());
 
   useEffect(() => {
-    const tick = () => {
-      setActive(getActiveDeveloperCount());
-      setHint(getRotatingPlatformHint());
-    };
-    tick();
-    const id = window.setInterval(tick, 20_000);
+    const id = window.setInterval(() => setHint(getRotatingPlatformHint()), 20_000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -33,11 +25,17 @@ export default function HeroPresenceStrip() {
       transition={{ delay: 0.45, duration: duration.base, ease: easePremium }}
     >
       <div className="flex items-center gap-2.5 rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 backdrop-blur-sm">
-        <DeveloperAvatars count={active} size="sm" />
+        <DeveloperAvatars people={people} count={Math.min(5, people.length)} size="sm" />
         <p className="text-[11px] text-zinc-500">
           <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 align-middle" />
-          <span className="font-medium text-zinc-300">{active}</span>
-          <span className="text-zinc-500"> geliştirici · çevrimiçi</span>
+          {count > 0 ? (
+            <>
+              <span className="font-medium text-zinc-300">{count}</span>
+              <span className="text-zinc-500"> kişi eşleşmeye açık</span>
+            </>
+          ) : (
+            <span className="text-zinc-400">Eşleşme talepleri ekibe düşer</span>
+          )}
         </p>
       </div>
 

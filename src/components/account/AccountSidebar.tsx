@@ -6,6 +6,7 @@ import {
   CreditCard,
   Gift,
   Grid2X2,
+  Inbox,
   LogOut,
   MessageSquare,
   Plus,
@@ -19,6 +20,7 @@ import { cn } from '@/lib/utils';
 
 const ICONS: Record<AccountNavIcon, typeof User> = {
   user: User,
+  inbox: Inbox,
   requests: MessageSquare,
   grid: Grid2X2,
   card: CreditCard,

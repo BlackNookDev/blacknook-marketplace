@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Loader2, MessageSquare } from 'lucide-react';
 import AccountSection from '@/components/account/AccountSection';
 import { apiFetch } from '@/lib/apiUrl';
@@ -11,6 +12,8 @@ type MatchRequest = {
   need: string;
   status: string;
   createdAt: string;
+  conversationId?: number | null;
+  assigned?: { name: string; skills?: string } | null;
 };
 
 function statusLabel(status: string) {
@@ -100,7 +103,7 @@ export default function ActiveRequestsSection() {
   return (
     <AccountSection
       title="Aktif talepler"
-      description="Eşleşme talepleriniz burada listelenir. Ekibimiz dönüş yaptıkça durumu güncellenir."
+      description="Eşleşme talepleriniz burada listelenir. Atanan kişiyle Mesajlar’dan yazışın."
     >
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-zinc-500">
@@ -135,6 +138,22 @@ export default function ActiveRequestsSection() {
                 </time>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-zinc-200">{req.need}</p>
+              {req.assigned ? (
+                <p className="mt-2 text-xs text-zinc-500">
+                  Atanan: {req.assigned.name}
+                  {req.assigned.skills ? ` · ${req.assigned.skills}` : ''}
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-zinc-500">Ekip inceliyor</p>
+              )}
+              {req.conversationId ? (
+                <Link
+                  href={`/account/messages?c=${req.conversationId}`}
+                  className="mt-3 inline-flex text-sm font-medium text-sky-400 hover:text-sky-300"
+                >
+                  Mesaja git
+                </Link>
+              ) : null}
             </li>
           ))}
         </ul>

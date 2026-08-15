@@ -163,7 +163,7 @@ export default function Navbar() {
                 onClick={openMatch}
                 className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 px-2 text-[11px] font-semibold text-black shadow-[0_0_12px_rgba(45,212,191,0.28)] transition-[filter,transform] duration-premium ease-premium hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 active:scale-[0.98]"
                 aria-label="Geliştiricilerle eşleş"
-                title="Şu an eşleşmeye hazır geliştiriciler"
+                title="Eşleşmeye açık geliştiriciler"
               >
                 <Users className="h-3 w-3" aria-hidden />
                 <span className="hidden sm:inline">Eşleş</span>

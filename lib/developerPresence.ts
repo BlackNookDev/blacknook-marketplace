@@ -1,4 +1,4 @@
-/** Ambient “aktif geliştirici” sinyalleri — mock, deterministik aralık */
+/** Platform ipuçları — sahte “çevrimiçi” sayısı yok; gerçek havuz /api/match-pool */
 
 export type DevPresence = {
   id: string;
@@ -30,7 +30,7 @@ export const PLATFORM_HINTS: PlatformHint[] = [
   { id: 'h2', message: 'Self-host ve SaaS projelerinde eşleşme' },
   { id: 'h3', message: 'Auth, billing ve entegrasyon talepleri kabul ediliyor' },
   { id: 'h4', message: 'Teknik ekip talepleri inceliyor' },
-  { id: 'h5', message: 'Eşleşme talepleri 24 saat içinde yanıtlanır' },
+  { id: 'h5', message: 'Eşleşme sohbeti Hesap → Mesajlar’da açılır' },
 ];
 
 /** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */

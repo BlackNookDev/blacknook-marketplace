@@ -1,13 +1,17 @@
 'use client';
 
-import { DEVELOPERS, type DevPresence } from '../../../lib/developerPresence';
+export type AvatarPerson = {
+  id: string;
+  initials: string;
+  color: string;
+  role?: string;
+};
 
 type Props = {
+  people?: AvatarPerson[];
   count?: number;
   size?: 'sm' | 'md';
   className?: string;
-  pulse?: boolean;
-  highlightIndex?: number;
 };
 
 const SIZE = {
@@ -16,13 +20,13 @@ const SIZE = {
 } as const;
 
 export default function DeveloperAvatars({
-  count = 5,
+  people = [],
+  count,
   size = 'sm',
   className = '',
-  pulse = false,
-  highlightIndex = -1,
 }: Props) {
-  const list: DevPresence[] = DEVELOPERS.slice(0, count);
+  const list = people.slice(0, count ?? people.length);
+  if (!list.length) return null;
 
   return (
     <ul className={`flex items-center ${className}`} aria-hidden>
@@ -31,8 +35,6 @@ export default function DeveloperAvatars({
           key={dev.id}
           className={`relative flex shrink-0 items-center justify-center rounded-full border-2 border-[var(--bn-bg,#050505)] font-semibold text-black ${SIZE[size]} ${
             i > 0 ? '-ml-2' : ''
-          } ${pulse && highlightIndex === i ? 'z-10 scale-110 ring-2 ring-emerald-400/80' : ''} ${
-            pulse ? 'transition-transform duration-300' : ''
           }`}
           style={{ backgroundColor: dev.color, zIndex: list.length - i }}
           title={dev.role}

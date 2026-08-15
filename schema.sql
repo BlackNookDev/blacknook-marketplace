@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
   avatar        TEXT,                              -- Base64 encoded profil fotoğrafı
   bio           TEXT,                              -- Kısa özet / hakkında
   linkedin_url  VARCHAR(255),                       -- LinkedIn profil linki
+  match_available BOOLEAN DEFAULT FALSE,
+  match_skills  VARCHAR(255),
   created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -98,14 +100,16 @@ CREATE TABLE IF NOT EXISTS waitlist_signups (
 
 -- Geliştirici eşleşme talepleri
 CREATE TABLE IF NOT EXISTS match_requests (
-  id          SERIAL PRIMARY KEY,
-  user_id     INTEGER REFERENCES users(id) ON DELETE SET NULL,
-  name        VARCHAR(255),
-  email       VARCHAR(255),
-  need        TEXT NOT NULL,
-  status      VARCHAR(20) NOT NULL DEFAULT 'active'
-                CHECK (status IN ('active', 'closed', 'cancelled')),
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id                SERIAL PRIMARY KEY,
+  user_id           INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  name              VARCHAR(255),
+  email             VARCHAR(255),
+  need              TEXT NOT NULL,
+  status            VARCHAR(20) NOT NULL DEFAULT 'active'
+                    CHECK (status IN ('active', 'closed', 'cancelled')),
+  assigned_user_id  INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  conversation_id   INTEGER,
+  created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_match_requests_email ON match_requests (email);
@@ -160,3 +164,25 @@ CREATE TABLE IF NOT EXISTS listing_drafts (
   data        JSONB NOT NULL,
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Eşleşme konuşmaları
+CREATE TABLE IF NOT EXISTS conversations (
+  id                SERIAL PRIMARY KEY,
+  type              VARCHAR(20) NOT NULL DEFAULT 'match',
+  match_request_id  INTEGER REFERENCES match_requests(id) ON DELETE SET NULL,
+  created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS conversation_participants (
+  conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  last_read_at    TIMESTAMP,
+  PRIMARY KEY (conversation_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_conversation_participants_user
+  ON conversation_participants (user_id);
+
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS conversation_id INTEGER REFERENCES conversations(id) ON DELETE CASCADE;
+CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages (conversation_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_match_requests_assigned ON match_requests (assigned_user_id, status);

@@ -462,15 +462,28 @@ export function installationTeamEmail(params: {
   };
 }
 
-export function matchUserEmail(params: { name: string; need: string; requestId?: number }) {
-  const requests = siteUrl('/account/requests');
+export function matchUserEmail(params: {
+  name: string;
+  need: string;
+  requestId?: number;
+  assigneeName?: string;
+  conversationId?: number | null;
+}) {
+  const href = params.conversationId
+    ? siteUrl(`/account/messages?c=${params.conversationId}`)
+    : siteUrl('/account/requests');
+  const matched = Boolean(params.assigneeName);
   const html = renderBrandEmail({
-    preheader: 'Geliştirici eşleşme talebiniz alındı.',
+    preheader: matched
+      ? `${params.assigneeName} ile eşleştiniz.`
+      : 'Eşleşme talebiniz alındı.',
     eyebrow: 'Eşleşme',
-    title: 'Talebiniz kaydedildi',
+    title: matched ? 'Eşleşme kuruldu' : 'Talebiniz kaydedildi',
     bodyHtml: [
       p(
-        `Merhaba ${escapeHtml(params.name)}, eşleşme talebinizi aldık. Uygun geliştiricilerle bağlantı için sizi bilgilendireceğiz.`
+        matched
+          ? `Merhaba ${escapeHtml(params.name)}, talebiniz ${strong(params.assigneeName || '')} ile eşleştirildi. Sohbete siteden devam edebilirsiniz.`
+          : `Merhaba ${escapeHtml(params.name)}, eşleşme talebinizi aldık. Uygun bir geliştirici bulunduğunda sizinle iletişime geçeceğiz.`
       ),
       params.requestId != null
         ? detailCard([
@@ -482,20 +495,24 @@ export function matchUserEmail(params: { name: string; need: string; requestId?:
         : '',
       quoteBlock('İhtiyacınız', escapeHtml(params.need).replace(/\n/g, '<br />')),
     ].join(''),
-    cta: { href: requests, label: 'Taleplerimi gör' },
+    cta: { href, label: matched ? 'Mesaja git' : 'Taleplerimi gör' },
   });
 
   return {
-    subject: 'Eşleşme talebiniz alındı — Blacknook',
+    subject: matched
+      ? `${params.assigneeName} ile eşleştiniz — Blacknook`
+      : 'Eşleşme talebiniz alındı — Blacknook',
     text: [
       `Merhaba ${params.name},`,
       '',
-      'Geliştirici eşleşme talebiniz alındı.',
+      matched
+        ? `Talebiniz ${params.assigneeName} ile eşleştirildi.`
+        : 'Eşleşme talebiniz alındı.',
       params.requestId != null ? `Talep #${params.requestId}` : '',
       '',
       params.need,
       '',
-      requests,
+      href,
     ]
       .filter(Boolean)
       .join('\n'),
@@ -508,6 +525,7 @@ export function matchTeamEmail(params: {
   email: string;
   need: string;
   requestId?: number;
+  assigneeName?: string;
 }) {
   const html = renderBrandEmail({
     preheader: `Eşleşme: ${params.name}`,
@@ -524,6 +542,10 @@ export function matchTeamEmail(params: {
           label: 'Talep ID',
           valueHtml: escapeHtml(String(params.requestId ?? '-')),
         },
+        {
+          label: 'Atanan',
+          valueHtml: escapeHtml(params.assigneeName || 'Havuz boş — ekip'),
+        },
       ]),
       quoteBlock('İhtiyaç', escapeHtml(params.need).replace(/\n/g, '<br />')),
     ].join(''),
@@ -535,8 +557,80 @@ export function matchTeamEmail(params: {
       `Kullanıcı: ${params.name}`,
       `E-posta: ${params.email || '(belirtilmedi)'}`,
       `Talep ID: ${params.requestId ?? '-'}`,
+      `Atanan: ${params.assigneeName || 'Havuz boş — ekip'}`,
       '',
       params.need,
+    ].join('\n'),
+    html,
+  };
+}
+
+export function matchAssigneeEmail(params: {
+  assigneeName: string;
+  requesterName: string;
+  need: string;
+  conversationId?: number | null;
+}) {
+  const href = params.conversationId
+    ? siteUrl(`/account/messages?c=${params.conversationId}`)
+    : siteUrl('/account/messages');
+  const html = renderBrandEmail({
+    preheader: `${params.requesterName} sizinle eşleşmek istiyor.`,
+    eyebrow: 'Eşleşme',
+    title: 'Yeni eşleşme',
+    bodyHtml: [
+      p(
+        `Merhaba ${escapeHtml(params.assigneeName)}, ${strong(params.requesterName)} sizinle eşleştirildi.`
+      ),
+      quoteBlock('İhtiyaç', escapeHtml(params.need).replace(/\n/g, '<br />')),
+    ].join(''),
+    cta: { href, label: 'Mesaja git' },
+  });
+
+  return {
+    subject: `${params.requesterName} ile eşleştiniz — Blacknook`,
+    text: [
+      `Merhaba ${params.assigneeName},`,
+      '',
+      `${params.requesterName} sizinle eşleştirildi.`,
+      '',
+      params.need,
+      '',
+      href,
+    ].join('\n'),
+    html,
+  };
+}
+
+export function messageReceivedEmail(params: {
+  toName: string;
+  fromName: string;
+  preview: string;
+  conversationId: number;
+}) {
+  const href = siteUrl(`/account/messages?c=${params.conversationId}`);
+  const preview =
+    params.preview.length > 280 ? `${params.preview.slice(0, 277)}…` : params.preview;
+  const html = renderBrandEmail({
+    preheader: `${params.fromName}: ${preview.slice(0, 80)}`,
+    eyebrow: 'Mesaj',
+    title: 'Yeni mesaj',
+    bodyHtml: [
+      p(`Merhaba ${escapeHtml(params.toName)}, ${strong(params.fromName)} size yazdı.`),
+      quoteBlock('Mesaj', escapeHtml(preview).replace(/\n/g, '<br />')),
+    ].join(''),
+    cta: { href, label: 'Yanıtla' },
+  });
+
+  return {
+    subject: `${params.fromName} size yazdı — Blacknook`,
+    text: [
+      `Merhaba ${params.toName},`,
+      '',
+      `${params.fromName} size yazdı:`,
+      preview,
+      '',
+      href,
     ].join('\n'),
     html,
   };
