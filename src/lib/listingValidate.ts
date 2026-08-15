@@ -30,8 +30,8 @@ export function getStepErrors(step: ListingStepId, draft: ListingDraft): string[
       const errors: string[] = [];
       if (draft.productName.trim().length < 2) errors.push('Ürün adı yazın.');
       if (!draft.category.trim()) errors.push('Kategori seçin.');
-      if (draft.tagline.trim().length < 8) errors.push('Kısa açıklama yazın.');
-      if (draft.usp.trim().length < 24) errors.push('Ürünün ne yaptığını yazın.');
+      if (draft.tagline.trim().length < 2) errors.push('Kısa açıklama yazın.');
+      if (draft.usp.trim().length < 8) errors.push('Ürünün ne yaptığını yazın.');
       if (!looksLikeUrl(draft.websiteUrl)) errors.push('Çalışan bir site adresi girin (https://…).');
       if (!DELIVERY_OPTIONS.some((o) => o.id === draft.delivery)) {
         errors.push('Ürünün nerede çalıştığını seçin.');

@@ -33,7 +33,6 @@ export default function ListingWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
-  const [gateHint, setGateHint] = useState('');
 
   const draftRef = useRef<ListingDraft | null>(null);
   const loadedRef = useRef(false);
@@ -100,7 +99,12 @@ export default function ListingWizard() {
 
   const update = useCallback((patch: Partial<ListingDraft>) => {
     dirtyRef.current = true;
-    setDraft((prev) => (prev ? { ...prev, ...patch } : prev));
+    setDraft((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...patch };
+      draftRef.current = next;
+      return next;
+    });
   }, []);
 
   const persist = () => {
@@ -122,29 +126,20 @@ export default function ListingWizard() {
     const blockedIndex = blocked ? LISTING_STEPS.findIndex((s) => s.id === blocked) : -1;
     if (blocked && target > blockedIndex) {
       setStep(blocked);
-      setGateHint(getStepErrors(blocked, current)[0] || 'Önce bu adımı bitirin.');
       return;
     }
-    setGateHint('');
     setStep(id);
   };
 
   const go = (dir: -1 | 1) => {
     const current = draftRef.current;
     if (!current) return;
-    if (dir === 1) {
-      const errors = getStepErrors(step, current);
-      if (errors.length) {
-        setGateHint(errors[0]);
-        return;
-      }
+    if (dir === 1 && getStepErrors(step, current).length) {
+      return;
     }
     if (dirtyRef.current) void persistToDb(current, false);
     const next = LISTING_STEPS[stepIndex + dir];
-    if (next) {
-      setGateHint('');
-      setStep(next.id);
-    }
+    if (next) setStep(next.id);
   };
 
   const submit = async () => {
@@ -152,10 +147,7 @@ export default function ListingWizard() {
     setSubmitError('');
     if (!isListingReady(draft)) {
       const blocked = firstIncompleteStep(draft);
-      if (blocked) {
-        setStep(blocked);
-        setGateHint(getStepErrors(blocked, draft)[0] || 'Eksik alan var.');
-      }
+      if (blocked) setStep(blocked);
       return;
     }
     submittingRef.current = true;
@@ -260,11 +252,11 @@ export default function ListingWizard() {
           <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Ürün oluştur
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-            {role === 'admin'
-              ? 'Admin gönderince ürün katalogda hemen yayınlanır.'
-              : 'Zorunlu alanlar * ile işaretli. Sonraki adıma ancak bu sayfa tamamsa geçilir.'}
-          </p>
+          {role === 'admin' ? (
+            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
+              Admin gönderince ürün katalogda hemen yayınlanır.
+            </p>
+          ) : null}
         </header>
 
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-8">
@@ -296,8 +288,8 @@ export default function ListingWizard() {
             >
               {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
             </button>
-            {gateHint || submitError ? (
-              <p className="self-center text-xs text-rose-300">{gateHint || submitError}</p>
+            {currentErrors[0] || submitError ? (
+              <p className="self-center text-xs text-rose-300">{currentErrors[0] || submitError}</p>
             ) : null}
             {step === 'review' ? (
               <button

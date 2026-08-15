@@ -16,7 +16,6 @@ export default function StepBasic({ draft, update }: Props) {
     <div className="space-y-6">
       <div>
         <h2 className="font-display text-xl font-semibold text-white">Ürün</h2>
-        <p className="mt-1 text-sm text-zinc-500">Katalog kartında ve detay sayfasında görünenler.</p>
       </div>
 
       <div>
