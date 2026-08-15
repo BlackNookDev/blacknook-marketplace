@@ -4,11 +4,14 @@ import { getSessionUser } from '@/lib/sessionUser';
 import { installationTeamEmail, installationUserEmail } from '@/lib/emailTemplates';
 import { getPlatformMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
 import { notifyUser } from '@/lib/notify';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
+import { failResponse, logServerError } from '@/lib/errorLog';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
@@ -36,13 +39,18 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error('[installation-request] Listeleme hatası:', error);
-    return NextResponse.json({ error: 'Talepler yüklenemedi.' }, { status: 500 });
+    const logId = await logServerError({
+      source: 'installation-request.GET',
+      error,
+      req,
+    });
+    return failResponse('Talepler yüklenemedi.', logId);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Kurulum talebi için giriş yapın.' }, { status: 401 });
@@ -86,8 +94,13 @@ export async function POST(req: NextRequest) {
       );
       if (result.insertId != null) insertId = Number(result.insertId);
     } catch (dbError) {
-      console.error('[installation-request] DB kayıt hatası:', dbError);
-      return NextResponse.json({ error: 'Talep kaydedilemedi.' }, { status: 500 });
+      const logId = await logServerError({
+        source: 'installation-request.POST.insert',
+        error: dbError,
+        req,
+        userId: user.id,
+      });
+      return failResponse('Talep kaydedilemedi.', logId);
     }
 
     await notifyUser({
@@ -132,10 +145,11 @@ export async function POST(req: NextRequest) {
       mailed: teamResult.ok || userResult.ok,
     });
   } catch (error) {
-    console.error('Kurulum talebi hatası:', error);
-    return NextResponse.json(
-      { error: 'Talep gönderilemedi. Lütfen tekrar deneyin.' },
-      { status: 500 }
-    );
+    const logId = await logServerError({
+      source: 'installation-request.POST',
+      error,
+      req,
+    });
+    return failResponse('Talep gönderilemedi. Lütfen tekrar deneyin.', logId);
   }
 }

@@ -183,6 +183,12 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
 CREATE INDEX IF NOT EXISTS idx_conversation_participants_user
   ON conversation_participants (user_id);
 
+-- Mevcut DB'lerde CREATE TABLE IF NOT EXISTS kolon eklemez; indeksten önce ALTER şart.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS match_available BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS match_skills VARCHAR(255);
+ALTER TABLE match_requests ADD COLUMN IF NOT EXISTS assigned_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE match_requests ADD COLUMN IF NOT EXISTS conversation_id INTEGER;
+
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS conversation_id INTEGER REFERENCES conversations(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages (conversation_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_match_requests_assigned ON match_requests (assigned_user_id, status);
@@ -202,3 +208,17 @@ CREATE TABLE IF NOT EXISTS installation_requests (
 
 CREATE INDEX IF NOT EXISTS idx_installation_requests_user
   ON installation_requests (user_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS error_logs (
+  id          SERIAL PRIMARY KEY,
+  source      VARCHAR(120) NOT NULL,
+  message     TEXT NOT NULL,
+  stack       TEXT,
+  detail      TEXT,
+  method      VARCHAR(16),
+  path        VARCHAR(500),
+  user_id     INTEGER,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_error_logs_created ON error_logs (created_at DESC);

@@ -10,11 +10,14 @@ import { getMatchMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
 import { pickMatchAssignee, toPublicPerson } from '@/lib/matchAssign';
 import { createMatchConversation } from '@/lib/conversations';
 import { notifyUser } from '@/lib/notify';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
+import { failResponse, logServerError } from '@/lib/errorLog';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
@@ -59,13 +62,18 @@ export async function GET(req: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('[match-request] Listeleme hatası:', error);
-    return NextResponse.json({ error: 'Talepler yüklenemedi.' }, { status: 500 });
+    const logId = await logServerError({
+      source: 'match-request.GET',
+      error,
+      req,
+    });
+    return failResponse('Talepler yüklenemedi.', logId);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Eşleşmek için giriş yapın.' }, { status: 401 });
@@ -94,11 +102,13 @@ export async function POST(req: NextRequest) {
       );
       if (result.insertId != null) insertId = Number(result.insertId);
     } catch (dbError) {
-      console.error('[match-request] DB kayıt hatası:', dbError);
-      return NextResponse.json(
-        { error: 'Talep kaydedilemedi. Lütfen tekrar deneyin.' },
-        { status: 500 }
-      );
+      const logId = await logServerError({
+        source: 'match-request.POST.insert',
+        error: dbError,
+        req,
+        userId: user.id,
+      });
+      return failResponse('Talep kaydedilemedi. Lütfen tekrar deneyin.', logId);
     }
 
     if (!insertId) {
@@ -115,7 +125,13 @@ export async function POST(req: NextRequest) {
           need,
         });
       } catch (convError) {
-        console.error('[match-request] Konuşma hatası:', convError);
+        await logServerError({
+          source: 'match-request.POST.conversation',
+          error: convError,
+          req,
+          userId: user.id,
+          extra: { matchRequestId: insertId },
+        });
       }
     }
 
@@ -195,10 +211,11 @@ export async function POST(req: NextRequest) {
       mailed: teamResult.ok || userResult.ok,
     });
   } catch (error) {
-    console.error('[match-request] Hata:', error);
-    return NextResponse.json(
-      { error: 'Talep gönderilemedi. Lütfen tekrar deneyin.' },
-      { status: 500 }
-    );
+    const logId = await logServerError({
+      source: 'match-request.POST',
+      error,
+      req,
+    });
+    return failResponse('Talep gönderilemedi. Lütfen tekrar deneyin.', logId);
   }
 }

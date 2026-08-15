@@ -12,11 +12,14 @@ import { notifyUser } from '@/lib/notify';
 import { messageReceivedEmail } from '@/lib/emailTemplates';
 import { sendUserEmail } from '@/lib/mail';
 import pool from '@/lib/db';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
+import { failResponse, logServerError } from '@/lib/errorLog';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
@@ -39,13 +42,14 @@ export async function GET(req: NextRequest) {
     const conversations = await listInbox(user.id);
     return NextResponse.json({ conversations });
   } catch (error) {
-    console.error('[messages] Listeleme hatası:', error);
-    return NextResponse.json({ error: 'Mesajlar yüklenemedi.' }, { status: 500 });
+    const logId = await logServerError({ source: 'messages.GET', error, req });
+    return failResponse('Mesajlar yüklenemedi.', logId);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
@@ -119,13 +123,14 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[messages] Gönderme hatası:', error);
-    return NextResponse.json({ error: 'Mesaj gönderilemedi.' }, { status: 500 });
+    const logId = await logServerError({ source: 'messages.POST', error, req });
+    return failResponse('Mesaj gönderilemedi.', logId);
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
@@ -142,7 +147,7 @@ export async function PATCH(req: NextRequest) {
     await markConversationRead(conversationId, user.id);
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('[messages] Okundu hatası:', error);
-    return NextResponse.json({ error: 'Güncellenemedi.' }, { status: 500 });
+    const logId = await logServerError({ source: 'messages.PATCH', error, req });
+    return failResponse('Güncellenemedi.', logId);
   }
 }

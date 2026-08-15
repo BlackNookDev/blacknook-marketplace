@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, PlusCircle, Shield, Users } from 'lucide-react';
+import { AlertTriangle, LayoutDashboard, Package, PlusCircle, Shield, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Item = { href: string; label: string; icon: typeof LayoutDashboard };
@@ -16,6 +16,7 @@ const VENDOR_NAV: Item[] = [
 const ADMIN_NAV: Item[] = [
   { href: '/admin/developers', label: 'Partner başvuruları', icon: Users },
   { href: '/admin/products', label: 'Ürün moderasyonu', icon: Shield },
+  { href: '/admin/errors', label: 'Hatalar', icon: AlertTriangle },
 ];
 
 type Props = {
