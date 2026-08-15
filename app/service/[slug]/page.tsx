@@ -12,23 +12,35 @@ import {
   softwareApplicationJsonLd,
 } from '@/lib/seo';
 import ServiceDetailActions from './ServiceDetailActions';
+import MarketplaceDetail from '@/components/services/MarketplaceDetail';
+import { getMarketplaceBySlug } from '@/lib/marketplace';
 
 type PageProps = {
   params: { slug: string };
 };
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return getAllServiceSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const service = getServiceBySlug(params.slug);
   if (!service) {
+    const market = await getMarketplaceBySlug(params.slug).catch(() => null);
+    if (!market) {
+      return buildPageMetadata({
+        title: 'Servis bulunamadı',
+        description: 'Aradığınız servis Blacknook kataloğunda yok.',
+        path: `/service/${params.slug}`,
+        noIndex: true,
+      });
+    }
     return buildPageMetadata({
-      title: 'Servis bulunamadı',
-      description: 'Aradığınız servis Blacknook kataloğunda yok.',
-      path: `/service/${params.slug}`,
-      noIndex: true,
+      title: `${market.title} | Blacknook`.slice(0, 60),
+      description: market.shortDescription,
+      path: `/service/${market.slug}`,
     });
   }
 
@@ -40,9 +52,13 @@ export function generateMetadata({ params }: PageProps): Metadata {
   });
 }
 
-export default function ServiceDetailPage({ params }: PageProps) {
+export default async function ServiceDetailPage({ params }: PageProps) {
   const service = getServiceBySlug(params.slug);
-  if (!service) notFound();
+  if (!service) {
+    const market = await getMarketplaceBySlug(params.slug).catch(() => null);
+    if (!market) notFound();
+    return <MarketplaceDetail product={market} />;
+  }
 
   return (
     <main className="min-h-screen bg-transparent pb-24 pt-28">

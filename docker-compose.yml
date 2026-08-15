@@ -68,8 +68,11 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@blacknook.com}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-BlacknookAdmin1}
       ADMIN_NAME: ${ADMIN_NAME:-Admin}
+      UPLOAD_DIR: /app/uploads
     ports:
       - '127.0.0.1:${APP_PORT:-18080}:3000'
+    volumes:
+      - blacknook_marketplace_uploads:/app/uploads
     expose:
       - '3000'
     healthcheck:
@@ -103,6 +106,7 @@ services:
 volumes:
   blacknook_marketplace_postgres_data:
   blacknook_marketplace_pgadmin_data:
+  blacknook_marketplace_uploads:
 
 networks:
   blacknook_marketplace_internal:

@@ -9,7 +9,12 @@ export interface ServiceCatalogItem {
   useCases: string[];
 }
 
-export type ServiceCatalogEntry = ServiceCatalogItem & { brandColor: string };
+export type ServiceCatalogEntry = ServiceCatalogItem & {
+  brandColor: string;
+  coverImage?: string;
+  iconImage?: string;
+  source?: 'catalog' | 'marketplace';
+};
 
 export const SERVICES: ServiceCatalogEntry[] = [
   {

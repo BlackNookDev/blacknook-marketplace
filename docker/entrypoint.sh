@@ -4,6 +4,7 @@ set -e
 DB_HOST="${DB_HOST:-postgres}"
 DB_PORT="${DB_PORT:-5432}"
 DB_USER="${DB_USER:-postgres}"
+UPLOAD_DIR="${UPLOAD_DIR:-/app/uploads}"
 
 echo "PostgreSQL bekleniyor (${DB_HOST}:${DB_PORT})..."
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" >/dev/null 2>&1; do
@@ -11,7 +12,19 @@ until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" >/dev/null 2>&1; do
 done
 echo "PostgreSQL hazır."
 
-if [ -f schema.sql ]; then
+mkdir -p "$UPLOAD_DIR"
+if id nextjs >/dev/null 2>&1; then
+  chown -R nextjs:nodejs "$UPLOAD_DIR" || true
+fi
+
+if [ -f scripts/migrate.js ]; then
+  echo "Veritabanı migrate ediliyor..."
+  if node scripts/migrate.js; then
+    echo "Migrate tamam."
+  else
+    echo "Migrate başarısız — uygulama yine başlıyor."
+  fi
+elif [ -f schema.sql ]; then
   echo "Veritabanı şeması uygulanıyor..."
   export PGPASSWORD="${DB_PASSWORD}"
   psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -v ON_ERROR_STOP=1 -f schema.sql
@@ -28,4 +41,7 @@ if [ -f scripts/seed-admin.js ]; then
 fi
 
 echo "Next.js başlatılıyor..."
+if command -v su-exec >/dev/null 2>&1 && id nextjs >/dev/null 2>&1 && [ "$(id -u)" = "0" ]; then
+  exec su-exec nextjs node server.js
+fi
 exec node server.js

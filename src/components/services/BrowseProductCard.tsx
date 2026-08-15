@@ -29,24 +29,40 @@ export default function BrowseProductCard({ service, className }: Props) {
           background: `linear-gradient(145deg, ${service.brandColor}cc 0%, #0a0a0b 72%)`,
         }}
       >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08), transparent 40%)',
-          }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 flex items-center justify-center p-6">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/35 shadow-lg ring-1 ring-white/20 backdrop-blur-sm transition-transform duration-premium group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]">
-            <ServiceCatalogLogo
-              icon={service.icon}
-              brandColor={service.brandColor}
-              name={service.name}
-              size="lg"
+        {service.coverImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={service.coverImage}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <>
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08), transparent 40%)',
+              }}
+              aria-hidden
             />
-          </div>
-        </div>
+            <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/35 shadow-lg ring-1 ring-white/20 backdrop-blur-sm transition-transform duration-premium group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]">
+                <ServiceCatalogLogo
+                  icon={service.iconImage || service.icon}
+                  brandColor={service.brandColor}
+                  name={service.name}
+                  size="lg"
+                />
+              </div>
+            </div>
+          </>
+        )}
+        {service.source === 'marketplace' ? (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black">
+            Partner
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col px-3.5 pb-4 pt-3.5">

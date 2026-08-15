@@ -132,6 +132,14 @@ export function iconDisplayColor(hex: string): string {
 }
 
 export function resolveServiceLogo(iconKey: string, brandColor: string) {
+  if (
+    iconKey.startsWith('/') ||
+    iconKey.startsWith('http://') ||
+    iconKey.startsWith('https://') ||
+    iconKey.startsWith('data:')
+  ) {
+    return { kind: 'image' as const, src: iconKey };
+  }
   if (iconKey in SERVICE_ICON_MAP) {
     const Icon = SERVICE_ICON_MAP[iconKey];
     return { kind: 'icon' as const, Icon, color: iconDisplayColor(brandColor) };

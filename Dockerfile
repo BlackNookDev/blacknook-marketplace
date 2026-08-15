@@ -23,10 +23,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
-RUN apk add --no-cache postgresql-client wget
+RUN apk add --no-cache postgresql-client wget su-exec
 
 RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
+  && adduser --system --uid 1001 nextjs \
+  && mkdir -p /app/uploads \
+  && chown nextjs:nodejs /app/uploads
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
@@ -38,7 +40,6 @@ COPY --chown=nextjs:nodejs docker/entrypoint.sh ./docker/entrypoint.sh
 
 RUN chmod +x ./docker/entrypoint.sh
 
-USER nextjs
 EXPOSE 3000
 
 ENTRYPOINT ["./docker/entrypoint.sh"]

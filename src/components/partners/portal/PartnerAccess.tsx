@@ -11,6 +11,7 @@ import {
   type DevApplication,
   VENDOR_EVENT,
 } from '@/lib/demoVendor';
+import { apiFetch } from '@/lib/apiUrl';
 
 export type PartnerAccessState = {
   ready: boolean;
@@ -24,6 +25,7 @@ export function usePartnerAccess(): PartnerAccessState {
   const [ready, setReady] = useState(false);
   const [role, setRole] = useState<DemoRole>('user');
   const [application, setApplication] = useState<DevApplication | null>(null);
+  const [hasListing, setHasListing] = useState(false);
 
   useEffect(() => {
     const tick = () => {
@@ -44,8 +46,27 @@ export function usePartnerAccess(): PartnerAccessState {
     };
   }, []);
 
+  useEffect(() => {
+    if (!ready) return;
+    let cancelled = false;
+    void apiFetch('/api/products?mine=1', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : { products: [] }))
+      .then((data) => {
+        if (!cancelled) setHasListing(Array.isArray(data.products) && data.products.length > 0);
+      })
+      .catch(() => {
+        if (!cancelled) setHasListing(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ready]);
+
   const canManage =
-    role === 'vendor' || role === 'admin' || application?.status === 'approved';
+    role === 'vendor' ||
+    role === 'admin' ||
+    application?.status === 'approved' ||
+    hasListing;
 
   return { ready, role, application, canManage };
 }

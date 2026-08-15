@@ -12,8 +12,8 @@ import {
   type ListingDraft,
   type ListingStepId,
 } from '@/lib/listingDraft';
-import { addProduct, getDemoRole, slugify, submitApplication } from '@/lib/demoVendor';
-import { getAuthIdentity } from '@/lib/authIdentity';
+import { getDemoRole } from '@/lib/demoVendor';
+import { apiFetch } from '@/lib/apiUrl';
 import StepBasic from '@/components/partners/steps/StepBasic';
 import StepMedia from '@/components/partners/steps/StepMedia';
 import StepFeatures from '@/components/partners/steps/StepFeatures';
@@ -29,6 +29,7 @@ export default function ListingWizard() {
   const [draft, setDraft] = useState<ListingDraft | null>(null);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
   const [role, setRole] = useState<'user' | 'pending' | 'vendor' | 'admin'>('user');
 
@@ -61,57 +62,43 @@ export default function ListingWizard() {
     if (next) setStep(next.id);
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!draft || submitting) return;
+    setSubmitError('');
+    if (!draft.productName.trim()) {
+      setSubmitError('Ürün adı gerekli.');
+      return;
+    }
     setSubmitting(true);
-    window.setTimeout(() => {
-      const user = getAuthIdentity();
-      const currentRole = getDemoRole();
-      const isApprovedSeller = currentRole === 'vendor' || currentRole === 'admin';
-
-      if (!isApprovedSeller) {
-        submitApplication({
-          name: draft.founderName || user?.name || draft.productName,
-          github: '',
-          linkedin: draft.linkedinUrl,
-          bio: draft.usp || draft.tagline,
-          productFocus: draft.category,
-          portfolioUrl: draft.websiteUrl,
-        });
-        // submitApplication zaten pending yazar
-      }
-
-      const features = draft.stories.flatMap((s) =>
-        s.bullets.map((b) => b.trim()).filter(Boolean)
-      );
-      addProduct({
-        title: draft.productName || 'İsimsiz ürün',
-        slug: slugify(draft.productName || 'urun'),
-        category: draft.category,
-        shortDescription: draft.tagline,
-        longDescription: draft.usp || draft.founderNarrative,
-        features: features.length ? features : draft.tldr.filter(Boolean),
-        tiers: draft.tiers.map((t) => ({
-          id: t.id,
-          name: t.name,
-          price: t.price,
-          originalPrice: Math.round(t.price * 3),
-          features: draft.matrix
-            .filter((r) => !r.inAllPlans)
-            .map((r) => {
-              const idx = draft.tiers.findIndex((x) => x.id === t.id);
-              return `${r.label}: ${r.values[idx] ?? '—'}`;
-            }),
-        })),
+    try {
+      const res = await apiFetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listing: draft }),
       });
-
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        status?: string;
+        slug?: string;
+      };
+      if (!res.ok) {
+        setSubmitError(data.error || 'Ürün gönderilemedi.');
+        setSubmitting(false);
+        return;
+      }
       saveListingDraft({
         ...draft,
         submittedAt: new Date().toISOString(),
       });
+      router.push(
+        data.status === 'approved' && data.slug
+          ? `/service/${data.slug}`
+          : '/partners/listings'
+      );
+    } catch {
+      setSubmitError('Bağlantı hatası. Tekrar deneyin.');
       setSubmitting(false);
-      router.push(isApprovedSeller ? '/partners/listings' : '/partners/status');
-    }, 800);
+    }
   };
 
   if (!draft) {
@@ -185,9 +172,9 @@ export default function ListingWizard() {
             Ürün oluştur
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-            {role === 'vendor' || role === 'admin'
-              ? 'Onaylı partner olarak yeni ürün gönderiyorsunuz. İnceleme sonrası hub’da yayınlanır.'
-              : 'Tek partner yolu: program bilgisinden sonra bu formu doldurup incelemeye gönderin. Onay sonrası partner paneli açılır.'}
+            {role === 'admin'
+              ? 'Admin olarak gönderdiğiniz ürün hemen pazaryerinde, açık kaynak listesinin önünde yayınlanır.'
+              : 'Görseller, fiyat ve hikâyeyi doldurup gönderin. Admin onayından sonra ürününüz katalogda önde sergilenir.'}
           </p>
         </header>
 
@@ -221,10 +208,13 @@ export default function ListingWizard() {
             >
               {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
             </button>
+            {submitError ? (
+              <p className="self-center text-xs text-rose-300">{submitError}</p>
+            ) : null}
             {step === 'review' ? (
               <button
                 type="button"
-                onClick={submit}
+                onClick={() => void submit()}
                 disabled={submitting || !draft.productName.trim()}
                 className="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90 disabled:opacity-50"
               >

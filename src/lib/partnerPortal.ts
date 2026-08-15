@@ -1,6 +1,6 @@
 export const PARTNER_PORTAL_NAV = [
   { href: '/partners/overview', label: 'Kontrol Paneli', requiresApproval: false },
-  { href: '/partners/listings', label: 'Listeler', requiresApproval: true },
+  { href: '/partners/listings', label: 'Listeler', requiresApproval: false },
   { href: '/partners/sales', label: 'Satış ve Analitik', requiresApproval: true },
   { href: '/partners/billing', label: 'Faturalandırma', requiresApproval: true },
   { href: '/partners/support', label: 'Destek', requiresApproval: false },
@@ -24,7 +24,7 @@ export type PortalSaleRow = {
 
 /** Satış satırları — canlı sipariş entegrasyonu gelene kadar boş */
 export function buildDemoSales(
-  _products: { id: string; title: string; tiers: { name: string; price: number }[]; status: string }[]
+  _products: { id: string | number; title: string; status: string }[]
 ): PortalSaleRow[] {
   return [];
 }

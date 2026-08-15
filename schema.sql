@@ -28,9 +28,15 @@ CREATE TABLE IF NOT EXISTS products (
   gallery_images      TEXT,                        -- JSON array of Base64 strings
   video_url           TEXT,                        -- Base64 encoded MP4/WebM
   features_list       JSONB,                       -- ["Özellik 1", "Özellik 2", ...]
+  listing_data        JSONB,                       -- partner wizard tam taslak
+  icon_image          TEXT,                        -- logo / ikon URL
+  brand_color         VARCHAR(32) DEFAULT '#6366F1',
+  reject_reason       TEXT,
   status              VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
   created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_products_status ON products (status, created_at DESC);
 
 -- Ürün Lisans Katmanları (Tiers)
 CREATE TABLE IF NOT EXISTS product_tiers (

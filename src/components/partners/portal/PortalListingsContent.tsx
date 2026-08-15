@@ -4,7 +4,18 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { PlusCircle, Search } from 'lucide-react';
 import StatusBadge from '@/components/demo/StatusBadge';
-import { getMyProducts, type DemoVendorProduct, VENDOR_EVENT } from '@/lib/demoVendor';
+import { apiFetch } from '@/lib/apiUrl';
+
+type PortalProduct = {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  shortDescription: string;
+  status: 'pending' | 'approved' | 'rejected';
+  rejectReason?: string;
+  tiers: { id: number | string }[];
+};
 
 const FILTERS = [
   { id: 'all', label: 'Tümü' },
@@ -14,15 +25,23 @@ const FILTERS = [
 ] as const;
 
 export default function PortalListingsContent() {
-  const [products, setProducts] = useState<DemoVendorProduct[]>([]);
+  const [products, setProducts] = useState<PortalProduct[]>([]);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<(typeof FILTERS)[number]['id']>('all');
 
   useEffect(() => {
-    const tick = () => setProducts(getMyProducts());
-    tick();
-    window.addEventListener(VENDOR_EVENT, tick);
-    return () => window.removeEventListener(VENDOR_EVENT, tick);
+    let cancelled = false;
+    void apiFetch('/api/products?mine=1', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : { products: [] }))
+      .then((data) => {
+        if (!cancelled) setProducts(Array.isArray(data.products) ? data.products : []);
+      })
+      .catch(() => {
+        if (!cancelled) setProducts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -118,7 +137,15 @@ export default function PortalListingsContent() {
               >
                 <div className="min-w-0">
                   <p className="font-medium text-zinc-100">{p.title}</p>
-                  <p className="mt-0.5 truncate text-xs text-zinc-500">/{p.slug}</p>
+                  <p className="mt-0.5 truncate text-xs text-zinc-500">
+                    {p.status === 'approved' ? (
+                      <Link href={`/service/${p.slug}`} className="hover:text-zinc-300">
+                        /service/{p.slug}
+                      </Link>
+                    ) : (
+                      `/${p.slug}`
+                    )}
+                  </p>
                   <p className="mt-1 line-clamp-2 text-sm text-zinc-500 sm:hidden">
                     {p.shortDescription}
                   </p>

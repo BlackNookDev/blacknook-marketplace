@@ -16,6 +16,7 @@ import { getComingSoonCopy, isComingSoonMenuId } from '../../../lib/catalogChann
 import { SERVICES, type ServiceCatalogEntry } from '../../../lib/data';
 import { browseHeading, countBySubcategory } from '../../../lib/browseMeta';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/apiUrl';
 
 type SortKey = 'recommended' | 'name-asc' | 'name-desc' | 'category';
 
@@ -47,6 +48,26 @@ export default function ServicesBrowse() {
   const [q, setQ] = useState(searchParams.get('q') ?? '');
   const [debouncedQ, setDebouncedQ] = useState(q);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [market, setMarket] = useState<ServiceCatalogEntry[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void apiFetch('/api/products', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : { products: [] }))
+      .then((data) => {
+        if (cancelled) return;
+        const list = Array.isArray(data.products) ? data.products : [];
+        setMarket(list.filter((item: ServiceCatalogEntry) => item?.slug));
+      })
+      .catch(() => {
+        if (!cancelled) setMarket([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const catalog = useMemo(() => [...market, ...SERVICES], [market]);
 
   const category = searchParams.get('category') ?? '';
   const type = searchParams.get('type') ?? '';
@@ -105,10 +126,14 @@ export default function ServicesBrowse() {
     if (comingSoon) return [];
     const browse = category ? getBrowseCategory(category) : undefined;
     const menu = NAV_MENUS.find((m) => m.id === type);
-    if (browse) return getServicesForBrowseCategory(browse.id);
-    if (menu) return getNavMenuServices(menu);
-    return SERVICES;
-  }, [category, type, comingSoon]);
+    if (browse) {
+      const staticList = getServicesForBrowseCategory(browse.id);
+      const extra = market.filter((item) => browse.match.includes(item.category));
+      return [...extra, ...staticList];
+    }
+    if (menu) return [...market, ...getNavMenuServices(menu)];
+    return catalog;
+  }, [category, type, comingSoon, market, catalog]);
 
   const filtered = useMemo(() => {
     let list = basePool;
@@ -173,12 +198,14 @@ export default function ServicesBrowse() {
               )}
             >
               Tümü
-              <span className="ml-1 text-zinc-600">({SERVICES.length})</span>
+              <span className="ml-1 text-zinc-600">({catalog.length})</span>
             </button>
           </li>
           {BROWSE_CATEGORIES.map((c) => {
             const active = category === c.id;
-            const count = getServicesForBrowseCategory(c.id).length;
+            const count =
+              getServicesForBrowseCategory(c.id).length +
+              market.filter((item) => c.match.includes(item.category)).length;
             return (
               <li key={c.id}>
                 <button
@@ -256,7 +283,7 @@ export default function ServicesBrowse() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={`Servis ara (${SERVICES.length})`}
+            placeholder={`Servis ara (${catalog.length})`}
             className="h-12 w-full rounded-full border border-white/15 bg-white/[0.04] py-2 pl-11 pr-10 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10"
           />
           {q ? (

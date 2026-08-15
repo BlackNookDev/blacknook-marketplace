@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import DemoGate from '@/components/demo/DemoGate';
-import { PartnerFeatureGate } from '@/components/partners/portal/PartnerAccess';
 import PartnerPortalShell from '@/components/partners/portal/PartnerPortalShell';
 import PortalListingsContent from '@/components/partners/portal/PortalListingsContent';
 import { buildPageMetadata } from '@/lib/seo';
@@ -16,9 +15,7 @@ export default function PartnersListingsPage() {
   return (
     <DemoGate fallbackHref="/login">
       <PartnerPortalShell title="Listeler">
-        <PartnerFeatureGate title="Listeler">
-          <PortalListingsContent />
-        </PartnerFeatureGate>
+        <PortalListingsContent />
       </PartnerPortalShell>
     </DemoGate>
   );

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 const SELL_LINKS = [
+  { href: '/partners/self-submission', label: 'Ürününü listele' },
   { href: '/sell', label: 'Satışa başla' },
   { href: '/partners/overview', label: 'Partner Portal' },
   { href: '/select', label: 'Blacknook Select' },

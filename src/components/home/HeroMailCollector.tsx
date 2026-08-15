@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Check, Loader2, Shield, Sparkles } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
@@ -181,6 +182,15 @@ export default function HeroMailCollector() {
               )}
             </button>
           </form>
+          <p className="mt-3 text-center text-xs text-zinc-600">
+            Kendi yazılımını mı satıyorsun?{' '}
+            <Link
+              href="/partners/self-submission"
+              className="font-semibold text-zinc-300 underline underline-offset-2 hover:text-white"
+            >
+              Ürününü listele
+            </Link>
+          </p>
         </div>
       </m.div>
 

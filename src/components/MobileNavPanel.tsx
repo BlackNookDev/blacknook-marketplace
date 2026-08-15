@@ -7,6 +7,7 @@ import { ArrowRight, X } from 'lucide-react';
 import { ECOSYSTEM_NAV } from '../../lib/navMenus';
 
 const SITE_LINKS = [
+  { href: '/partners/self-submission', label: 'Ürününü listele', gated: true },
   { href: '/sell', label: 'Satışa başla', gated: true },
   { href: '/select', label: 'Blacknook Select', gated: true },
   { href: '/partners/overview', label: 'Partner Portal', gated: true },

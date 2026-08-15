@@ -13,8 +13,16 @@ import {
 } from 'lucide-react';
 import StatusBadge from '@/components/demo/StatusBadge';
 import { usePartnerAccess } from '@/components/partners/portal/PartnerAccess';
-import { getMyProducts, type DemoVendorProduct, VENDOR_EVENT } from '@/lib/demoVendor';
+import { apiFetch } from '@/lib/apiUrl';
 import { buildDemoSales, formatTry } from '@/lib/partnerPortal';
+
+type OverviewProduct = {
+  id: number;
+  title: string;
+  category: string;
+  status: 'pending' | 'approved' | 'rejected';
+  tiers: { id: number | string }[];
+};
 
 function EmptyWelcome() {
   return (
@@ -153,13 +161,21 @@ function RejectedWelcome({ reason }: { reason?: string }) {
 
 export default function PortalOverviewContent() {
   const { ready, canManage, application, role } = usePartnerAccess();
-  const [products, setProducts] = useState<DemoVendorProduct[]>([]);
+  const [products, setProducts] = useState<OverviewProduct[]>([]);
 
   useEffect(() => {
-    const tick = () => setProducts(getMyProducts());
-    tick();
-    window.addEventListener(VENDOR_EVENT, tick);
-    return () => window.removeEventListener(VENDOR_EVENT, tick);
+    let cancelled = false;
+    void apiFetch('/api/products?mine=1', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : { products: [] }))
+      .then((data) => {
+        if (!cancelled) setProducts(Array.isArray(data.products) ? data.products : []);
+      })
+      .catch(() => {
+        if (!cancelled) setProducts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!ready) {
