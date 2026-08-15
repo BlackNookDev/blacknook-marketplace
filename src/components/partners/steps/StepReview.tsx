@@ -1,6 +1,9 @@
-import type { ListingDraft } from '@/lib/listingDraft';
+import {
+  LISTING_STEPS,
+  listingTypeLabel,
+  type ListingDraft,
+} from '@/lib/listingDraft';
 import { deliveryLabel, firstIncompleteStep, getStepErrors } from '@/lib/listingValidate';
-import { LISTING_STEPS } from '@/lib/listingDraft';
 
 type Props = { draft: ListingDraft };
 
@@ -29,6 +32,7 @@ export default function StepReview({ draft }: Props) {
 
       <Section title="Ürün">
         <Row k="Ad" v={draft.productName || '—'} />
+        <Row k="Tür" v={listingTypeLabel(draft.listingType) || '—'} />
         <Row k="Kategori" v={draft.category} />
         <Row k="Site" v={draft.websiteUrl || '—'} />
         <Row k="Çalışır" v={deliveryLabel(draft.delivery) || '—'} />

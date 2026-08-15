@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
+import VerifiedBadge from '@/components/VerifiedBadge';
 import type { ServiceCatalogEntry } from '../../../lib/data';
 import { cn } from '@/lib/utils';
 
@@ -58,7 +59,11 @@ export default function BrowseProductCard({ service, className }: Props) {
             </div>
           </>
         )}
-        {service.source === 'marketplace' ? (
+        {service.verified ? (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-sky-500/20 px-2 py-0.5 ring-1 ring-sky-400/30">
+            <VerifiedBadge compact className="text-sky-200" />
+          </span>
+        ) : service.source === 'marketplace' ? (
           <span className="absolute left-2.5 top-2.5 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black">
             Partner
           </span>

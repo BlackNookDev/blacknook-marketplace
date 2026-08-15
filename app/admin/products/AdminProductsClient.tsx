@@ -1,28 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import StatusBadge from '@/components/demo/StatusBadge';
 import { apiFetch } from '@/lib/apiUrl';
+import AdminProductDetail, {
+  type AdminProductRow,
+} from '@/components/admin/AdminProductDetail';
 
-type AdminProduct = {
-  id: number;
-  title: string;
-  slug: string;
-  category: string;
-  shortDescription: string;
-  coverImage?: string;
-  iconImage?: string;
-  status: 'pending' | 'approved' | 'rejected';
-  rejectReason?: string;
-  vendorName: string;
-  tiers: { id: number | string; name: string; price: number }[];
-};
+const FILTERS = [
+  { id: 'all', label: 'Tümü' },
+  { id: 'approved', label: 'Yayında' },
+  { id: 'pending', label: 'Bekleyen' },
+  { id: 'unpublished', label: 'Yayından alındı' },
+  { id: 'rejected', label: 'Reddedildi' },
+] as const;
 
 export default function AdminProductsClient() {
   const { data: session } = useSession();
-  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [products, setProducts] = useState<AdminProductRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]['id']>('approved');
+  const [query, setQuery] = useState('');
   const isAdmin = session?.user?.role === 'admin';
 
   const load = useCallback(async () => {
@@ -40,17 +38,39 @@ export default function AdminProductsClient() {
     void load();
   }, [isAdmin, load]);
 
-  const setStatus = async (id: number, status: 'approved' | 'rejected') => {
+  const setStatus = async (
+    id: number,
+    status: 'approved' | 'rejected' | 'unpublished',
+    rejectReason?: string
+  ) => {
     await apiFetch(`/api/products/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status,
-        rejectReason: status === 'rejected' ? 'Eksik bilgi veya politika uyumsuzluğu.' : undefined,
-      }),
+      body: JSON.stringify({ status, rejectReason }),
     });
     void load();
   };
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return products
+      .filter((p) => (filter === 'all' ? true : p.status === filter))
+      .filter((p) => {
+        if (!q) return true;
+        return (
+          p.title.toLowerCase().includes(q) ||
+          p.slug.toLowerCase().includes(q) ||
+          p.vendorName.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => {
+        if (a.status === b.status) return a.title.localeCompare(b.title, 'tr');
+        if (a.status === 'pending') return -1;
+        if (b.status === 'pending') return 1;
+        return 0;
+      });
+  }, [products, filter, query]);
 
   if (!isAdmin) {
     return (
@@ -67,64 +87,55 @@ export default function AdminProductsClient() {
     return <p className="text-sm text-zinc-500">Yükleniyor…</p>;
   }
 
-  if (products.length === 0) {
-    return <p className="text-sm text-zinc-500">Moderasyon bekleyen ürün yok.</p>;
-  }
+  const counts = {
+    all: products.length,
+    approved: products.filter((p) => p.status === 'approved').length,
+    pending: products.filter((p) => p.status === 'pending').length,
+    unpublished: products.filter((p) => p.status === 'unpublished').length,
+    rejected: products.filter((p) => p.status === 'rejected').length,
+  };
 
   return (
-    <ul className="space-y-4">
-      {products.map((p) => (
-        <li key={p.id} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex min-w-0 gap-3">
-              {p.iconImage || p.coverImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={p.iconImage || p.coverImage}
-                  alt=""
-                  className="h-12 w-12 rounded-xl object-cover"
-                />
-              ) : null}
-              <div>
-                <p className="font-medium text-zinc-100">{p.title}</p>
-                <p className="text-sm text-zinc-500">
-                  {p.vendorName} · {p.category}
-                </p>
-                <p className="mt-2 text-sm text-zinc-400">{p.shortDescription}</p>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {p.tiers.map((t) => (
-                    <li
-                      key={String(t.id)}
-                      className="rounded-full border border-white/10 px-2.5 py-0.5 text-[11px] text-zinc-400"
-                    >
-                      {t.name}: ${t.price}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <StatusBadge status={p.status} />
-          </div>
-          {p.status === 'pending' ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void setStatus(p.id, 'approved')}
-                className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-              >
-                Yayınla
-              </button>
-              <button
-                type="button"
-                onClick={() => void setStatus(p.id, 'rejected')}
-                className="rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/[0.04]"
-              >
-                Reddet
-              </button>
-            </div>
-          ) : null}
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-6">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Ürün, sağlayıcı veya kategori ara…"
+        className="h-11 w-full rounded-xl border border-white/15 bg-transparent px-4 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30"
+      />
+      <div className="flex flex-wrap gap-1.5">
+        {FILTERS.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => setFilter(f.id)}
+            className={
+              filter === f.id
+                ? 'rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black'
+                : 'rounded-full border border-white/10 px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white'
+            }
+          >
+            {f.label} ({counts[f.id]})
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="text-sm text-zinc-500">Bu filtrede ürün yok.</p>
+      ) : (
+        <ul className="space-y-4">
+          {filtered.map((p) => (
+            <AdminProductDetail
+              key={p.id}
+              product={p}
+              defaultOpen={p.status === 'pending'}
+              onApprove={(id) => void setStatus(id, 'approved')}
+              onReject={(id, reason) => void setStatus(id, 'rejected', reason)}
+              onUnpublish={(id, reason) => void setStatus(id, 'unpublished', reason)}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

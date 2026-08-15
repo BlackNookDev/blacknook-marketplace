@@ -42,7 +42,7 @@ const COMING_SOON: Record<Exclude<CatalogChannel, 'service'>, ComingSoonCopy> = 
 };
 
 export function isComingSoonMenuId(id: string | null | undefined): boolean {
-  return id === 'saas' || id === 'micro-saas' || id === 'script';
+  return id === 'script';
 }
 
 export function getComingSoonCopy(id: string): ComingSoonCopy | null {

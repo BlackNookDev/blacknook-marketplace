@@ -13,7 +13,7 @@ import {
   getServicesForBrowseCategory,
 } from '../../../lib/navMenus';
 import { getComingSoonCopy, isComingSoonMenuId } from '../../../lib/catalogChannels';
-import { SERVICES, type ServiceCatalogEntry } from '../../../lib/data';
+import { asOfficialCatalog, SERVICES, type ServiceCatalogEntry } from '../../../lib/data';
 import { browseHeading, countBySubcategory } from '../../../lib/browseMeta';
 import { cn } from '@/lib/utils';
 import { apiFetch } from '@/lib/apiUrl';
@@ -67,7 +67,10 @@ export default function ServicesBrowse() {
     };
   }, []);
 
-  const catalog = useMemo(() => [...market, ...SERVICES], [market]);
+  const catalog = useMemo(() => {
+    const slugs = new Set(market.map((item) => item.slug));
+    return [...market, ...SERVICES.filter((item) => !slugs.has(item.slug)).map(asOfficialCatalog)];
+  }, [market]);
 
   const category = searchParams.get('category') ?? '';
   const type = searchParams.get('type') ?? '';
@@ -125,12 +128,18 @@ export default function ServicesBrowse() {
   const basePool = useMemo(() => {
     if (comingSoon) return [];
     const browse = category ? getBrowseCategory(category) : undefined;
-    const menu = NAV_MENUS.find((m) => m.id === type);
     if (browse) {
-      const staticList = getServicesForBrowseCategory(browse.id);
-      const extra = market.filter((item) => browse.match.includes(item.category));
-      return [...extra, ...staticList];
+      const fromMarket = market.filter((item) => browse.match.includes(item.category));
+      const slugs = new Set(fromMarket.map((item) => item.slug));
+      const staticList = getServicesForBrowseCategory(browse.id)
+        .filter((item) => !slugs.has(item.slug))
+        .map(asOfficialCatalog);
+      return [...fromMarket, ...staticList];
     }
+    if (type === 'saas' || type === 'micro-saas') {
+      return market.filter((item) => (item.listingType || 'saas') === type);
+    }
+    const menu = NAV_MENUS.find((m) => m.id === type);
     if (menu) return [...market, ...getNavMenuServices(menu)];
     return catalog;
   }, [category, type, comingSoon, market, catalog]);
@@ -157,9 +166,13 @@ export default function ServicesBrowse() {
 
   const heading = category
     ? browseHeading(category)
-    : type
-      ? `${NAV_MENUS.find((m) => m.id === type)?.label ?? ''} keşfet`
-      : 'Servisleri keşfet';
+    : type === 'saas'
+      ? 'SaaS'
+      : type === 'micro-saas'
+        ? 'MicroSaaS'
+        : type
+          ? `${NAV_MENUS.find((m) => m.id === type)?.label ?? ''} keşfet`
+          : 'Servisleri keşfet';
 
   const hasActiveFilters = Boolean(category || type || cat || debouncedQ);
 

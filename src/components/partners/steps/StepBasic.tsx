@@ -1,5 +1,5 @@
 import type { ListingDraft } from '@/lib/listingDraft';
-import { charHint, LISTING_CATEGORIES } from '@/lib/listingDraft';
+import { charHint, LISTING_CATEGORIES, LISTING_TYPES } from '@/lib/listingDraft';
 import { FieldLabel } from '@/components/partners/FieldHint';
 import { DELIVERY_OPTIONS } from '@/lib/listingValidate';
 
@@ -33,6 +33,28 @@ export default function StepBasic({ draft, update }: Props) {
         <p className="mt-1.5 text-right text-[11px] tabular-nums text-zinc-600">
           {charHint(draft.productName.length, 75)}
         </p>
+      </div>
+
+      <div>
+        <FieldLabel required hint="Ana sayfada ve katalogda hangi başlık altında duracağını belirler.">
+          Tür
+        </FieldLabel>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {LISTING_TYPES.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => update({ listingType: opt.id })}
+              className={`rounded-xl border px-3 py-3 text-left text-sm transition-colors ${
+                draft.listingType === opt.id
+                  ? 'border-white/30 bg-white/[0.06] text-white'
+                  : 'border-white/[0.08] text-zinc-400 hover:bg-white/[0.03]'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div>

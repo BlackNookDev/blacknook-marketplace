@@ -14,6 +14,9 @@ export type ServiceCatalogEntry = ServiceCatalogItem & {
   coverImage?: string;
   iconImage?: string;
   source?: 'catalog' | 'marketplace';
+  listingType?: 'saas' | 'micro-saas' | 'service';
+  verified?: boolean;
+  vendorName?: string;
 };
 
 export const SERVICES: ServiceCatalogEntry[] = [
@@ -1134,8 +1137,18 @@ export function getServiceDealMeta(_slug: string, _index = 0): ServiceDealMeta {
   };
 }
 
+export function asOfficialCatalog(service: ServiceCatalogEntry): ServiceCatalogEntry {
+  return {
+    ...service,
+    listingType: 'service',
+    verified: true,
+    vendorName: 'BlackNook',
+    source: 'catalog',
+  };
+}
+
 export function getFeaturedServices(limit = 12): ServiceCatalogEntry[] {
-  return SERVICES.slice(0, limit);
+  return SERVICES.slice(0, limit).map(asOfficialCatalog);
 }
 
 export function getServiceBySlug(slug: string): ServiceCatalogEntry | undefined {

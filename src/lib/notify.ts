@@ -16,3 +16,32 @@ export async function notifyUser(params: {
     console.warn('[notify] Bildirim yazılamadı:', error);
   }
 }
+
+export async function notifyAdmins(params: {
+  title: string;
+  body: string;
+  href: string;
+  exceptUserId?: number;
+}) {
+  try {
+    const [rows]: any = await pool.query(`SELECT id FROM users WHERE role = 'admin'`);
+    const ids = (rows || [])
+      .map((row: { id: unknown }) => Number(row.id))
+      .filter(
+        (id: number) => Number.isFinite(id) && id > 0 && id !== params.exceptUserId
+      );
+    await Promise.all(
+      ids.map((userId: number) =>
+        notifyUser({
+          userId,
+          title: params.title,
+          body: params.body,
+          href: params.href,
+        })
+      )
+    );
+  } catch (error) {
+    console.warn('[notify] Admin bildirimi yazılamadı:', error);
+  }
+}
+

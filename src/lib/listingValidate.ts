@@ -29,6 +29,9 @@ export function getStepErrors(step: ListingStepId, draft: ListingDraft): string[
     case 'basic': {
       const errors: string[] = [];
       if (draft.productName.trim().length < 2) errors.push('Ürün adı yazın.');
+      if (draft.listingType !== 'saas' && draft.listingType !== 'micro-saas') {
+        errors.push('SaaS veya MicroSaaS seçin.');
+      }
       if (!draft.category.trim()) errors.push('Kategori seçin.');
       if (draft.tagline.trim().length < 2) errors.push('Kısa açıklama yazın.');
       if (draft.usp.trim().length < 8) errors.push('Ürünün ne yaptığını yazın.');

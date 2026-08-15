@@ -14,14 +14,13 @@ export const metadata: Metadata = buildPageMetadata({
 export default function AdminDevelopersPage() {
   return (
     <AuthGate allowRoles={['admin']} fallbackHref="/account">
-      <main className="mx-auto w-full max-w-4xl px-4 pb-24 pt-28 sm:px-6">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-28 sm:px-6">
         <PanelNav variant="admin" />
         <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Partner başvuruları
         </h1>
         <p className="mt-3 text-sm text-zinc-500">
-          Ürün gönderen partner başvurularını onaylayın veya reddedin. Akış: /sell → ürün oluştur →
-          burası.
+          Gönderilen ürünün görselleri, fiyatı, hikâyesi ve bağlantıları burada. Bekleyenler açık gelir.
         </p>
         <div className="mt-10">
           <AdminDevelopersClient />

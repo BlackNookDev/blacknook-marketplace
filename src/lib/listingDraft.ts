@@ -2,6 +2,13 @@
 
 export type PricingModel = 'licensing' | 'codes';
 
+export type ListingType = 'saas' | 'micro-saas';
+
+export const LISTING_TYPES = [
+  { id: 'saas', label: 'SaaS' },
+  { id: 'micro-saas', label: 'MicroSaaS' },
+] as const;
+
 export type ListingTier = {
   id: string;
   name: string;
@@ -33,6 +40,7 @@ export type FaqItem = {
 
 export type ListingDraft = {
   productName: string;
+  listingType: ListingType | '';
   category: string;
   tagline: string;
   secondaryTagline: string;
@@ -71,6 +79,7 @@ export type ListingDraft = {
   docsUrl: string;
   supportEmail: string;
   delivery: string;
+  catalogIcon?: string;
   g2Url: string;
   capterraUrl: string;
   stripeArrUrl: string;
@@ -134,9 +143,23 @@ function padTo(list: string[], length: number) {
   return next.slice(0, length);
 }
 
+export function listingTypeLabel(id: string | undefined) {
+  if (id === 'service') return 'Servis';
+  return LISTING_TYPES.find((item) => item.id === id)?.label || '';
+}
+
+export function normalizeListingType(value: unknown): ListingType | '' {
+  if (value === 'saas' || value === 'micro-saas') return value;
+  if (value === 'microSaas' || value === 'MicroSaaS' || value === 'microsaas') {
+    return 'micro-saas';
+  }
+  return '';
+}
+
 export function emptyListingDraft(): ListingDraft {
   return {
     productName: '',
+    listingType: '',
     category: LISTING_CATEGORIES[0],
     tagline: '',
     secondaryTagline: '',
@@ -254,6 +277,7 @@ export function normalizeListingDraft(parsed?: Partial<ListingDraft> | null): Li
     tiers,
     matrix,
     faqs,
+    listingType: normalizeListingType(parsed.listingType),
     docsUrl: String(parsed.docsUrl ?? base.docsUrl),
     supportEmail: String(parsed.supportEmail ?? base.supportEmail),
     delivery: String(parsed.delivery ?? base.delivery),

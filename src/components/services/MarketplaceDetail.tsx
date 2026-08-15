@@ -6,11 +6,13 @@ import JsonLd from '@/components/seo/JsonLd';
 import ServiceDetailActions from '../../../app/service/[slug]/ServiceDetailActions';
 import type { MarketplaceProduct } from '@/lib/marketplace';
 import { breadcrumbJsonLd, softwareApplicationJsonLd } from '@/lib/seo';
+import VerifiedBadge from '@/components/VerifiedBadge';
 
 export default function MarketplaceDetail({ product }: { product: MarketplaceProduct }) {
   const listing = product.listing;
   const faqs = (listing?.faqs || []).filter((f) => f.question.trim() && f.answer.trim());
   const gallery = product.gallery.filter(Boolean);
+  const useCases = (listing?.tldr || []).filter(Boolean);
 
   return (
     <main className="min-h-screen bg-transparent pb-24 pt-28">
@@ -70,11 +72,14 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
           </div>
           <div className="min-w-0">
             <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-              Partner · {product.category}
+              {product.verified ? 'BlackNook' : 'Partner'} · {product.category}
             </p>
-            <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 md:text-5xl">
-              {product.title}
-            </h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 md:text-5xl">
+                {product.title}
+              </h1>
+              {product.verified ? <VerifiedBadge /> : null}
+            </div>
             <p className="mt-4 max-w-3xl text-lg leading-relaxed text-zinc-500 md:text-xl">
               {product.shortDescription}
             </p>
@@ -100,6 +105,24 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
                     <li key={feature} className="flex items-start gap-3 py-1">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" aria-hidden />
                       <span className="text-sm leading-relaxed text-zinc-400">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {useCases.length ? (
+              <section>
+                <h2 className="mb-6 font-display text-2xl font-semibold text-white">
+                  Kullanım senaryoları
+                </h2>
+                <ul className="space-y-4">
+                  {useCases.map((useCase) => (
+                    <li
+                      key={useCase}
+                      className="border-l border-white/15 pl-5 leading-relaxed text-zinc-400"
+                    >
+                      {useCase}
                     </li>
                   ))}
                 </ul>
@@ -183,7 +206,10 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-zinc-500">Sağlayıcı</dt>
-                  <dd className="text-right font-medium text-zinc-200">{product.vendorName}</dd>
+                  <dd className="flex items-center justify-end gap-1.5 text-right font-medium text-zinc-200">
+                    <span>{product.vendorName}</span>
+                    {product.verified ? <VerifiedBadge compact /> : null}
+                  </dd>
                 </div>
                 {listing?.delivery ? (
                   <div className="flex justify-between gap-4">

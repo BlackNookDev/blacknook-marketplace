@@ -85,6 +85,14 @@ export default function Navbar() {
   }, [refreshNavData]);
 
   useEffect(() => {
+    if (status !== 'authenticated') return;
+    const timer = window.setInterval(() => {
+      void refreshNavData();
+    }, 40000);
+    return () => window.clearInterval(timer);
+  }, [status, refreshNavData]);
+
+  useEffect(() => {
     if (hideChrome) return;
     if (searchParams.get('match') !== '1') return;
     if (status === 'loading') return;

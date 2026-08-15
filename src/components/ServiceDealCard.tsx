@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
+import VerifiedBadge from '@/components/VerifiedBadge';
 import type { ServiceCatalogEntry } from '../../lib/data';
 import { cn } from '@/lib/utils';
 
@@ -34,9 +35,12 @@ export default function ServiceDealCard({ service, className }: Props) {
       </div>
 
       <div className="relative z-10 min-w-0 flex-1 pt-0.5">
-        <h3 className="truncate text-[15px] font-bold text-zinc-50 group-hover:text-white">
-          {service.name}
-        </h3>
+        <div className="flex min-w-0 items-center gap-2">
+          <h3 className="truncate text-[15px] font-bold text-zinc-50 group-hover:text-white">
+            {service.name}
+          </h3>
+          {service.verified ? <VerifiedBadge compact className="shrink-0 text-sky-300" /> : null}
+        </div>
         <p className="mt-1 line-clamp-2 text-sm leading-snug text-zinc-500">
           {service.description}
         </p>

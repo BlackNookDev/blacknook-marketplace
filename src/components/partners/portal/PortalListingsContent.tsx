@@ -12,7 +12,7 @@ type PortalProduct = {
   slug: string;
   category: string;
   shortDescription: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'unpublished';
   rejectReason?: string;
   tiers: { id: number | string }[];
 };
@@ -21,6 +21,7 @@ const FILTERS = [
   { id: 'all', label: 'Tümü' },
   { id: 'approved', label: 'Yayında' },
   { id: 'pending', label: 'İncelemede' },
+  { id: 'unpublished', label: 'Yayından alındı' },
   { id: 'rejected', label: 'Reddedildi' },
 ] as const;
 
@@ -151,6 +152,9 @@ export default function PortalListingsContent() {
                   </p>
                   {p.status === 'rejected' && p.rejectReason ? (
                     <p className="mt-2 text-xs text-rose-300">{p.rejectReason}</p>
+                  ) : null}
+                  {p.status === 'unpublished' && p.rejectReason ? (
+                    <p className="mt-2 text-xs text-zinc-400">{p.rejectReason}</p>
                   ) : null}
                 </div>
                 <p className="text-sm text-zinc-400">{p.category}</p>

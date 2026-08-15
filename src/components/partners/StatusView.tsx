@@ -9,7 +9,7 @@ type MineProduct = {
   title: string;
   slug: string;
   category: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'unpublished';
   rejectReason?: string;
   createdAt: string;
 };
@@ -72,6 +72,23 @@ export default function StatusView() {
             Yeni ürün
           </Link>
         </div>
+      </div>
+    );
+  }
+
+  if (latest.status === 'unpublished') {
+    return (
+      <div className="rounded-2xl border border-white/15 bg-white/[0.03] p-6">
+        <StatusBadge status="unpublished" />
+        <p className="mt-3 text-sm text-zinc-300">
+          {latest.rejectReason || `${latest.title} katalogdan alındı.`}
+        </p>
+        <Link
+          href="/partners/listings"
+          className="mt-5 inline-flex text-sm font-medium text-sky-400 hover:text-sky-300"
+        >
+          Listelere git →
+        </Link>
       </div>
     );
   }

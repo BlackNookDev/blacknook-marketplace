@@ -76,15 +76,13 @@ export const NAV_MENUS: NavMenuConfig[] = [
     label: 'SaaS',
     href: '/services?type=saas',
     channel: 'saas',
-    comingSoon: true,
     dropdownItems: [],
   },
   {
     id: 'micro-saas',
-    label: 'Micro-SaaS',
+    label: 'MicroSaaS',
     href: '/services?type=micro-saas',
     channel: 'micro-saas',
-    comingSoon: true,
     dropdownItems: [],
   },
   {
@@ -114,8 +112,8 @@ export const ECOSYSTEM_NAV = {
       label: c.label,
       href: `/services?category=${c.id}`,
     })),
-    { label: 'SaaS', href: '/services?type=saas', badge: 'Yakında' as const },
-    { label: 'Micro-SaaS', href: '/services?type=micro-saas', badge: 'Yakında' as const },
+    { label: 'SaaS', href: '/services?type=saas' },
+    { label: 'MicroSaaS', href: '/services?type=micro-saas' },
     { label: 'Scriptler', href: '/services?type=script', badge: 'Yakında' as const },
   ],
   trending: [
@@ -160,7 +158,7 @@ export const CATEGORIES_NAV = {
   href: ECOSYSTEM_NAV.href,
   items: [
     { label: 'Servisler', href: '/services' },
-    { label: 'Micro-SaaS', href: '/services?type=micro-saas' },
+    { label: 'MicroSaaS', href: '/services?type=micro-saas' },
     { label: 'SaaS', href: '/services?type=saas' },
     { label: 'Scriptler', href: '/services?type=script' },
   ],

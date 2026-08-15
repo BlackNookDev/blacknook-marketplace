@@ -46,6 +46,9 @@ export default function VendorProductsList() {
               {p.status === 'rejected' && p.rejectReason ? (
                 <p className="mt-2 text-xs text-rose-300">{p.rejectReason}</p>
               ) : null}
+              {p.status === 'unpublished' && p.rejectReason ? (
+                <p className="mt-2 text-xs text-zinc-400">{p.rejectReason}</p>
+              ) : null}
             </div>
             <StatusBadge status={p.status} />
           </div>

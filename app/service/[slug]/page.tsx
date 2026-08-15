@@ -14,11 +14,13 @@ import {
 import ServiceDetailActions from './ServiceDetailActions';
 import MarketplaceDetail from '@/components/services/MarketplaceDetail';
 import { getMarketplaceBySlug } from '@/lib/marketplace';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
 
 type PageProps = {
   params: { slug: string };
 };
 
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
 export function generateStaticParams() {
@@ -26,21 +28,31 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const service = getServiceBySlug(params.slug);
-  if (!service) {
-    const market = await getMarketplaceBySlug(params.slug).catch(() => null);
-    if (!market) {
-      return buildPageMetadata({
-        title: 'Servis bulunamadı',
-        description: 'Aradığınız servis Blacknook kataloğunda yok.',
-        path: `/service/${params.slug}`,
-        noIndex: true,
-      });
-    }
+  await ensureCriticalSchema().catch(() => undefined);
+  const market = await getMarketplaceBySlug(params.slug, { includeUnlisted: true }).catch(() => null);
+  if (market?.status === 'approved') {
     return buildPageMetadata({
       title: `${market.title} | Blacknook`.slice(0, 60),
       description: market.shortDescription,
       path: `/service/${market.slug}`,
+    });
+  }
+  if (market) {
+    return buildPageMetadata({
+      title: 'Servis bulunamadı',
+      description: 'Aradığınız servis Blacknook kataloğunda yok.',
+      path: `/service/${params.slug}`,
+      noIndex: true,
+    });
+  }
+
+  const service = getServiceBySlug(params.slug);
+  if (!service) {
+    return buildPageMetadata({
+      title: 'Servis bulunamadı',
+      description: 'Aradığınız servis Blacknook kataloğunda yok.',
+      path: `/service/${params.slug}`,
+      noIndex: true,
     });
   }
 
@@ -53,12 +65,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ServiceDetailPage({ params }: PageProps) {
-  const service = getServiceBySlug(params.slug);
-  if (!service) {
-    const market = await getMarketplaceBySlug(params.slug).catch(() => null);
-    if (!market) notFound();
+  await ensureCriticalSchema().catch(() => undefined);
+  const market = await getMarketplaceBySlug(params.slug, { includeUnlisted: true }).catch(() => null);
+  if (market) {
+    if (market.status !== 'approved') notFound();
     return <MarketplaceDetail product={market} />;
   }
+
+  const service = getServiceBySlug(params.slug);
+  if (!service) notFound();
 
   return (
     <main className="min-h-screen bg-transparent pb-24 pt-28">
@@ -194,8 +209,9 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 <div className="flex items-center justify-between gap-4">
                   <dt className="text-zinc-500">Sağlayıcı</dt>
                   <dd className="flex items-center gap-1.5 font-medium text-zinc-200">
-                    <Check className="h-4 w-4" aria-hidden />
-                    Doğrulanmış
+                    <span>BlackNook</span>
+                    <Check className="h-4 w-4 text-sky-300" aria-hidden />
+                    <span className="text-sky-300">Doğrulanmış</span>
                   </dd>
                 </div>
               </dl>

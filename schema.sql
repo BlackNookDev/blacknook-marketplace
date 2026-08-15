@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS products (
   icon_image          TEXT,                        -- logo / ikon URL
   brand_color         VARCHAR(32) DEFAULT '#6366F1',
   reject_reason       TEXT,
-  status              VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+  verified            BOOLEAN NOT NULL DEFAULT FALSE,
+  status              VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','unpublished')),
   created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

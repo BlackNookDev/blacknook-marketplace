@@ -3,33 +3,25 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import StatusBadge from '@/components/demo/StatusBadge';
 import { apiFetch } from '@/lib/apiUrl';
-
-type AdminProduct = {
-  id: number;
-  title: string;
-  slug: string;
-  category: string;
-  shortDescription: string;
-  status: 'pending' | 'approved' | 'rejected';
-  rejectReason?: string;
-  vendorName: string;
-  vendorEmail?: string;
-  createdAt?: string;
-  tiers: { id: number | string; name: string; price: number }[];
-};
+import AdminProductDetail, {
+  type AdminProductRow,
+} from '@/components/admin/AdminProductDetail';
 
 export default function AdminDevelopersClient() {
   const { data: session } = useSession();
-  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [products, setProducts] = useState<AdminProductRow[]>([]);
   const [loading, setLoading] = useState(true);
   const isAdmin = session?.user?.role === 'admin';
 
   const load = useCallback(async () => {
     const res = await apiFetch('/api/products?scope=admin', { cache: 'no-store' });
     const data = await res.json().catch(() => ({}));
-    setProducts(Array.isArray(data.products) ? data.products : []);
+    setProducts(
+      (Array.isArray(data.products) ? data.products : []).filter(
+        (p: AdminProductRow) => !p.verified
+      )
+    );
     setLoading(false);
   }, []);
 
@@ -41,14 +33,15 @@ export default function AdminDevelopersClient() {
     void load();
   }, [isAdmin, load]);
 
-  const setStatus = async (id: number, status: 'approved' | 'rejected') => {
+  const setStatus = async (
+    id: number,
+    status: 'approved' | 'rejected' | 'unpublished',
+    rejectReason?: string
+  ) => {
     await apiFetch(`/api/products/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status,
-        rejectReason: status === 'rejected' ? 'Eksik bilgi veya politika uyumsuzluğu.' : undefined,
-      }),
+      body: JSON.stringify({ status, rejectReason }),
     });
     void load();
   };
@@ -73,9 +66,9 @@ export default function AdminDevelopersClient() {
       <p className="text-sm text-zinc-500">
         Henüz ürün başvurusu yok. Partnerler{' '}
         <Link href="/partners/self-submission" className="text-sky-400 hover:text-sky-300">
-          /partners/self-submission
+          ürün formundan
         </Link>{' '}
-        üzerinden gönderir.
+        gönderir.
       </p>
     );
   }
@@ -90,50 +83,14 @@ export default function AdminDevelopersClient() {
   return (
     <ul className="space-y-4">
       {pendingFirst.map((p) => (
-        <li key={p.id} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="font-medium text-zinc-100">{p.title}</p>
-              <p className="mt-1 text-sm text-zinc-500">
-                {p.vendorName}
-                {p.vendorEmail ? ` · ${p.vendorEmail}` : ''}
-              </p>
-              <p className="mt-2 text-sm text-zinc-400">
-                {p.category}
-                {p.shortDescription ? ` · ${p.shortDescription}` : ''}
-              </p>
-              {p.status === 'rejected' && p.rejectReason ? (
-                <p className="mt-2 text-xs text-rose-300">{p.rejectReason}</p>
-              ) : null}
-            </div>
-            <StatusBadge status={p.status} />
-          </div>
-          {p.status === 'pending' ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void setStatus(p.id, 'approved')}
-                className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-              >
-                Onayla / yayınla
-              </button>
-              <button
-                type="button"
-                onClick={() => void setStatus(p.id, 'rejected')}
-                className="rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
-              >
-                Reddet
-              </button>
-            </div>
-          ) : p.status === 'approved' ? (
-            <Link
-              href={`/service/${p.slug}`}
-              className="mt-4 inline-flex text-sm font-medium text-sky-400 hover:text-sky-300"
-            >
-              Vitrinde gör
-            </Link>
-          ) : null}
-        </li>
+        <AdminProductDetail
+          key={p.id}
+          product={p}
+          defaultOpen={p.status === 'pending'}
+          onApprove={(id) => void setStatus(id, 'approved')}
+          onReject={(id, reason) => void setStatus(id, 'rejected', reason)}
+          onUnpublish={(id, reason) => void setStatus(id, 'unpublished', reason)}
+        />
       ))}
     </ul>
   );

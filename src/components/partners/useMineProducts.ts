@@ -9,7 +9,7 @@ export type MineProduct = {
   slug: string;
   category: string;
   shortDescription: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'unpublished';
   rejectReason?: string;
   createdAt: string;
   vendorName?: string;

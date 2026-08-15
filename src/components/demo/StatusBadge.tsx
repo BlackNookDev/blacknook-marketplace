@@ -2,16 +2,18 @@ type Props = {
   status: 'pending' | 'approved' | 'rejected' | string;
 };
 
+const LABELS: Record<string, string> = {
+  pending: 'İncelemede',
+  approved: 'Yayında',
+  rejected: 'Reddedildi',
+  unpublished: 'Yayından alındı',
+};
+
 const STYLES: Record<string, string> = {
   pending: 'bg-amber-500/15 text-amber-300',
   approved: 'bg-emerald-500/15 text-emerald-300',
   rejected: 'bg-rose-500/15 text-rose-300',
-};
-
-const LABELS: Record<string, string> = {
-  pending: 'İncelemede',
-  approved: 'Onaylandı',
-  rejected: 'Reddedildi',
+  unpublished: 'bg-zinc-500/20 text-zinc-300',
 };
 
 export default function StatusBadge({ status }: Props) {

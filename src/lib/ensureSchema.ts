@@ -1,4 +1,5 @@
 import pool from '@/lib/db';
+import { seedOfficialCatalog } from '@/lib/seedCatalog';
 
 const CRITICAL_STATEMENTS = [
   `ALTER TABLE users ADD COLUMN IF NOT EXISTS match_available BOOLEAN DEFAULT FALSE`,
@@ -47,6 +48,24 @@ const CRITICAL_STATEMENTS = [
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    )`,
   `CREATE INDEX IF NOT EXISTS idx_error_logs_created ON error_logs (created_at DESC)`,
+  `DO $$
+DECLARE
+  r record;
+BEGIN
+  FOR r IN
+    SELECT conname
+    FROM pg_constraint
+    WHERE conrelid = 'products'::regclass
+      AND contype = 'c'
+      AND pg_get_constraintdef(oid) ILIKE '%status%'
+  LOOP
+    EXECUTE format('ALTER TABLE products DROP CONSTRAINT IF EXISTS %I', r.conname);
+  END LOOP;
+  ALTER TABLE products
+    ADD CONSTRAINT products_status_check
+    CHECK (status IN ('pending','approved','rejected','unpublished'));
+END $$`,
+  `ALTER TABLE products ADD COLUMN IF NOT EXISTS verified BOOLEAN DEFAULT FALSE`,
 ];
 
 let ensurePromise: Promise<void> | null = null;
@@ -60,6 +79,7 @@ async function runCriticalStatements() {
       console.error('[ensureSchema] SQL hatası:', err.code || '', err.message || error);
     }
   }
+  await seedOfficialCatalog();
 }
 
 /** Eksik kolon/tabloyu idempotent tamamlar. Migrate başarısız olsa bile API ayağa kalkınca şema toparlanır. */
@@ -88,6 +108,7 @@ export async function checkRequiredSchema(): Promise<SchemaCheck> {
     { kind: 'table', table: 'conversation_participants' },
     { kind: 'table', table: 'installation_requests' },
     { kind: 'table', table: 'error_logs' },
+    { kind: 'column', table: 'products', column: 'verified' },
   ] as const;
 
   const missing: string[] = [];

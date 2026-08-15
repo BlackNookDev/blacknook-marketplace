@@ -12,6 +12,8 @@ import {
   uniqueProductSlug,
 } from '@/lib/marketplace';
 import { firstIncompleteStep, getStepErrors, isListingReady } from '@/lib/listingValidate';
+import { notifyAdmins, notifyUser } from '@/lib/notify';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
 
 function featuresFromDraft(draft: ListingDraft) {
   const fromStories = draft.stories.flatMap((s) =>
@@ -23,6 +25,7 @@ function featuresFromDraft(draft: ListingDraft) {
 
 export async function GET(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const url = new URL(req.url);
     const mine = url.searchParams.get('mine') === '1';
     const scope = url.searchParams.get('scope');
@@ -114,21 +117,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    try {
-      await pool.query(
-        `INSERT INTO user_notifications (user_id, title, body, href, is_read)
-         VALUES (?, ?, ?, ?, FALSE)`,
-        [
-          user.id,
-          status === 'approved' ? 'Ürününüz yayınlandı' : 'Ürününüz incelemeye alındı',
-          status === 'approved'
-            ? `${title} pazaryerinde öne çıkan bölümde yayında.`
-            : `${title} admin onayından sonra katalogda görünecek.`,
-          status === 'approved' ? `/service/${slug}` : '/partners/listings',
-        ]
-      );
-    } catch (notifError) {
-      console.warn('[products] Bildirim yazılamadı:', notifError);
+    await notifyUser({
+      userId: user.id,
+      title: status === 'approved' ? 'Ürününüz yayınlandı' : 'Ürününüz incelemeye alındı',
+      body:
+        status === 'approved'
+          ? `${title} pazaryerinde öne çıkan bölümde yayında.`
+          : `${title} admin onayından sonra katalogda görünecek.`,
+      href: status === 'approved' ? `/service/${slug}` : '/partners/listings',
+    });
+
+    if (status === 'pending') {
+      const vendor = user.name || user.email;
+      await notifyAdmins({
+        exceptUserId: user.id,
+        title: 'Yeni ürün başvurusu',
+        body: `${vendor}: ${title}`,
+        href: '/admin/developers',
+      });
     }
 
     return NextResponse.json({ id: productId, slug, status }, { status: 201 });

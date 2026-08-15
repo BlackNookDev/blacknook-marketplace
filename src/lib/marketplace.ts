@@ -1,8 +1,8 @@
 import pool from '@/lib/db';
 import { SERVICES, type ServiceCatalogEntry } from '../../lib/data';
-import type { ListingDraft } from '@/lib/listingDraft';
+import { normalizeListingType, type ListingDraft } from '@/lib/listingDraft';
 
-export type ProductStatus = 'pending' | 'approved' | 'rejected';
+export type ProductStatus = 'pending' | 'approved' | 'rejected' | 'unpublished';
 
 export type MarketplaceTier = {
   id: number | string;
@@ -30,6 +30,7 @@ export type MarketplaceProduct = {
   listing: Partial<ListingDraft> | null;
   tiers: MarketplaceTier[];
   status: ProductStatus;
+  verified: boolean;
   rejectReason: string;
   createdAt: string;
 };
@@ -83,12 +84,46 @@ function parseFeatures(raw: unknown): string[] {
   if (Array.isArray(raw)) {
     return raw.filter((x): x is string => typeof x === 'string' && x.trim().length > 0);
   }
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((x): x is string => typeof x === 'string' && x.trim().length > 0);
+      }
+    } catch {
+      return [];
+    }
+  }
   return [];
 }
 
+function parseListing(raw: unknown): Partial<ListingDraft> | null {
+  if (!raw) return null;
+  if (typeof raw === 'object') return raw as Partial<ListingDraft>;
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? (parsed as Partial<ListingDraft>) : null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export function productChannel(
+  listing: Partial<ListingDraft> | null | undefined,
+  verified?: boolean
+): 'saas' | 'micro-saas' | 'service' {
+  const raw = listing?.listingType as string | undefined;
+  if (raw === 'service') return 'service';
+  const typed = normalizeListingType(raw);
+  if (typed) return typed;
+  return verified ? 'service' : 'saas';
+}
+
 export function rowToProduct(row: any, tiers: MarketplaceTier[] = []): MarketplaceProduct {
-  const listing =
-    row.listing_data && typeof row.listing_data === 'object' ? (row.listing_data as Partial<ListingDraft>) : null;
+  const listing = parseListing(row.listing_data);
   return {
     id: Number(row.id),
     vendorId: Number(row.vendor_id),
@@ -100,7 +135,7 @@ export function rowToProduct(row: any, tiers: MarketplaceTier[] = []): Marketpla
     shortDescription: row.short_description || listing?.tagline || '',
     longDescription: row.long_description || listing?.usp || '',
     coverImage: row.cover_image || listing?.heroImageData || '',
-    iconImage: row.icon_image || listing?.companyIconData || '',
+    iconImage: row.icon_image || listing?.catalogIcon || listing?.companyIconData || '',
     gallery: parseGallery(row.gallery_images).length
       ? parseGallery(row.gallery_images)
       : (listing?.screenshotData || []).filter(Boolean),
@@ -109,6 +144,7 @@ export function rowToProduct(row: any, tiers: MarketplaceTier[] = []): Marketpla
     listing,
     tiers,
     status: row.status,
+    verified: Boolean(row.verified),
     rejectReason: row.reject_reason || '',
     createdAt: row.created_at,
   };
@@ -117,19 +153,23 @@ export function rowToProduct(row: any, tiers: MarketplaceTier[] = []): Marketpla
 export function productToCatalog(product: MarketplaceProduct): ServiceCatalogEntry {
   const listing = product.listing;
   const useCases = (listing?.tldr || []).filter(Boolean);
+  const channel = productChannel(listing, product.verified);
   return {
     slug: product.slug,
     name: product.title,
     description: product.shortDescription,
-    icon: product.iconImage || product.coverImage || 'marketplace',
-    category: mapListingCategory(product.category),
+    icon: listing?.catalogIcon || product.iconImage || product.coverImage || 'marketplace',
+    category: channel === 'service' ? product.category : mapListingCategory(product.category),
     features: product.features,
     about: product.longDescription || product.shortDescription,
     useCases: useCases.length ? useCases : product.features.slice(0, 3),
     brandColor: product.brandColor,
     coverImage: product.coverImage || undefined,
-    iconImage: product.iconImage || undefined,
-    source: 'marketplace',
+    iconImage: listing?.catalogIcon || product.iconImage || undefined,
+    source: product.verified || channel === 'service' ? 'catalog' : 'marketplace',
+    listingType: channel,
+    verified: product.verified || channel === 'service',
+    vendorName: product.vendorName,
   };
 }
 
@@ -228,6 +268,7 @@ export function serializeProduct(product: MarketplaceProduct) {
     listing: product.listing,
     tiers: product.tiers,
     status: product.status,
+    verified: product.verified,
     rejectReason: product.rejectReason,
     vendorName: product.vendorName,
     vendorEmail: product.vendorEmail,

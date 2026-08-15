@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { getSessionUser } from '@/lib/sessionUser';
 import { loadTiers, rowToProduct, serializeProduct } from '@/lib/marketplace';
+import { ensureCriticalSchema } from '@/lib/ensureSchema';
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user || user.role !== 'admin') {
       return NextResponse.json({ error: 'Yetkisiz.' }, { status: 403 });
@@ -20,13 +22,15 @@ export async function PATCH(
 
     const body = await req.json();
     const status = body.status as string;
-    if (!['pending', 'approved', 'rejected'].includes(status)) {
+    if (!['pending', 'approved', 'rejected', 'unpublished'].includes(status)) {
       return NextResponse.json({ error: 'Geçersiz durum.' }, { status: 400 });
     }
     const rejectReason =
       status === 'rejected'
         ? String(body.rejectReason || 'Eksik bilgi veya politika uyumsuzluğu.').trim()
-        : null;
+        : status === 'unpublished'
+          ? String(body.rejectReason || 'Yayından kaldırıldı.').trim()
+          : null;
 
     const [result]: any = await pool.query(
       'UPDATE products SET status = ?, reject_reason = ? WHERE id = ?',
@@ -56,12 +60,18 @@ export async function PATCH(
          VALUES (?, ?, ?, ?, FALSE)`,
         [
           product.vendorId,
-          status === 'approved' ? 'Ürününüz yayınlandı' : 'Ürün başvurunuz güncellendi',
+          status === 'approved'
+            ? 'Ürününüz yayınlandı'
+            : status === 'unpublished'
+              ? 'Ürününüz yayından alındı'
+              : 'Ürün başvurunuz güncellendi',
           status === 'approved'
             ? `${product.title} pazaryerinde önde sergileniyor.`
-            : status === 'rejected'
-              ? rejectReason
-              : `${product.title} durumu: ${status}`,
+            : status === 'unpublished'
+              ? `${product.title} katalogdan kaldırıldı.`
+              : status === 'rejected'
+                ? rejectReason
+                : `${product.title} durumu: ${status}`,
           status === 'approved' ? `/service/${product.slug}` : '/partners/listings',
         ]
       );
