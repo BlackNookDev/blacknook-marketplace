@@ -160,7 +160,7 @@ export default function ServiceDetailActions({ serviceName, serviceSlug }: Props
 
               {success ? (
                 <p className="mt-8 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm text-zinc-200">
-                  Talebiniz gönderildi. Teşekkürler!
+                  Talebiniz kaydedildi. Hesap → Talepler’den takip edebilirsiniz.
                 </p>
               ) : (
                 <div className="mt-6 space-y-4">

@@ -1,19 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatusBadge from '@/components/demo/StatusBadge';
-import { getMyProducts, type DemoVendorProduct, VENDOR_EVENT } from '@/lib/demoVendor';
+import { useMineProducts } from '@/components/partners/useMineProducts';
 
 export default function VendorProductsList() {
-  const [products, setProducts] = useState<DemoVendorProduct[]>([]);
+  const { products, loading } = useMineProducts();
 
-  useEffect(() => {
-    const tick = () => setProducts(getMyProducts());
-    tick();
-    window.addEventListener(VENDOR_EVENT, tick);
-    return () => window.removeEventListener(VENDOR_EVENT, tick);
-  }, []);
+  if (loading) {
+    return <p className="text-sm text-zinc-500">Yükleniyor…</p>;
+  }
 
   if (products.length === 0) {
     return (
@@ -30,7 +26,7 @@ export default function VendorProductsList() {
   }
 
   return (
-    <ul className="divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] overflow-hidden">
+    <ul className="divide-y divide-white/[0.06] overflow-hidden rounded-2xl border border-white/[0.08]">
       {products.map((p) => (
         <li key={p.id} className="bg-white/[0.02] px-5 py-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -38,7 +34,14 @@ export default function VendorProductsList() {
               <p className="font-medium text-zinc-100">{p.title}</p>
               <p className="mt-1 text-sm text-zinc-500">{p.shortDescription}</p>
               <p className="mt-2 text-xs text-zinc-600">
-                /{p.slug} · {p.category} · {p.tiers.map((t) => t.name).join(', ')}
+                {p.status === 'approved' ? (
+                  <Link href={`/service/${p.slug}`} className="hover:text-zinc-400">
+                    /service/{p.slug}
+                  </Link>
+                ) : (
+                  `/${p.slug}`
+                )}{' '}
+                · {p.category} · {p.tiers.length} plan
               </p>
               {p.status === 'rejected' && p.rejectReason ? (
                 <p className="mt-2 text-xs text-rose-300">{p.rejectReason}</p>

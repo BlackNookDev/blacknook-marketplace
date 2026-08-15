@@ -103,7 +103,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'profile',
         title: 'Profilimi nereden düzenlerim?',
         summary: 'Hesap menüsü ve sekmeler.',
-        body: 'Giriş yaptıktan sonra sağ üstteki hesap menüsünden Profil’e gidin. Talepler, ürünler ve faturalama sekmeleri aynı hesap alanındadır. Bazı sekmeler (ör. ödüller, üyelik) erken erişim veya yakında özellikler için yer tutucudur; içerik boş olabilir.',
+        body: 'Giriş yaptıktan sonra sağ üstteki hesap menüsünden Profil’e gidin. Talepler ve mesajlar canlıdır. Ödeme, kredi, üyelik, ödül ve affiliate sayfaları ödeme gelene kadar “henüz açık değil” olarak durur; kart bilgisi toplanmaz.',
       },
     ],
   },
@@ -122,7 +122,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'invoice',
         title: 'Fatura ve faturalama ekranı',
         summary: 'Hesap → Ödeme & faturalama.',
-        body: 'Hesabınızda Ödeme & faturalama bölümü vardır. Henüz tamamlanmış bir satın alma yoksa geçmiş boş görünür. Partner faturalandırma ekranları onaylı partnerler içindir ve sipariş entegrasyonu geldikçe dolar. Eksik belge veya fatura soruları için contact@blacknook.com.',
+        body: 'Hesap → Ödeme & faturalama şu an kart formu içermez; satın alma henüz yok. Partner faturalandırma da gerçek sipariş gelene kadar $0 gösterir. Fatura soruları için contact@blacknook.com.',
       },
       {
         id: 'refund',

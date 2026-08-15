@@ -2,73 +2,56 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { Clock, Lock, ShieldX } from 'lucide-react';
-import { AUTH_IDENTITY_EVENT, getAuthIdentity } from '@/lib/authIdentity';
-import {
-  getDemoRole,
-  getMyApplication,
-  type DemoRole,
-  type DevApplication,
-  VENDOR_EVENT,
-} from '@/lib/demoVendor';
-import { apiFetch } from '@/lib/apiUrl';
+import { useMineProducts, type MineProduct } from '@/components/partners/useMineProducts';
 
 export type PartnerAccessState = {
   ready: boolean;
-  role: DemoRole;
-  application: DevApplication | null;
-  /** Satış / liste / fatura tam erişim */
+  role: string;
+  products: MineProduct[];
+  application: {
+    status: 'pending' | 'approved' | 'rejected';
+    rejectReason?: string;
+    submittedAt?: string;
+  } | null;
   canManage: boolean;
 };
 
 export function usePartnerAccess(): PartnerAccessState {
+  const { data: session, status } = useSession();
+  const { products, loading } = useMineProducts();
   const [ready, setReady] = useState(false);
-  const [role, setRole] = useState<DemoRole>('user');
-  const [application, setApplication] = useState<DevApplication | null>(null);
-  const [hasListing, setHasListing] = useState(false);
 
   useEffect(() => {
-    const tick = () => {
-      if (!getAuthIdentity()) {
-        setReady(false);
-        return;
+    if (status === 'loading' || loading) {
+      setReady(false);
+      return;
+    }
+    setReady(true);
+  }, [status, loading]);
+
+  const role = session?.user?.role || 'user';
+  const hasListing = products.length > 0;
+  const hasApproved = products.some((p) => p.status === 'approved');
+  const hasPending = products.some((p) => p.status === 'pending');
+  const latest = products[0];
+
+  const application = hasListing
+    ? {
+        status: (hasApproved
+          ? 'approved'
+          : hasPending
+            ? 'pending'
+            : 'rejected') as 'pending' | 'approved' | 'rejected',
+        rejectReason: products.find((p) => p.status === 'rejected')?.rejectReason,
+        submittedAt: latest?.createdAt,
       }
-      setRole(getDemoRole());
-      setApplication(getMyApplication());
-      setReady(true);
-    };
-    tick();
-    window.addEventListener(AUTH_IDENTITY_EVENT, tick);
-    window.addEventListener(VENDOR_EVENT, tick);
-    return () => {
-      window.removeEventListener(AUTH_IDENTITY_EVENT, tick);
-      window.removeEventListener(VENDOR_EVENT, tick);
-    };
-  }, []);
+    : null;
 
-  useEffect(() => {
-    if (!ready) return;
-    let cancelled = false;
-    void apiFetch('/api/products?mine=1', { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : { products: [] }))
-      .then((data) => {
-        if (!cancelled) setHasListing(Array.isArray(data.products) && data.products.length > 0);
-      })
-      .catch(() => {
-        if (!cancelled) setHasListing(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready]);
+  const canManage = role === 'admin' || role === 'vendor' || hasListing;
 
-  const canManage =
-    role === 'vendor' ||
-    role === 'admin' ||
-    application?.status === 'approved' ||
-    hasListing;
-
-  return { ready, role, application, canManage };
+  return { ready, role, products, application, canManage };
 }
 
 type LockedProps = {
@@ -76,7 +59,6 @@ type LockedProps = {
   children: ReactNode;
 };
 
-/** Onaylı partner değilse kilitli bilgilendirme; onaylıysa children */
 export function PartnerFeatureGate({ title, children }: LockedProps) {
   const { ready, canManage, application, role } = usePartnerAccess();
 
@@ -88,7 +70,7 @@ export function PartnerFeatureGate({ title, children }: LockedProps) {
     return <>{children}</>;
   }
 
-  const pending = role === 'pending' || application?.status === 'pending';
+  const pending = application?.status === 'pending';
   const rejected = application?.status === 'rejected';
 
   return (
@@ -106,41 +88,42 @@ export function PartnerFeatureGate({ title, children }: LockedProps) {
       {rejected ? (
         <>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            Başvurunuz reddedildi. {application?.rejectReason || 'Güncelleyip yeniden gönderebilirsiniz.'}
+            Son listeniz reddedildi.{' '}
+            {application?.rejectReason || 'Güncelleyip yeniden gönderebilirsiniz.'}
           </p>
           <Link
             href="/partners/self-submission"
             className="mt-6 inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
           >
-            Başvuruyu güncelle
+            Yeni ürün gönder
           </Link>
         </>
       ) : pending ? (
         <>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            Başvurunuz incelemede. Onaylandıktan sonra {title.toLowerCase()} burada açılacak. Portal
-            menüsünü şimdiden keşfedebilirsiniz.
+            Listeniz incelemede. Onaylandıktan sonra {title.toLowerCase()} burada açılacak.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/partners/status"
               className="inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
             >
-              Başvuru durumu
+              Liste durumu
             </Link>
             <Link
-              href="/partners/support"
+              href="/partners/listings"
               className="inline-flex h-11 items-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
             >
-              Destek
+              Listeler
             </Link>
           </div>
         </>
       ) : (
         <>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            Bu bölüm partner onayından sonra açılır. Ürün başvurusu oluşturarak incelemeye
-            girebilirsiniz.
+            {role === 'user'
+              ? 'Bu bölüm, ürün gönderdikten sonra açılır. Listeniz veritabanına kaydedilir ve admin onayına düşer.'
+              : 'Bu bölüm partner onayından sonra açılır.'}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link

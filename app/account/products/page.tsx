@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 type CartItem = {
@@ -50,21 +49,6 @@ export default function AccountProductsPage() {
         <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Ürünler
         </h1>
-        <div className="flex flex-wrap items-center gap-4 text-sm">
-          <button
-            type="button"
-            className="font-medium text-sky-400 transition-colors hover:text-sky-300"
-          >
-            Satın alma geçmişini görüntüle
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 font-medium text-sky-400 transition-colors hover:text-sky-300"
-          >
-            <Download className="h-3.5 w-3.5" aria-hidden />
-            CSV indir
-          </button>
-        </div>
       </div>
 
       <div className="mt-10">

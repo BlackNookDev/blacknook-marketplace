@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
@@ -13,16 +12,7 @@ import {
 } from 'lucide-react';
 import StatusBadge from '@/components/demo/StatusBadge';
 import { usePartnerAccess } from '@/components/partners/portal/PartnerAccess';
-import { apiFetch } from '@/lib/apiUrl';
-import { buildDemoSales, formatTry } from '@/lib/partnerPortal';
-
-type OverviewProduct = {
-  id: number;
-  title: string;
-  category: string;
-  status: 'pending' | 'approved' | 'rejected';
-  tiers: { id: number | string }[];
-};
+import { formatTry } from '@/lib/partnerPortal';
 
 function EmptyWelcome() {
   return (
@@ -160,23 +150,7 @@ function RejectedWelcome({ reason }: { reason?: string }) {
 }
 
 export default function PortalOverviewContent() {
-  const { ready, canManage, application, role } = usePartnerAccess();
-  const [products, setProducts] = useState<OverviewProduct[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void apiFetch('/api/products?mine=1', { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : { products: [] }))
-      .then((data) => {
-        if (!cancelled) setProducts(Array.isArray(data.products) ? data.products : []);
-      })
-      .catch(() => {
-        if (!cancelled) setProducts([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { ready, canManage, application, role, products } = usePartnerAccess();
 
   if (!ready) {
     return <p className="text-sm text-zinc-500">Yükleniyor…</p>;
@@ -186,7 +160,7 @@ export default function PortalOverviewContent() {
     if (application?.status === 'rejected') {
       return <RejectedWelcome reason={application.rejectReason} />;
     }
-    if (role === 'pending' || application?.status === 'pending') {
+    if (application?.status === 'pending' || role === 'pending') {
       return <PendingWelcome submittedAt={application?.submittedAt} />;
     }
     return <EmptyWelcome />;
@@ -198,8 +172,6 @@ export default function PortalOverviewContent() {
 
   const pending = products.filter((p) => p.status === 'pending').length;
   const approved = products.filter((p) => p.status === 'approved').length;
-  const sales = buildDemoSales(products);
-  const revenue = sales.filter((s) => s.status === 'completed').reduce((a, s) => a + s.amount, 0);
 
   return (
     <div className="space-y-8">
@@ -208,7 +180,7 @@ export default function PortalOverviewContent() {
           { label: 'Toplam ürün', value: String(products.length), icon: Package },
           { label: 'İncelemede', value: String(pending), icon: Clock },
           { label: 'Yayında', value: String(approved), icon: CheckCircle2 },
-          { label: 'Gelir', value: formatTry(revenue), icon: TrendingUp },
+          { label: 'Gelir', value: formatTry(0), icon: TrendingUp },
         ].map(({ label, value, icon: Icon }) => (
           <div
             key={label}
@@ -268,28 +240,9 @@ export default function PortalOverviewContent() {
 
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6">
           <h2 className="font-display text-lg font-semibold text-white">Son satışlar</h2>
-          {sales.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-500">
-              Satışlar oluşunca burada görünür.
-            </p>
-          ) : (
-            <ul className="mt-4 space-y-3">
-              {sales.slice(0, 5).map((s) => (
-                <li
-                  key={s.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-zinc-950/40 px-4 py-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-zinc-100">{s.productTitle}</p>
-                    <p className="text-xs text-zinc-500">
-                      {s.plan} · {new Date(s.date).toLocaleDateString('tr-TR')}
-                    </p>
-                  </div>
-                  <p className="text-sm font-semibold text-emerald-300">{formatTry(s.amount)}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <p className="mt-4 text-sm text-zinc-500">
+            Sipariş yok. Ödeme açılınca gerçek satışlar burada görünür.
+          </p>
         </div>
       </section>
     </div>

@@ -1,23 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Package, PlusCircle, Clock } from 'lucide-react';
 import StatusBadge from '@/components/demo/StatusBadge';
-import { getMyProducts, type DemoVendorProduct, VENDOR_EVENT } from '@/lib/demoVendor';
+import { useMineProducts } from '@/components/partners/useMineProducts';
 
 export default function VendorDashboard() {
-  const [products, setProducts] = useState<DemoVendorProduct[]>([]);
-
-  useEffect(() => {
-    const tick = () => setProducts(getMyProducts());
-    tick();
-    window.addEventListener(VENDOR_EVENT, tick);
-    return () => window.removeEventListener(VENDOR_EVENT, tick);
-  }, []);
-
+  const { products, loading } = useMineProducts();
   const pending = products.filter((p) => p.status === 'pending').length;
   const approved = products.filter((p) => p.status === 'approved').length;
+
+  if (loading) {
+    return <p className="text-sm text-zinc-500">Yükleniyor…</p>;
+  }
 
   return (
     <div className="space-y-8">
