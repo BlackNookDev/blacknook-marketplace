@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import StatusBadge from '@/components/demo/StatusBadge';
 import VerifiedBadge from '@/components/VerifiedBadge';
+import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
 import { deliveryLabel } from '@/lib/listingValidate';
 import { listingTypeLabel, type ListingDraft } from '@/lib/listingDraft';
 
@@ -16,6 +17,7 @@ export type AdminProductRow = {
   longDescription?: string;
   coverImage?: string;
   iconImage?: string;
+  brandColor?: string;
   gallery?: string[];
   features?: string[];
   listing?: Partial<ListingDraft> | null;
@@ -47,6 +49,16 @@ function formatDate(value?: string) {
   }
 }
 
+function isImageSrc(value?: string) {
+  if (!value) return false;
+  return (
+    value.startsWith('/') ||
+    value.startsWith('http://') ||
+    value.startsWith('https://') ||
+    value.startsWith('data:')
+  );
+}
+
 export default function AdminProductDetail({
   product: p,
   defaultOpen = false,
@@ -59,7 +71,9 @@ export default function AdminProductDetail({
   const [unpublishing, setUnpublishing] = useState(false);
   const [reason, setReason] = useState('');
   const listing = p.listing || {};
-  const gallery = (p.gallery || []).filter(Boolean);
+  const icon = listing.catalogIcon || p.iconImage || '';
+  const cover = isImageSrc(p.coverImage) ? p.coverImage : '';
+  const gallery = (p.gallery || []).filter((src) => isImageSrc(src));
   const stories = (listing.stories || []).filter(
     (s) => s.title?.trim() || s.bullets?.some((b) => b.trim())
   );
@@ -70,10 +84,14 @@ export default function AdminProductDetail({
     <li className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
-          {p.iconImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.iconImage} alt="" className="h-12 w-12 rounded-xl object-cover" />
-          ) : null}
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/[0.06] ring-1 ring-white/10">
+            <ServiceCatalogLogo
+              icon={icon || p.title}
+              brandColor={p.brandColor || '#6366F1'}
+              name={p.title}
+              size="md"
+            />
+          </div>
           <div className="min-w-0">
             <p className="font-medium text-zinc-100">{p.title}</p>
             <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
@@ -209,10 +227,10 @@ export default function AdminProductDetail({
 
       {open ? (
         <div className="mt-6 space-y-8 border-t border-white/[0.08] pt-6">
-          {p.coverImage ? (
+          {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={p.coverImage}
+              src={cover}
               alt=""
               className="max-h-72 w-full rounded-xl border border-white/10 object-cover"
             />

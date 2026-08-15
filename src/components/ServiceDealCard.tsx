@@ -13,6 +13,10 @@ type Props = {
 };
 
 export default function ServiceDealCard({ service, className }: Props) {
+  const icon = service.iconImage || service.icon;
+  const uploaded =
+    icon.startsWith('data:') || icon.startsWith('http://') || icon.startsWith('https://');
+
   return (
     <Link
       href={`/service/${service.slug}`}
@@ -24,9 +28,14 @@ export default function ServiceDealCard({ service, className }: Props) {
       )}
     >
       <div className="relative z-10 flex w-14 shrink-0 flex-col items-center gap-2 pt-1">
-        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white/[0.06] ring-1 ring-white/10">
+        <div
+          className={cn(
+            'flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl ring-1',
+            uploaded ? 'bg-white p-1.5 ring-black/10' : 'bg-white/[0.06] ring-white/10'
+          )}
+        >
           <ServiceCatalogLogo
-            icon={service.iconImage || service.icon}
+            icon={icon}
             brandColor={service.brandColor}
             name={service.name}
             size="md"

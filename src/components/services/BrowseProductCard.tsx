@@ -13,6 +13,10 @@ type Props = {
 
 /** Servis kartı: logo · isim · kategori · kısa açıklama */
 export default function BrowseProductCard({ service, className }: Props) {
+  const icon = service.iconImage || service.icon;
+  const cover = service.coverImage;
+  const hasPhoto = Boolean(cover && cover !== icon);
+
   return (
     <Link
       href={`/service/${service.slug}`}
@@ -27,30 +31,30 @@ export default function BrowseProductCard({ service, className }: Props) {
       <div
         className="relative aspect-[16/10] overflow-hidden"
         style={{
-          background: `linear-gradient(145deg, ${service.brandColor}cc 0%, #0a0a0b 72%)`,
+          background: `linear-gradient(145deg, ${service.brandColor || '#6366F1'}aa 0%, #121214 70%)`,
         }}
       >
-        {service.coverImage ? (
+        {hasPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={service.coverImage}
+            src={cover}
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
           <>
             <div
-              className="pointer-events-none absolute inset-0 opacity-40"
+              className="pointer-events-none absolute inset-0 opacity-50"
               style={{
                 backgroundImage:
-                  'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08), transparent 40%)',
+                  'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22), transparent 45%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1), transparent 40%)',
               }}
               aria-hidden
             />
             <div className="absolute inset-0 flex items-center justify-center p-6">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black/35 shadow-lg ring-1 ring-white/20 backdrop-blur-sm transition-transform duration-premium group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]">
+              <div className="flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-2xl bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-transform duration-premium group-hover:scale-105 sm:h-20 sm:w-20">
                 <ServiceCatalogLogo
-                  icon={service.iconImage || service.icon}
+                  icon={icon}
                   brandColor={service.brandColor}
                   name={service.name}
                   size="lg"

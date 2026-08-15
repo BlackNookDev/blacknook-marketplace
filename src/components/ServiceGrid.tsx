@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import BrowseProductCard from '@/components/services/BrowseProductCard';
 import ServiceDealCard from '@/components/ServiceDealCard';
 import { getFeaturedServices, type ServiceCatalogEntry } from '../../lib/data';
 import { apiFetch } from '@/lib/apiUrl';
@@ -15,9 +16,10 @@ type Group = {
   href: string;
   moreLabel: string;
   items: ServiceCatalogEntry[];
+  featured?: boolean;
 };
 
-function ServiceGroup({ title, href, moreLabel, items }: Group) {
+function ServiceGroup({ title, href, moreLabel, items, featured }: Group) {
   if (!items.length) return null;
 
   return (
@@ -38,13 +40,23 @@ function ServiceGroup({ title, href, moreLabel, items }: Group) {
         </Link>
       </div>
 
-      <ul className="grid w-full grid-cols-1 items-start gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((service, index) => (
-          <li key={service.slug} className="min-w-0">
-            <ServiceDealCard service={service} index={index} />
-          </li>
-        ))}
-      </ul>
+      {featured ? (
+        <ul className="grid w-full grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((service) => (
+            <li key={service.slug} className="min-w-0">
+              <BrowseProductCard service={service} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className="grid w-full grid-cols-1 items-start gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((service, index) => (
+            <li key={service.slug} className="min-w-0">
+              <ServiceDealCard service={service} index={index} />
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
@@ -76,18 +88,12 @@ export default function ServiceGrid() {
 
     return [
       {
-        id: 'services',
-        title: 'Servisler',
-        href: '/services',
-        moreLabel: 'Daha fazla servis',
-        items: services.length ? services : CATALOG,
-      },
-      {
         id: 'saas',
         title: 'SaaS',
         href: '/services?type=saas',
         moreLabel: 'Tümünü gör',
         items: saas,
+        featured: true,
       },
       {
         id: 'micro-saas',
@@ -95,6 +101,14 @@ export default function ServiceGrid() {
         href: '/services?type=micro-saas',
         moreLabel: 'Tümünü gör',
         items: micro,
+        featured: true,
+      },
+      {
+        id: 'services',
+        title: 'Servisler',
+        href: '/services',
+        moreLabel: 'Daha fazla servis',
+        items: services.length ? services : CATALOG,
       },
     ];
   }, [market]);
