@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   applicationName: SITE_NAME,
+  manifest: '/manifest.webmanifest',
   authors: [{ name: 'Blacknook', url: SITE_URL }],
   creator: 'Blacknook',
   publisher: 'Blacknook',
@@ -65,8 +66,14 @@ export const metadata: Metadata = {
   ],
   category: 'technology',
   icons: {
-    icon: [{ url: '/icon.png', type: 'image/png' }],
-    apple: [{ url: '/apple-icon.png', type: 'image/png' }],
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
+      { url: '/favicon-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     ...buildPageMetadata({
@@ -74,7 +81,7 @@ export const metadata: Metadata = {
       description: DEFAULT_DESCRIPTION,
       path: '/',
     }).openGraph,
-    images: [{ url: OG_IMAGE, width: 1000, height: 1000, alt: SITE_NAME }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
   },
 };
 

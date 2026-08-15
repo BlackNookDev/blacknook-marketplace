@@ -7,6 +7,7 @@ export const metadata: Metadata = buildPageMetadata({
   title: 'Giriş yap | Blacknook',
   description: 'Blacknook hesabınıza giriş yapın; profil, ürünler ve faturalama ayarlarınıza erişin.',
   path: '/login',
+  noIndex: true,
 });
 
 export default function LoginPage() {

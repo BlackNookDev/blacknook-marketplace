@@ -11,6 +11,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@splinetool/react-spline'],
     instrumentationHook: true,
+    serverComponentsExternalPackages: ['pg', 'bcryptjs'],
   },
 };
 

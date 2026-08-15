@@ -2,8 +2,9 @@ import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
 import { getAllServiceSlugs } from '../lib/data';
 import { HELP_CATEGORIES } from '../lib/helpCenter';
+import { getApprovedMarketplaceProducts } from '@/lib/marketplace';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticRoutes: MetadataRoute.Sitemap = [
     '',
@@ -17,13 +18,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/help',
     '/terms',
     '/privacy',
-    '/login',
-    '/register',
   ].map((path) => ({
     url: `${SITE_URL}${path || '/'}`,
     lastModified: now,
     changeFrequency: path === '' || path === '/services' ? 'daily' : 'weekly',
-    priority: path === '' ? 1 : path === '/services' || path === '/sell' || path === '/select' || path === '/careers' ? 0.9 : 0.7,
+    priority:
+      path === ''
+        ? 1
+        : path === '/services' || path === '/sell' || path === '/select' || path === '/careers'
+          ? 0.9
+          : 0.7,
   }));
 
   const helpRoutes: MetadataRoute.Sitemap = HELP_CATEGORIES.map((cat) => ({
@@ -40,5 +44,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...helpRoutes, ...serviceRoutes];
+  let marketRoutes: MetadataRoute.Sitemap = [];
+  try {
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return [...staticRoutes, ...helpRoutes, ...serviceRoutes];
+    }
+    const products = await getApprovedMarketplaceProducts();
+    marketRoutes = products.map((product) => ({
+      url: `${SITE_URL}/service/${product.slug}`,
+      lastModified: product.createdAt ? new Date(product.createdAt) : now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
+    }));
+  } catch {
+    marketRoutes = [];
+  }
+
+  return [...staticRoutes, ...helpRoutes, ...marketRoutes, ...serviceRoutes];
 }

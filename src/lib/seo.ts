@@ -5,15 +5,19 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://blacknook.
   ''
 );
 
-export const SITE_NAME = 'Blacknook Marketplace';
+export const SITE_NAME = 'Blacknook';
 
-export const DEFAULT_TITLE = 'Blacknook | Yazılım Pazaryeri';
+export const SITE_TAGLINE = 'Yazılımı kendi sunucunda çalıştır';
+
+export const DEFAULT_TITLE = 'Blacknook — Yazılımı kendi sunucunda çalıştır';
 
 /** max ~155–160 chars */
 export const DEFAULT_DESCRIPTION =
-  'Bağımsız yazılımcılar ve girişimler için yazılım pazaryeri. SaaS, araçlar ve dijital ürünleri keşfedin; kurulum talep edin.';
+  'Ghost, n8n, Supabase ve bağımsız ekiplerin ürünlerini keşfet. Kendi altyapında kur; kurulum talebiyle aynı gün başla.';
 
-export const OG_IMAGE = `${SITE_URL}/bn-mark.png`;
+export const OG_IMAGE = `${SITE_URL}/og.png`;
+export const FAVICON_48 = `${SITE_URL}/favicon-48.png`;
+export const FAVICON_192 = `${SITE_URL}/favicon-192.png`;
 
 export function absoluteUrl(path = '/') {
   if (path.startsWith('http')) return path;
@@ -59,9 +63,9 @@ export function buildPageMetadata({
       images: [
         {
           url: image,
-          width: 1000,
-          height: 1000,
-          alt: SITE_NAME,
+          width: 1200,
+          height: 630,
+          alt: `${SITE_NAME} — ${SITE_TAGLINE}`,
         },
       ],
     },
@@ -79,6 +83,7 @@ export function websiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
+    alternateName: ['BlackNOOK', SITE_TAGLINE],
     url: SITE_URL,
     description: DEFAULT_DESCRIPTION,
     inLanguage: 'tr-TR',
@@ -94,9 +99,16 @@ export function organizationJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Blacknook',
+    name: SITE_NAME,
+    alternateName: 'BlackNOOK',
     url: SITE_URL,
-    logo: OG_IMAGE,
+    logo: {
+      '@type': 'ImageObject',
+      url: FAVICON_192,
+      width: 192,
+      height: 192,
+    },
+    image: FAVICON_192,
     email: 'contact@blacknook.com',
     sameAs: [],
   };

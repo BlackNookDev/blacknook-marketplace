@@ -5,8 +5,17 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
-      disallow: ['/account', '/api/'],
+      allow: [
+        '/',
+        '/favicon.ico',
+        '/favicon-48.png',
+        '/favicon-96.png',
+        '/favicon-192.png',
+        '/icon.png',
+        '/apple-touch-icon.png',
+        '/og.png',
+      ],
+      disallow: ['/account', '/admin', '/partners', '/api/'],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
