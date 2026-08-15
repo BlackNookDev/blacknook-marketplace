@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
-import { charHint, LISTING_CATEGORIES, type ListingDraft } from '@/lib/listingDraft';
+import type { ListingDraft } from '@/lib/listingDraft';
+import { charHint, LISTING_CATEGORIES } from '@/lib/listingDraft';
+import { FieldLabel } from '@/components/partners/FieldHint';
+import { DELIVERY_OPTIONS } from '@/lib/listingValidate';
 
 const field =
   'h-11 w-full rounded-xl border border-white/15 bg-transparent px-4 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10';
@@ -11,33 +12,34 @@ type Props = {
 };
 
 export default function StepBasic({ draft, update }: Props) {
-  const highlights = draft.tldr.length ? draft.tldr : [''];
-
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-display text-xl font-semibold text-white">Temel bilgiler</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Alıcının ilk gördüğü satırlar. Ne işe yaradığını net ve somut yazın.
-        </p>
+        <h2 className="font-display text-xl font-semibold text-white">Ürün</h2>
+        <p className="mt-1 text-sm text-zinc-500">Katalog kartında ve detay sayfasında görünenler.</p>
       </div>
 
-      <Field
-        label="Ürün adı"
-        hint={charHint(draft.productName.length, 75)}
-        htmlFor="product-name"
-      >
+      <div>
+        <FieldLabel htmlFor="product-name" required hint="Müşterinin listede göreceği ad.">
+          Ürün adı
+        </FieldLabel>
         <input
           id="product-name"
           maxLength={75}
           value={draft.productName}
           onChange={(e) => update({ productName: e.target.value })}
           className={field}
-          placeholder="Örn. Görev paneli"
+          placeholder="Ghost"
         />
-      </Field>
+        <p className="mt-1.5 text-right text-[11px] tabular-nums text-zinc-600">
+          {charHint(draft.productName.length, 75)}
+        </p>
+      </div>
 
-      <Field label="Kategori" htmlFor="category">
+      <div>
+        <FieldLabel htmlFor="category" required hint="Yanlış kategorideki ürün bulunmaz.">
+          Kategori
+        </FieldLabel>
         <select
           id="category"
           value={draft.category}
@@ -50,158 +52,100 @@ export default function StepBasic({ draft, update }: Props) {
             </option>
           ))}
         </select>
-      </Field>
+      </div>
 
-      <Field
-        label="Kısa açıklama"
-        hint={charHint(draft.tagline.length, 100)}
-        htmlFor="tagline"
-        help="Tek cümle: ürün kimin için, hangi sorunu çözer."
-      >
+      <div>
+        <FieldLabel htmlFor="tagline" required hint="Kartın altında duran tek cümle.">
+          Kısa açıklama
+        </FieldLabel>
         <input
           id="tagline"
           maxLength={100}
           value={draft.tagline}
           onChange={(e) => update({ tagline: e.target.value })}
           className={field}
-          placeholder="Örn. Ajanslar için görev ve fatura takibi"
+          placeholder="Yayıncılar için açık kaynak CMS"
         />
-      </Field>
+      </div>
 
-      <Field
-        label="Alt başlık"
-        hint={charHint(draft.secondaryTagline.length, 140)}
-        htmlFor="secondary"
-        help="İsteğe bağlı ikinci cümle veya kısa çağrı."
-      >
-        <input
-          id="secondary"
-          maxLength={140}
-          value={draft.secondaryTagline}
-          onChange={(e) => update({ secondaryTagline: e.target.value })}
-          className={field}
-          placeholder="Örn. Tüm işleri tek ekrandan yönetin"
-        />
-      </Field>
-
-      <Field
-        label="Neden sizi tercih etmeliler?"
-        hint={charHint(draft.usp.length, 255)}
-        htmlFor="usp"
-        help="Rakiplerden farkınızı 2–3 cümlede anlatın."
-      >
+      <div>
+        <FieldLabel htmlFor="usp" required hint="Detay sayfasındaki genel bakış metni.">
+          Açıklama
+        </FieldLabel>
         <textarea
           id="usp"
-          maxLength={255}
-          rows={3}
+          maxLength={800}
+          rows={4}
           value={draft.usp}
           onChange={(e) => update({ usp: e.target.value })}
           className="w-full resize-none rounded-xl border border-white/15 bg-transparent px-4 py-3 text-sm text-zinc-100 outline-none focus:border-white/30 focus:ring-2 focus:ring-white/10"
-          placeholder="Örn. Self-host kurulum, tek tık yedekleme ve Türkçe destek."
+          placeholder="Ne işe yarıyor, kim kuruyor, kurulum kabaca nasıl."
         />
-      </Field>
+      </div>
 
       <div>
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-sm font-medium text-zinc-300">Öne çıkan faydalar</p>
-          {highlights.length < 4 ? (
+        <FieldLabel htmlFor="website" required hint="Demo, ürün sitesi veya canlı örnek.">
+          Site
+        </FieldLabel>
+        <input
+          id="website"
+          type="url"
+          value={draft.websiteUrl}
+          onChange={(e) => update({ websiteUrl: e.target.value })}
+          className={field}
+          placeholder="https://"
+        />
+      </div>
+
+      <div>
+        <FieldLabel required hint="Kurulum talebinde ekibe yol gösterir.">
+          Nerede çalışır
+        </FieldLabel>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {DELIVERY_OPTIONS.map((opt) => (
             <button
+              key={opt.id}
               type="button"
-              onClick={() => update({ tldr: [...highlights, ''] })}
-              className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
+              onClick={() => update({ delivery: opt.id })}
+              className={`rounded-xl border px-3 py-3 text-left text-sm transition-colors ${
+                draft.delivery === opt.id
+                  ? 'border-white/30 bg-white/[0.06] text-white'
+                  : 'border-white/[0.08] text-zinc-400 hover:bg-white/[0.03]'
+              }`}
             >
-              <Plus className="h-3.5 w-3.5" aria-hidden />
-              Madde ekle
+              {opt.label}
             </button>
-          ) : null}
-        </div>
-        <p className="mb-3 text-xs text-zinc-600">1–4 kısa madde. Alıcının hemen görmesini istediğiniz sonuçlar.</p>
-        <div className="space-y-2">
-          {highlights.map((item, i) => (
-            <div key={`tldr-${i}`} className="flex gap-2">
-              <input
-                maxLength={128}
-                value={item}
-                onChange={(e) => {
-                  const next = [...highlights];
-                  next[i] = e.target.value;
-                  update({ tldr: next });
-                }}
-                className={field}
-                placeholder={i === 0 ? 'Örn. Dakikalar içinde kendi sunucunuza kurun' : 'Somut bir fayda yazın'}
-              />
-              {highlights.length > 1 ? (
-                <button
-                  type="button"
-                  onClick={() => update({ tldr: highlights.filter((_, idx) => idx !== i) })}
-                  className="inline-flex h-11 shrink-0 items-center gap-1 rounded-xl border border-white/10 px-3 text-xs font-medium text-rose-300 hover:bg-rose-500/10"
-                  aria-label={`Fayda ${i + 1} maddesini kaldır`}
-                >
-                  <Trash2 className="h-3.5 w-3.5" aria-hidden />
-                  Sil
-                </button>
-              ) : null}
-            </div>
           ))}
         </div>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
-        <Field label="Alternatif olduğu araçlar" htmlFor="alt" help="En fazla 3, virgülle.">
-          <input
-            id="alt"
-            value={draft.alternativeTo}
-            onChange={(e) => update({ alternativeTo: e.target.value })}
-            className={field}
-            placeholder="Asana, Monday"
-          />
-        </Field>
-        <Field label="Entegrasyonlar" htmlFor="int" help="En fazla 4, virgülle.">
-          <input
-            id="int"
-            value={draft.integrations}
-            onChange={(e) => update({ integrations: e.target.value })}
-            className={field}
-            placeholder="Slack, Stripe"
-          />
-        </Field>
-        <Field label="Kimler için" htmlFor="best" help="En fazla 3, virgülle.">
-          <input
-            id="best"
-            value={draft.bestFor}
-            onChange={(e) => update({ bestFor: e.target.value })}
-            className={field}
-            placeholder="Freelancer, ajans"
-          />
-        </Field>
+      <div>
+        <FieldLabel htmlFor="support" required hint="Kurulum ve ürün soruları buraya gider.">
+          Destek e-postası
+        </FieldLabel>
+        <input
+          id="support"
+          type="email"
+          value={draft.supportEmail}
+          onChange={(e) => update({ supportEmail: e.target.value })}
+          className={field}
+          placeholder="destek@firma.com"
+        />
       </div>
-    </div>
-  );
-}
 
-function Field({
-  label,
-  htmlFor,
-  hint,
-  help,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  hint?: string;
-  help?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div>
-      <div className="mb-2 flex items-baseline justify-between gap-2">
-        <label htmlFor={htmlFor} className="text-sm font-medium text-zinc-300">
-          {label}
-        </label>
-        {hint ? <span className="text-[11px] tabular-nums text-zinc-600">{hint}</span> : null}
+      <div>
+        <FieldLabel htmlFor="docs" hint="Kurulum veya API sayfası. Yoksa boş bırakın.">
+          Dokümantasyon
+        </FieldLabel>
+        <input
+          id="docs"
+          type="url"
+          value={draft.docsUrl}
+          onChange={(e) => update({ docsUrl: e.target.value })}
+          className={field}
+          placeholder="https://"
+        />
       </div>
-      {children}
-      {help ? <p className="mt-1.5 text-xs text-zinc-600">{help}</p> : null}
     </div>
   );
 }

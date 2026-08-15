@@ -68,6 +68,9 @@ export type ListingDraft = {
   stage: string;
   funding: string;
   websiteUrl: string;
+  docsUrl: string;
+  supportEmail: string;
+  delivery: string;
   g2Url: string;
   capterraUrl: string;
   stripeArrUrl: string;
@@ -103,14 +106,13 @@ export const FUNDING = [
 ] as const;
 
 export const LISTING_STEPS = [
-  { id: 'basic', label: 'Temel bilgiler' },
-  { id: 'media', label: 'Medya' },
-  { id: 'features', label: 'Öne çıkan özellikler' },
-  { id: 'pricing', label: 'Fiyatlandırma' },
-  { id: 'story', label: 'Ürün hikayesi' },
-  { id: 'trust', label: 'Güven sinyalleri' },
+  { id: 'basic', label: 'Ürün' },
+  { id: 'media', label: 'Görseller' },
+  { id: 'features', label: 'Özellikler' },
+  { id: 'pricing', label: 'Fiyat' },
+  { id: 'story', label: 'Hikâye' },
   { id: 'faq', label: 'SSS' },
-  { id: 'review', label: 'Gözden geçir' },
+  { id: 'review', label: 'Gönder' },
 ] as const;
 
 export type ListingStepId = (typeof LISTING_STEPS)[number]['id'];
@@ -139,7 +141,7 @@ export function emptyListingDraft(): ListingDraft {
     tagline: '',
     secondaryTagline: '',
     usp: '',
-    tldr: ['', ''],
+    tldr: [''],
     alternativeTo: '',
     integrations: '',
     bestFor: '',
@@ -158,34 +160,18 @@ export function emptyListingDraft(): ListingDraft {
       {
         id: listingUid('story'),
         title: '',
-        bullets: ['', ''],
+        bullets: [''],
         screenshotNote: '',
       },
     ],
     pricingModel: 'licensing',
-    tiers: [
-      { id: listingUid('tier'), name: 'Başlangıç', price: 49, recommended: false },
-      { id: listingUid('tier'), name: 'Profesyonel', price: 99, recommended: true },
-    ],
-    matrix: [
-      {
-        id: listingUid('row'),
-        label: 'Kullanıcı sayısı',
-        values: ['1', '5'],
-        inAllPlans: false,
-      },
-      {
-        id: listingUid('row'),
-        label: 'Projeler',
-        values: ['3', 'Sınırsız'],
-        inAllPlans: false,
-      },
-    ],
+    tiers: [{ id: listingUid('tier'), name: '', price: 0, recommended: true }],
+    matrix: [],
     maxCodes: 5,
     storyHeadline: '',
     founderNarrative: '',
     founderName: '',
-    founderRole: 'Kurucu',
+    founderRole: '',
     linkedinUrl: '',
     foundedYear: '',
     headquarters: '',
@@ -193,10 +179,13 @@ export function emptyListingDraft(): ListingDraft {
     stage: 'Indie',
     funding: 'Bootstrapped',
     websiteUrl: '',
+    docsUrl: '',
+    supportEmail: '',
+    delivery: '',
     g2Url: '',
     capterraUrl: '',
     stripeArrUrl: '',
-    faqs: [{ id: listingUid('faq'), question: '', answer: '', linkLabel: '', linkUrl: '' }],
+    faqs: [],
     updatedAt: new Date().toISOString(),
   };
 }
@@ -244,16 +233,15 @@ export function normalizeListingDraft(parsed?: Partial<ListingDraft> | null): Li
         }))
       : base.matrix.map((row) => ({ ...row, values: padTo(row.values, tiers.length) }));
 
-  const faqs =
-    Array.isArray(parsed.faqs) && parsed.faqs.length
-      ? parsed.faqs.slice(0, 12).map((faq) => ({
-          id: String(faq?.id || listingUid('faq')),
-          question: String(faq?.question ?? ''),
-          answer: String(faq?.answer ?? ''),
-          linkLabel: String(faq?.linkLabel ?? ''),
-          linkUrl: String(faq?.linkUrl ?? ''),
-        }))
-      : base.faqs;
+  const faqs = Array.isArray(parsed.faqs)
+    ? parsed.faqs.slice(0, 12).map((faq) => ({
+        id: String(faq?.id || listingUid('faq')),
+        question: String(faq?.question ?? ''),
+        answer: String(faq?.answer ?? ''),
+        linkLabel: String(faq?.linkLabel ?? ''),
+        linkUrl: String(faq?.linkUrl ?? ''),
+      }))
+    : base.faqs;
 
   return {
     ...base,
@@ -266,6 +254,9 @@ export function normalizeListingDraft(parsed?: Partial<ListingDraft> | null): Li
     tiers,
     matrix,
     faqs,
+    docsUrl: String(parsed.docsUrl ?? base.docsUrl),
+    supportEmail: String(parsed.supportEmail ?? base.supportEmail),
+    delivery: String(parsed.delivery ?? base.delivery),
     maxCodes: Math.min(20, Math.max(1, Number(parsed.maxCodes) || base.maxCodes)),
     pricingModel: parsed.pricingModel === 'codes' ? 'codes' : 'licensing',
     updatedAt: parsed.updatedAt || base.updatedAt,

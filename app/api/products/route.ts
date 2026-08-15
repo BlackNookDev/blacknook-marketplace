@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { getSessionUser } from '@/lib/sessionUser';
 import type { ListingDraft } from '@/lib/listingDraft';
+import { normalizeListingDraft } from '@/lib/listingDraft';
 import {
   getAllMarketplaceProducts,
   getApprovedCatalogEntries,
@@ -10,6 +11,7 @@ import {
   slugifyTitle,
   uniqueProductSlug,
 } from '@/lib/marketplace';
+import { firstIncompleteStep, getStepErrors, isListingReady } from '@/lib/listingValidate';
 
 function featuresFromDraft(draft: ListingDraft) {
   const fromStories = draft.stories.flatMap((s) =>
@@ -57,15 +59,13 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const listing = body.listing as ListingDraft | undefined;
-    if (!listing || typeof listing !== 'object') {
-      return NextResponse.json({ error: 'Ürün bilgileri eksik.' }, { status: 400 });
+    const listing = normalizeListingDraft(body.listing as ListingDraft | undefined);
+    if (!isListingReady(listing)) {
+      const blocked = firstIncompleteStep(listing);
+      const message = blocked ? getStepErrors(blocked, listing)[0] : 'Form eksik.';
+      return NextResponse.json({ error: message || 'Form eksik.' }, { status: 400 });
     }
-
     const title = String(listing.productName || '').trim();
-    if (title.length < 2) {
-      return NextResponse.json({ error: 'Ürün adı gerekli.' }, { status: 400 });
-    }
 
     const category = String(listing.category || 'Diğer').trim();
     const shortDescription = String(listing.tagline || '').trim();
@@ -105,10 +105,9 @@ export async function POST(req: NextRequest) {
       const name = String(tier.name || '').trim();
       if (!name) continue;
       const price = Number(tier.price) || 0;
-      const idx = listing.tiers.findIndex((t) => t.id === tier.id);
-      const tierFeatures = (listing.matrix || [])
-        .filter((row) => !row.inAllPlans)
-        .map((row) => `${row.label}: ${row.values[idx] ?? '—'}`);
+      const tierFeatures = (listing.stories || [])
+        .map((s) => String(s.title || '').trim())
+        .filter(Boolean);
       await pool.query(
         'INSERT INTO product_tiers (product_id, tier_name, price, original_price, features) VALUES (?, ?, ?, ?, ?)',
         [productId, name, price, price ? Math.round(price * 3) : null, JSON.stringify(tierFeatures)]

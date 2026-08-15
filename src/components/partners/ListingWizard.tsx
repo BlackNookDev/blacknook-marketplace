@@ -15,12 +15,12 @@ import {
   type ListingStepId,
 } from '@/lib/listingDraft';
 import { apiFetch } from '@/lib/apiUrl';
+import { firstIncompleteStep, getStepErrors, isListingReady } from '@/lib/listingValidate';
 import StepBasic from '@/components/partners/steps/StepBasic';
 import StepMedia from '@/components/partners/steps/StepMedia';
 import StepFeatures from '@/components/partners/steps/StepFeatures';
 import StepPricing from '@/components/partners/steps/StepPricing';
 import StepStory from '@/components/partners/steps/StepStory';
-import StepTrust from '@/components/partners/steps/StepTrust';
 import StepFaq from '@/components/partners/steps/StepFaq';
 import StepReview from '@/components/partners/steps/StepReview';
 
@@ -33,6 +33,7 @@ export default function ListingWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
+  const [gateHint, setGateHint] = useState('');
 
   const draftRef = useRef<ListingDraft | null>(null);
   const loadedRef = useRef(false);
@@ -110,19 +111,51 @@ export default function ListingWizard() {
   };
 
   const stepIndex = LISTING_STEPS.findIndex((s) => s.id === step);
+  const currentErrors = draft ? getStepErrors(step, draft) : [];
+
+  const openStep = (id: ListingStepId) => {
+    const current = draftRef.current;
+    if (current && dirtyRef.current) void persistToDb(current, false);
+    if (!current) return;
+    const target = LISTING_STEPS.findIndex((s) => s.id === id);
+    const blocked = firstIncompleteStep(current);
+    const blockedIndex = blocked ? LISTING_STEPS.findIndex((s) => s.id === blocked) : -1;
+    if (blocked && target > blockedIndex) {
+      setStep(blocked);
+      setGateHint(getStepErrors(blocked, current)[0] || 'Önce bu adımı bitirin.');
+      return;
+    }
+    setGateHint('');
+    setStep(id);
+  };
 
   const go = (dir: -1 | 1) => {
     const current = draftRef.current;
-    if (current && dirtyRef.current) void persistToDb(current, false);
+    if (!current) return;
+    if (dir === 1) {
+      const errors = getStepErrors(step, current);
+      if (errors.length) {
+        setGateHint(errors[0]);
+        return;
+      }
+    }
+    if (dirtyRef.current) void persistToDb(current, false);
     const next = LISTING_STEPS[stepIndex + dir];
-    if (next) setStep(next.id);
+    if (next) {
+      setGateHint('');
+      setStep(next.id);
+    }
   };
 
   const submit = async () => {
     if (!draft || submitting) return;
     setSubmitError('');
-    if (!draft.productName.trim()) {
-      setSubmitError('Ürün adı gerekli.');
+    if (!isListingReady(draft)) {
+      const blocked = firstIncompleteStep(draft);
+      if (blocked) {
+        setStep(blocked);
+        setGateHint(getStepErrors(blocked, draft)[0] || 'Eksik alan var.');
+      }
       return;
     }
     submittingRef.current = true;
@@ -181,16 +214,12 @@ export default function ListingWizard() {
         <nav aria-label="Ürün oluşturma adımları" className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:pb-0">
           {LISTING_STEPS.map((s, i) => {
             const active = s.id === step;
-            const done = i < stepIndex;
+            const complete = s.id !== 'review' && getStepErrors(s.id, draft).length === 0;
             return (
               <button
                 key={s.id}
                 type="button"
-                onClick={() => {
-                  const current = draftRef.current;
-                  if (current && dirtyRef.current) void persistToDb(current, false);
-                  setStep(s.id);
-                }}
+                onClick={() => openStep(s.id)}
                 className={cn(
                   'inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors',
                   active
@@ -201,14 +230,14 @@ export default function ListingWizard() {
                 <span
                   className={cn(
                     'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold',
-                    done
+                    complete && !active
                       ? 'bg-emerald-500/20 text-emerald-300'
                       : active
                         ? 'bg-white text-black'
                         : 'bg-white/10 text-zinc-500'
                   )}
                 >
-                  {done ? <Check className="h-3 w-3" aria-hidden /> : i + 1}
+                  {complete && !active ? <Check className="h-3 w-3" aria-hidden /> : i + 1}
                 </span>
                 <span className="hidden sm:inline">{s.label}</span>
               </button>
@@ -233,8 +262,8 @@ export default function ListingWizard() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-500">
             {role === 'admin'
-              ? 'Admin olarak gönderdiğiniz ürün hemen pazaryerinde, açık kaynak listesinin önünde yayınlanır.'
-              : 'Görseller, fiyat ve hikâyeyi doldurup gönderin. Admin onayından sonra ürününüz katalogda önde sergilenir.'}
+              ? 'Admin gönderince ürün katalogda hemen yayınlanır.'
+              : 'Zorunlu alanlar * ile işaretli. Sonraki adıma ancak bu sayfa tamamsa geçilir.'}
           </p>
         </header>
 
@@ -244,7 +273,6 @@ export default function ListingWizard() {
           {step === 'features' ? <StepFeatures draft={draft} update={update} /> : null}
           {step === 'pricing' ? <StepPricing draft={draft} update={update} /> : null}
           {step === 'story' ? <StepStory draft={draft} update={update} /> : null}
-          {step === 'trust' ? <StepTrust draft={draft} update={update} /> : null}
           {step === 'faq' ? <StepFaq draft={draft} update={update} /> : null}
           {step === 'review' ? <StepReview draft={draft} /> : null}
         </div>
@@ -268,14 +296,14 @@ export default function ListingWizard() {
             >
               {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
             </button>
-            {submitError ? (
-              <p className="self-center text-xs text-rose-300">{submitError}</p>
+            {gateHint || submitError ? (
+              <p className="self-center text-xs text-rose-300">{gateHint || submitError}</p>
             ) : null}
             {step === 'review' ? (
               <button
                 type="button"
                 onClick={() => void submit()}
-                disabled={submitting || !draft.productName.trim()}
+                disabled={submitting || !isListingReady(draft)}
                 className="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90 disabled:opacity-50"
               >
                 {submitting ? (
@@ -291,7 +319,8 @@ export default function ListingWizard() {
               <button
                 type="button"
                 onClick={() => go(1)}
-                className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
+                disabled={currentErrors.length > 0}
+                className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90 disabled:opacity-50"
               >
                 Devam
                 <ChevronRight className="h-4 w-4" aria-hidden />

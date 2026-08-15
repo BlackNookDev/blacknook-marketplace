@@ -1,5 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react';
-import { charHint, listingUid, type FeatureStory, type ListingDraft } from '@/lib/listingDraft';
+import { listingUid, type FeatureStory, type ListingDraft } from '@/lib/listingDraft';
+import { FieldLabel } from '@/components/partners/FieldHint';
 
 const field =
   'h-11 w-full rounded-xl border border-white/15 bg-transparent px-4 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10';
@@ -15,39 +16,20 @@ export default function StepFeatures({ draft, update }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-display text-xl font-semibold text-white">Öne çıkan özellikler</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          1–4 özellik grubu ekleyin. Önce sonucu, sonra nasıl çalıştığını yazın.
-        </p>
-      </div>
-
-      <div>
-        <div className="mb-2 flex justify-between">
-          <label htmlFor="feat-header" className="text-sm font-medium text-zinc-300">
-            Bölüm başlığı
-          </label>
-          <span className="text-[11px] text-zinc-600">
-            {charHint(draft.featuresSectionHeader.length, 255)}
-          </span>
-        </div>
-        <input
-          id="feat-header"
-          maxLength={255}
-          value={draft.featuresSectionHeader}
-          onChange={(e) => update({ featuresSectionHeader: e.target.value })}
-          className={field}
-          placeholder="Ekiplerin ihtiyaç duyduğu her şey, tek yerde"
-        />
+        <h2 className="font-display text-xl font-semibold text-white">Özellikler</h2>
+        <p className="mt-1 text-sm text-zinc-500">Müşterinin üründe göreceği maddeler.</p>
       </div>
 
       <div className="space-y-6">
         {draft.stories.map((story, si) => (
           <div
             key={story.id}
-            className="space-y-4 border-t border-white/[0.08] pt-6 first:border-t-0 first:pt-0"
+            className="space-y-3 border-t border-white/[0.08] pt-6 first:border-t-0 first:pt-0"
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-zinc-200">Özellik {si + 1}</p>
+              <FieldLabel required={si === 0} hint="Kısa başlık, altında maddeler.">
+                Özellik {si + 1}
+              </FieldLabel>
               {draft.stories.length > 1 ? (
                 <button
                   type="button"
@@ -60,7 +42,7 @@ export default function StepFeatures({ draft, update }: Props) {
               ) : null}
             </div>
             <input
-              maxLength={255}
+              maxLength={120}
               value={story.title}
               onChange={(e) => {
                 setStories(
@@ -68,13 +50,13 @@ export default function StepFeatures({ draft, update }: Props) {
                 );
               }}
               className={field}
-              placeholder="Fayda başlığı (ör. Tek tıkla yedekleme)"
+              placeholder="Yedekleme"
             />
             <div className="space-y-2">
               {story.bullets.map((b, bi) => (
                 <div key={`${story.id}-b-${bi}`} className="flex gap-2">
                   <input
-                    maxLength={500}
+                    maxLength={200}
                     value={b}
                     onChange={(e) => {
                       setStories(
@@ -87,7 +69,7 @@ export default function StepFeatures({ draft, update }: Props) {
                       );
                     }}
                     className={field}
-                    placeholder="Somut bir madde yazın"
+                    placeholder="Ne yaptığını bir cümlede yazın"
                   />
                   {story.bullets.length > 1 ? (
                     <button
@@ -123,22 +105,10 @@ export default function StepFeatures({ draft, update }: Props) {
                   }}
                 >
                   <Plus className="h-3.5 w-3.5" aria-hidden />
-                  Madde ekle
+                  Madde
                 </button>
               ) : null}
             </div>
-            <input
-              value={story.screenshotNote}
-              onChange={(e) => {
-                setStories(
-                  draft.stories.map((s) =>
-                    s.id === story.id ? { ...s, screenshotNote: e.target.value } : s
-                  )
-                );
-              }}
-              className={field}
-              placeholder="Bu özelliğe denk gelen ekran görüntüsü notu (opsiyonel)"
-            />
           </div>
         ))}
       </div>
@@ -149,12 +119,7 @@ export default function StepFeatures({ draft, update }: Props) {
           onClick={() =>
             setStories([
               ...draft.stories,
-              {
-                id: listingUid('story'),
-                title: '',
-                bullets: [''],
-                screenshotNote: '',
-              },
+              { id: listingUid('story'), title: '', bullets: [''], screenshotNote: '' },
             ])
           }
           className="inline-flex items-center gap-1.5 text-sm font-medium text-sky-400 hover:text-sky-300"

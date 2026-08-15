@@ -1,53 +1,56 @@
 import type { ListingDraft } from '@/lib/listingDraft';
+import { deliveryLabel, firstIncompleteStep, getStepErrors } from '@/lib/listingValidate';
+import { LISTING_STEPS } from '@/lib/listingDraft';
 
 type Props = { draft: ListingDraft };
 
 export default function StepReview({ draft }: Props) {
-  const highlights = (draft.tldr || []).map((t) => t.trim()).filter(Boolean);
+  const blocked = firstIncompleteStep(draft);
+  const blockedLabel = blocked
+    ? LISTING_STEPS.find((s) => s.id === blocked)?.label
+    : null;
+  const blockedErrors = blocked ? getStepErrors(blocked, draft) : [];
+  const faqs = draft.faqs.filter((f) => f.question.trim() && f.answer.trim());
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="font-display text-xl font-semibold text-white">Gözden geçir</h2>
+        <h2 className="font-display text-xl font-semibold text-white">Gönder</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Göndermeden önce özeti kontrol edin. Taslak hesabınıza kaydedilir; gönderince admin onayına düşer.
+          Admin onayından sonra katalogda görünür. Taslak hesabınızda duruyor.
         </p>
       </div>
 
-      <Section title="Temel">
-        <Row k="Ürün" v={draft.productName || '—'} />
+      {blocked ? (
+        <p className="rounded-xl border border-amber-400/20 bg-amber-500/[0.06] px-4 py-3 text-sm text-amber-100">
+          {blockedLabel}: {blockedErrors[0]}
+        </p>
+      ) : null}
+
+      <Section title="Ürün">
+        <Row k="Ad" v={draft.productName || '—'} />
         <Row k="Kategori" v={draft.category} />
-        <Row k="Kısa açıklama" v={draft.tagline || '—'} />
-        <Row k="Neden tercih edilmeli" v={draft.usp || '—'} />
-        <Row k="Öne çıkan faydalar" v={highlights.length ? highlights.join(' · ') : '—'} />
+        <Row k="Site" v={draft.websiteUrl || '—'} />
+        <Row k="Çalışır" v={deliveryLabel(draft.delivery) || '—'} />
+        <Row k="Destek" v={draft.supportEmail || '—'} />
       </Section>
 
       <Section title="Fiyat">
-        <Row k="Model" v={draft.pricingModel === 'codes' ? 'Kullanım kodları' : 'Lisans planları'} />
-        {draft.tiers.map((t) => (
-          <Row
-            key={t.id}
-            k={t.name || 'Plansız'}
-            v={`$${t.price}${t.recommended ? ' · önerilen' : ''}`}
-          />
-        ))}
+        {draft.tiers
+          .filter((t) => t.name.trim())
+          .map((t) => (
+            <Row
+              key={t.id}
+              k={t.name}
+              v={`$${t.price}${t.recommended ? ' · öne çıkan' : ''}`}
+            />
+          ))}
       </Section>
 
-      <Section title="Hikaye">
-        <Row k="Kurucu" v={draft.founderName || '—'} />
-        <Row k="Ekip / aşama" v={`${draft.teamSize} · ${draft.stage}`} />
+      <Section title="Hikâye">
+        <Row k="Kim" v={draft.founderName || '—'} />
+        <Row k="SSS" v={`${faqs.length} soru`} />
       </Section>
-
-      <Section title="SSS">
-        <Row
-          k="Adet"
-          v={`${draft.faqs.filter((f) => f.question.trim()).length} soru`}
-        />
-      </Section>
-
-      {!draft.productName.trim() ? (
-        <p className="text-sm text-amber-300">Göndermek için ürün adı zorunlu.</p>
-      ) : null}
     </div>
   );
 }
@@ -67,7 +70,7 @@ function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex flex-col gap-0.5 border-b border-white/[0.05] py-2 sm:flex-row sm:justify-between sm:gap-4">
       <dt className="text-sm text-zinc-500">{k}</dt>
-      <dd className="text-sm text-zinc-200 sm:text-right">{v}</dd>
+      <dd className="break-all text-sm text-zinc-200 sm:text-right">{v}</dd>
     </div>
   );
 }

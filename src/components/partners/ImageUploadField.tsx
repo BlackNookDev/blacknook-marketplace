@@ -2,11 +2,13 @@
 
 import { useRef, useState } from 'react';
 import { ImagePlus, Loader2, Trash2 } from 'lucide-react';
+import { FieldLabel } from '@/components/partners/FieldHint';
 import { apiFetch } from '@/lib/apiUrl';
 
 type Props = {
   label?: string;
-  help?: string;
+  hint?: string;
+  required?: boolean;
   value: string;
   onChange: (dataUrl: string) => void;
   aspectClass?: string;
@@ -17,7 +19,8 @@ const MAX_BYTES = 4 * 1024 * 1024;
 
 export default function ImageUploadField({
   label,
-  help,
+  hint,
+  required,
   value,
   onChange,
   aspectClass = 'aspect-square',
@@ -54,8 +57,11 @@ export default function ImageUploadField({
 
   return (
     <div>
-      {label ? <p className="mb-2 text-sm font-medium text-zinc-300">{label}</p> : null}
-      {help ? <p className="mb-3 text-xs text-zinc-600">{help}</p> : null}
+      {label ? (
+        <FieldLabel required={required} hint={hint}>
+          {label}
+        </FieldLabel>
+      ) : null}
 
       {value ? (
         <div className="relative overflow-hidden rounded-xl border border-white/15 bg-white/[0.03]">

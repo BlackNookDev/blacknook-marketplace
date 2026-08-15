@@ -185,6 +185,63 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
                   <dt className="text-zinc-500">Sağlayıcı</dt>
                   <dd className="text-right font-medium text-zinc-200">{product.vendorName}</dd>
                 </div>
+                {listing?.delivery ? (
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-zinc-500">Çalışır</dt>
+                    <dd className="text-right font-medium text-zinc-200">
+                      {listing.delivery === 'self-host'
+                        ? 'Kendi sunucunuzda'
+                        : listing.delivery === 'saas'
+                          ? 'Bizim sunucumuzda'
+                          : listing.delivery === 'both'
+                            ? 'İkisi de'
+                            : listing.delivery}
+                    </dd>
+                  </div>
+                ) : null}
+                {listing?.websiteUrl ? (
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-zinc-500">Site</dt>
+                    <dd className="text-right">
+                      <a
+                        href={listing.websiteUrl}
+                        className="font-medium text-sky-400 hover:text-sky-300"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Aç
+                      </a>
+                    </dd>
+                  </div>
+                ) : null}
+                {listing?.docsUrl ? (
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-zinc-500">Dokümantasyon</dt>
+                    <dd className="text-right">
+                      <a
+                        href={listing.docsUrl}
+                        className="font-medium text-sky-400 hover:text-sky-300"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Aç
+                      </a>
+                    </dd>
+                  </div>
+                ) : null}
+                {listing?.supportEmail ? (
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-zinc-500">Destek</dt>
+                    <dd className="text-right">
+                      <a
+                        href={`mailto:${listing.supportEmail}`}
+                        className="font-medium text-sky-400 hover:text-sky-300"
+                      >
+                        {listing.supportEmail}
+                      </a>
+                    </dd>
+                  </div>
+                ) : null}
               </dl>
             </div>
           </aside>
