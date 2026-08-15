@@ -104,6 +104,8 @@ http://localhost:3000
 | `GOOGLE_CLIENT_SECRET` | ⬜ | OAuth |
 | `GITHUB_CLIENT_ID` | ⬜ | OAuth |
 | `GITHUB_CLIENT_SECRET` | ⬜ | OAuth |
+| `ADMIN_EMAIL` | ⬜ | Varsayılan `admin@blacknook.com` — yoksa ilk kurulumda oluşturulur |
+| `ADMIN_PASSWORD` | ⬜ | Varsayılan `BlacknookAdmin1` — hesap varsa şifre değişmez |
 
 SMTP tanımlı değilse kurulum talebi `503` döner; kayıt yine tamamlanır (hoş geldin maili log’a düşer).
 

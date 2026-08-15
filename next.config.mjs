@@ -10,6 +10,7 @@ const nextConfig = {
   // Spline için büyük paket boyutu uyarısını bastır
   experimental: {
     optimizePackageImports: ['@splinetool/react-spline'],
+    instrumentationHook: true,
   },
 };
 

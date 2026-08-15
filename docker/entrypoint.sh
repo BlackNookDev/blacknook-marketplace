@@ -18,5 +18,14 @@ if [ -f schema.sql ]; then
   echo "Şema uygulandı."
 fi
 
+if [ -f scripts/seed-admin.js ]; then
+  echo "Admin hesabı kontrol ediliyor..."
+  if node scripts/seed-admin.js; then
+    echo "Admin seed tamam."
+  else
+    echo "Admin seed atlandı (uygulama yine başlıyor)."
+  fi
+fi
+
 echo "Next.js başlatılıyor..."
 exec node server.js

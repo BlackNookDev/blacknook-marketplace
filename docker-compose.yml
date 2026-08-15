@@ -65,6 +65,9 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-BlackNOOK <noreply@blacknook.com>}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@blacknook.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-BlacknookAdmin1}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
     ports:
       - '127.0.0.1:${APP_PORT:-18080}:3000'
     expose:
