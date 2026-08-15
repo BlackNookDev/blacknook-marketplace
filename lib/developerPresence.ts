@@ -28,8 +28,7 @@ export type PlatformHint = {
 export const PLATFORM_HINTS: PlatformHint[] = [
   { id: 'h1', message: 'Kurulum ve deploy desteği talep edilebilir' },
   { id: 'h2', message: 'Self-host ve SaaS projelerinde eşleşme' },
-  { id: 'h3', message: 'Auth, billing ve entegrasyon talepleri kabul ediliyor' },
-  { id: 'h4', message: 'Teknik ekip talepleri inceliyor' },
+  { id: 'h3', message: 'Teknik ekip talepleri inceliyor' },
 ];
 
 /** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */
