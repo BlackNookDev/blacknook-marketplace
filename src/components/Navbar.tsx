@@ -175,16 +175,6 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-0.5 sm:gap-1">
-              <Link
-                href={
-                  status === 'authenticated'
-                    ? '/partners/self-submission'
-                    : '/login?callbackUrl=%2Fpartners%2Fself-submission'
-                }
-                className="mr-0.5 hidden h-8 items-center rounded-full bg-white px-3 text-[12px] font-bold text-black transition-opacity hover:opacity-90 lg:inline-flex"
-              >
-                Ürününü listele
-              </Link>
               <div className="relative" ref={notifRef}>
                 <button
                   type="button"

@@ -54,20 +54,13 @@ export default function ServiceGrid() {
       aria-labelledby="service-grid-heading"
     >
       <div className="relative mx-auto max-w-6xl px-6">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-10">
+        <div className="mb-8 md:mb-10">
           <h2
             id="service-grid-heading"
             className="font-display text-2xl font-bold tracking-tight text-zinc-50 md:text-3xl"
           >
             Servisler
           </h2>
-          <Link
-            href="/partners/self-submission"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-400 hover:text-sky-300"
-          >
-            Ürününü listele
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </Link>
         </div>
 
         <m.div

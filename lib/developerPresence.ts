@@ -30,7 +30,6 @@ export const PLATFORM_HINTS: PlatformHint[] = [
   { id: 'h2', message: 'Self-host ve SaaS projelerinde eşleşme' },
   { id: 'h3', message: 'Auth, billing ve entegrasyon talepleri kabul ediliyor' },
   { id: 'h4', message: 'Teknik ekip talepleri inceliyor' },
-  { id: 'h5', message: 'Eşleşme sohbeti Hesap → Mesajlar’da açılır' },
 ];
 
 /** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */
