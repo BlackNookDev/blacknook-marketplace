@@ -1,12 +1,18 @@
 #!/bin/sh
 set -e
 
-DB_HOST="${DB_HOST:-postgres}"
+DB_HOST="${DB_HOST:-}"
 DB_PORT="${DB_PORT:-5432}"
 DB_USER="${DB_USER:-postgres}"
+DB_NAME="${DB_NAME:-postgres}"
 UPLOAD_DIR="${UPLOAD_DIR:-/app/uploads}"
 
-echo "PostgreSQL bekleniyor (${DB_HOST}:${DB_PORT})..."
+if [ -z "$DB_HOST" ]; then
+  echo "DB_HOST tanımlı değil. Coolify Postgres hostname veya harici host girin."
+  exit 1
+fi
+
+echo "PostgreSQL bekleniyor (${DB_HOST}:${DB_PORT}/${DB_NAME})..."
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" >/dev/null 2>&1; do
   sleep 1
 done

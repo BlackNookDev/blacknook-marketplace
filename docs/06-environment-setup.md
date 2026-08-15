@@ -10,24 +10,23 @@
 
 ---
 
-## Docker (önerilen — tam stack)
+## Docker (önerilen)
 
-Tüm stack tek komutla:
+PostgreSQL compose içinde yoktur; Coolify DB veya lokal Postgres gerekir.
 
 ```bash
 cp .env.docker.example .env
-# .env içinde DB_PASSWORD, NEXTAUTH_SECRET, PGADMIN_DEFAULT_PASSWORD değiştir
+# DB_HOST, DB_PASSWORD, NEXTAUTH_SECRET doldur
 docker compose up -d --build
 ```
 
 | Servis | URL |
 |---|---|
-| Uygulama | http://localhost:3000 |
-| pgAdmin | http://localhost:5050 |
+| Uygulama | http://127.0.0.1:18080 |
 
 Coolify deploy: [07-docker-coolify.md](./07-docker-coolify.md)
 
-Compose içinde `DB_HOST=postgres` otomatik ayarlanır; `.env`'de `DB_HOST` tanımlamanız gerekmez.
+`DB_HOST` zorunlu — Coolify Postgres internal hostname veya `localhost`.
 
 ---
 

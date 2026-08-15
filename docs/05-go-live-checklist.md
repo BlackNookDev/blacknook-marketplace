@@ -58,9 +58,9 @@ Google Cloud Console / GitHub OAuth App:
 
 - [ ] `cp .env.docker.example .env` — şifreler değiştirildi
 - [ ] `docker compose up -d --build` — tüm servisler healthy
-- [ ] Coolify'de `app` + `pgadmin` domain ataması yapıldı
+- [ ] Coolify'de `app` domain ataması yapıldı
 - [ ] `NEXTAUTH_URL` = production https domain
-- [ ] pgAdmin'den `postgres` host'una bağlanılabiliyor
+- [ ] `DB_HOST` Coolify Postgres internal hostname; app ile DB aynı network
 
 Detay: [07-docker-coolify.md](./07-docker-coolify.md)
 

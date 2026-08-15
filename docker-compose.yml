@@ -1,36 +1,10 @@
-# BlackNOOK Marketplace — Docker Compose
+# BlackNOOK Marketplace — yalnızca uygulama.
+# PostgreSQL Coolify (veya harici) servisidir; bu compose içinde yok.
 #
-# Lokal / NPM: app → 127.0.0.1:18080, pgadmin → 127.0.0.1:18081 (sadece localhost)
-# Coolify: domain sadece app:3000 — pgAdmin’e public domain ATAMA
-#
-# PostgreSQL host'a publish EDİLMEZ.
+# Coolify: app ile Postgres aynı Docker network'te olmalı.
+# DB_HOST = Coolify Postgres internal hostname (ör. opzltzid4nnqpeky0libvyvh)
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
-      POSTGRES_DB: ${DB_NAME:-blacknook}
-    volumes:
-      - blacknook_marketplace_postgres_data:/var/lib/postgresql/data
-      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-    # Coolify $${VAR} / start_period race yüzünden service_healthy kullanmıyoruz.
-    # Healthcheck sadece izleme; deploy app entrypoint ile DB bekler.
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-blacknook} || exit 1',
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 40s
-    networks:
-      - blacknook_marketplace_internal
-
   app:
     build:
       context: .
@@ -39,16 +13,13 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_OAUTH: ${NEXT_PUBLIC_GOOGLE_OAUTH:-}
     restart: unless-stopped
-    # service_healthy Coolify'de race ile düşüyor; entrypoint.sh zaten pg_isready bekliyor
-    depends_on:
-      - postgres
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_PORT: ${DB_PORT:-5432}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
-      DB_NAME: ${DB_NAME:-blacknook}
-      DB_SSL: 'false'
+      DB_NAME: ${DB_NAME:-postgres}
+      DB_SSL: ${DB_SSL:-false}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-https://blacknook.com}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://blacknook.com}
@@ -81,33 +52,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-    networks:
-      - blacknook_marketplace_internal
-
-  pgadmin:
-    image: dpage/pgadmin4:8
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@blacknook.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?PGADMIN_DEFAULT_PASSWORD is required}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-      - blacknook_marketplace_pgadmin_data:/var/lib/pgadmin
-    # Sadece host localhost — dış dünyaya / Coolify domain’e açma
-    ports:
-      - '127.0.0.1:${PGADMIN_PORT:-18081}:80'
-    labels:
-      - traefik.enable=false
-    networks:
-      - blacknook_marketplace_internal
 
 volumes:
-  blacknook_marketplace_postgres_data:
-  blacknook_marketplace_pgadmin_data:
   blacknook_marketplace_uploads:
-
-networks:
-  blacknook_marketplace_internal:
-    driver: bridge
