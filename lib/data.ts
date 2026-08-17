@@ -7,6 +7,7 @@ export interface ServiceCatalogItem {
   features: string[];
   about: string;
   useCases: string[];
+  listingType?: 'saas' | 'micro-saas' | 'service';
 }
 
 export type ServiceCatalogEntry = ServiceCatalogItem & {
@@ -267,6 +268,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Umami',
     description: 'Minimal, gizlilik odaklı açık kaynak web analitiği.',
     icon: 'umami',
+    listingType: 'saas',
     category: 'Analitik & Ürün',
     brandColor: '#000000',
     features: [
@@ -377,6 +379,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Keycloak',
     description: 'OpenID Connect ve SAML destekli kimlik ve erişim yönetimi.',
     icon: 'keycloak',
+    listingType: 'saas',
     category: 'Kimlik & Güvenlik',
     brandColor: '#4D4D4D',
     features: [
@@ -465,6 +468,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Portainer',
     description: 'Docker, Swarm ve Kubernetes için görsel konteyner yönetimi.',
     icon: 'portainer',
+    listingType: 'saas',
     category: 'Konteyner & Ağ',
     brandColor: '#13BEF9',
     features: [
@@ -531,6 +535,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Uptime Kuma',
     description: 'Self-host uptime, ping ve SSL süresi izleme.',
     icon: 'uptimekuma',
+    listingType: 'saas',
     category: 'İzleme & Güvenilirlik',
     brandColor: '#5CDD8B',
     features: [
@@ -553,6 +558,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Sentry',
     description: 'Uygulama hata takibi, performans ve session replay.',
     icon: 'sentry',
+    listingType: 'saas',
     category: 'Gözlemlenebilirlik',
     brandColor: '#362D59',
     features: [
@@ -597,6 +603,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Cal.com',
     description: 'Açık kaynak randevu planlama ve toplantı altyapısı.',
     icon: 'caldotcom',
+    listingType: 'saas',
     category: 'Planlama & Randevu',
     brandColor: '#292929',
     features: [
@@ -663,6 +670,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Chatwoot',
     description: 'Omnichannel müşteri destek ve canlı sohbet platformu.',
     icon: 'chatwoot',
+    listingType: 'saas',
     category: 'İletişim & Destek',
     brandColor: '#1F93FF',
     features: [
@@ -707,6 +715,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Rocket.Chat',
     description: 'Omnichannel takım sohbeti ve müşteri iletişim merkezi.',
     icon: 'rocketchat',
+    listingType: 'saas',
     category: 'İletişim & Destek',
     brandColor: '#F5455C',
     features: [
@@ -993,6 +1002,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'Flowise',
     description: 'Görsel sürükle-bırak LLM agent ve RAG pipeline oluşturucu.',
     icon: 'flowise',
+    listingType: 'saas',
     category: 'Yapay Zeka',
     brandColor: '#7C3AED',
     features: [
@@ -1059,6 +1069,7 @@ export const SERVICES: ServiceCatalogEntry[] = [
     name: 'PocketBase',
     description: 'Tek ikili dosyada gömülü veritabanı ve gerçek zamanlı API.',
     icon: 'pocketbase',
+    listingType: 'saas',
     category: 'Backend & BaaS',
     brandColor: '#B8DBE4',
     features: [
@@ -1120,6 +1131,443 @@ export const SERVICES: ServiceCatalogEntry[] = [
       'GraphQL sorgu deneme',
     ],
   },
+  {
+    slug: 'activepieces',
+    name: 'Activepieces',
+    description: 'Yapay zeka ajanları ve yüzlerce uygulamayı bağlayan görsel otomasyon platformu.',
+    icon: 'activepieces',
+    listingType: 'saas',
+    category: 'Otomasyon & İş Akışı',
+    brandColor: '#6E41E2',
+    features: [
+      'Sürükle-bırak akış editörü',
+      'AI ajanları ve MCP sunucu bağlantıları',
+      'Slack, Gmail ve yüzlerce uygulama entegrasyonu',
+      'Self-host ve bulut dağıtımı',
+      'Zapier / Make alternatifi açık kaynak lisans',
+    ],
+    about:
+      'Activepieces, görsel arayüzle yapay zeka ajanlarını ve iş uygulamalarını birbirine bağlayan otomasyon platformudur. Kod yazmadan Slack, Gmail ve benzeri araçları zincirleyebilir; self-host ile veriyi kendi sunucunuzda tutabilirsiniz.',
+    useCases: [
+      'Satış ve destek süreçlerini otomatikleştirme',
+      'AI ajanlarını şirket araçlarına bağlama',
+      'Zapier yerine self-host otomasyon',
+    ],
+  },
+  {
+    slug: 'dify',
+    name: 'Dify',
+    description: 'RAG, ajan ve sohbet botlarını tek çalışma alanında kuran AI geliştirici platformu.',
+    icon: 'dify',
+    listingType: 'saas',
+    category: 'Yapay Zeka',
+    brandColor: '#1C64F2',
+    features: [
+      'Kod yazmadan RAG ve ajan iş akışları',
+      'Kendi belgelerinizle bilgi tabanı',
+      'Model ve araç entegrasyonları',
+      'Bulut, VPC veya self-host dağıtım',
+      'LangChain alternatifi üretim ortamı',
+    ],
+    about:
+      'Dify, kendi verilerinizle çalışan yapay zeka asistanları, RAG sistemleri ve sohbet botları üretmenizi sağlar. Prototipten üretime tek bir collaborative workspace içinde geçiş hedeflenir.',
+    useCases: [
+      'Şirket içi doküman asistanı',
+      'Müşteri destek botu ve RAG pipeline',
+      'Ekipçe ajan iş akışı tasarımı',
+    ],
+  },
+  {
+    slug: 'jan',
+    name: 'Jan',
+    description: 'Tamamen çevrimdışı çalışan açık kaynak ChatGPT masaüstü alternatifi.',
+    icon: 'jan',
+    listingType: 'saas',
+    category: 'Yapay Zeka',
+    brandColor: '#F4B400',
+    features: [
+      'Yerel LLM çalıştırma, internet gerekmez',
+      'Masaüstü ve sunucu kurulumu',
+      'Model indirme ve sohbet arayüzü',
+      'Gizlilik odaklı, veri cihazda kalır',
+      'Açık kaynak lisans',
+    ],
+    about:
+      'Jan, ChatGPT benzeri bir arayüzü kendi bilgisayarınızda veya sunucunuzda çalıştırır. Model çıkarımı yereldir; bağlantı kesikken de asistan kullanılabilir.',
+    useCases: [
+      'İnternetsiz yerel yapay zeka asistanı',
+      'Hassas belgelerle çevrimdışı sohbet',
+      'Ekipler için self-host LLM arayüzü',
+    ],
+  },
+  {
+    slug: 'anything-llm',
+    name: 'AnythingLLM',
+    description: 'PDF ve şirket belgelerinizle güvenle sohbet eden yerel bilgi bankası.',
+    icon: 'anythingllm',
+    listingType: 'saas',
+    category: 'Yapay Zeka',
+    brandColor: '#3B82F6',
+    features: [
+      'PDF, Word ve metin belgesi yükleme',
+      'Yerel veya kendi modelinizle RAG',
+      'Çoklu çalışma alanı ve ajan deneyimi',
+      'Self-host, veri dışarı çıkmaz',
+      'ChatPDF alternatifi açık kaynak',
+    ],
+    about:
+      'AnythingLLM, şirket içi belgeleri yükleyip verilerinizle sohbet etmenizi sağlar. Amaç kiralık zeka yerine kendi altyapınızda çalışan bir bilgi bankası kurmaktır.',
+    useCases: [
+      'İç prosedür ve PDF arşiviyle soru-cevap',
+      'Hukuk veya finans doküman asistanı',
+      'Yerel-first ajan deneyimi',
+    ],
+  },
+  {
+    slug: 'stagehand',
+    name: 'Stagehand',
+    description: 'Yapay zeka ajanlarının web’de insan gibi gezinmesini sağlayan tarayıcı SDK’sı.',
+    icon: 'stagehand',
+    listingType: 'saas',
+    category: 'Yapay Zeka',
+    brandColor: '#F03603',
+    features: [
+      'Doğal dil ile sayfa aksiyonları',
+      'Form doldurma ve veri çıkarma',
+      'Browserbase bulut tarayıcı entegrasyonu',
+      'Tekrarlanabilir, önbellekli iş akışları',
+      'TypeScript SDK',
+    ],
+    about:
+      'Stagehand (Browserbase), ajanların sitelerde gezinmesi, form doldurması ve veri toplaması için tarayıcı otomasyon altyapısıdır. AI ile kodu birleştirerek kırılgan selector’lara daha az bağımlı otomasyon yazar.',
+    useCases: [
+      'Ajan tabanlı web kazıma',
+      'Form ve kayıt akışlarını otomatikleştirme',
+      'Tarayıcı ajanı ürünleri',
+    ],
+  },
+  {
+    slug: 'mastra',
+    name: 'Mastra',
+    description: 'TypeScript ile ajan, iş akışı ve RAG kurmak için modern AI çerçevesi.',
+    icon: 'mastra',
+    listingType: 'saas',
+    category: 'Yapay Zeka',
+    brandColor: '#00C853',
+    features: [
+      'Ajan, workflow ve bellek primitive’leri',
+      'RAG ve araç entegrasyonu',
+      'TypeScript-first API',
+      'Stagehand ile tarayıcı otomasyonu',
+      'Üretim ortamına yönelik gözlemlenebilirlik',
+    ],
+    about:
+      'Mastra, TypeScript geliştiricilerinin hazır ajanlar, iş akışları ve RAG sistemleri kurması için yazılmış bir çerçevedir. Model, araç ve veri kaynaklarını tek arayüzde birleştirir.',
+    useCases: [
+      'Ürün içi AI ajanı',
+      'Şirket verisiyle RAG asistanı',
+      'Tarayıcı ve API araçlı otomasyon ajanı',
+    ],
+  },
+  {
+    slug: 'typebot',
+    name: 'Typebot',
+    description: 'Siteye gömülen adım adım anket ve sohbet botu oluşturucu.',
+    icon: 'typebot',
+    listingType: 'saas',
+    category: 'İletişim & Destek',
+    brandColor: '#0042DA',
+    features: [
+      'Görsel bot ve form akışı',
+      'Web sitesine gömme',
+      'Dinamik soru ve dallanma',
+      'Self-host açık kaynak',
+      'Typeform alternatifi',
+    ],
+    about:
+      'Typebot, web sitelerine gömülen etkileşimli sohbet botları ve dinamik anketler üretir. Adım adım akışlarla lead toplama veya destek yönlendirmesi kurulur.',
+    useCases: [
+      'Landing page lead formu',
+      'Ürün onboarding sohbeti',
+      'Müşteri memnuniyet anketi',
+    ],
+  },
+  {
+    slug: 'krayin',
+    name: 'Krayin CRM',
+    description: 'Müşteri, lead ve satış hattı yönetimi için açık kaynak Laravel CRM.',
+    icon: 'krayin',
+    listingType: 'saas',
+    category: 'İletişim & Destek',
+    brandColor: '#0284C7',
+    features: [
+      'Lead, fırsat ve pipeline takibi',
+      'Müşteri kartları ve aktivite geçmişi',
+      'Laravel tabanlı, genişletilebilir',
+      'Self-host, peşin lisans maliyeti yok',
+      'Pipedrive alternatifi hafif CRM',
+    ],
+    about:
+      'Krayin CRM, B2B ekipler için müşteri ilişkileri, satış kanalları ve fırsat takibi sunan modüler bir açık kaynak CRM’dir. Laravel ile gelir; kendi sunucunuzda çalışır.',
+    useCases: [
+      'KOBİ satış pipeline’ı',
+      'Lead ve teklif takibi',
+      'Self-host müşteri veritabanı',
+    ],
+  },
+  {
+    slug: 'corteza',
+    name: 'Corteza',
+    description: 'Kendi satış süreçlerinizi tasarlamanıza izin veren düşük kodlu CRM platformu.',
+    icon: 'corteza',
+    listingType: 'saas',
+    category: 'İletişim & Destek',
+    brandColor: '#4A90D9',
+    features: [
+      'Low-code uygulama ve form tasarımı',
+      'Özel müşteri kartları ve iş akışları',
+      'Rol tabanlı erişim',
+      'Self-host açık kaynak',
+      'Salesforce alternatifi esneklik',
+    ],
+    about:
+      'Corteza, ekiplerin kendi satış süreçlerini, müşteri kartlarını ve iş akışlarını kod yazmadan tasarlamasına olanak tanıyan düşük kodlu bir platformdur.',
+    useCases: [
+      'Kuruma özel CRM',
+      'İç süreç ve onay akışları',
+      'Salesforce yerine self-host CRM',
+    ],
+  },
+  {
+    slug: 'dokploy',
+    name: 'Dokploy',
+    description: 'Kendi sunucunuzda Vercel / Netlify / Heroku alternatifi dağıtım paneli.',
+    icon: 'dokploy',
+    listingType: 'saas',
+    category: 'Platform & Dağıtım',
+    brandColor: '#5B4DFF',
+    features: [
+      'Git’ten tek tıkla canlıya alma',
+      'Veritabanı ve uygulama yönetimi',
+      'Docker tabanlı self-host PaaS',
+      'Vercel, Netlify ve Heroku alternatifi',
+      'Açık kaynak panel',
+    ],
+    about:
+      'Dokploy, kendi sunucunuza kurarak veritabanlarını ve web uygulamalarını tek tıkla yayınlamanızı sağlayan bulut yönetim panelidir.',
+    useCases: [
+      'Startup self-host PaaS',
+      'Ajans müşteri sitelerini tek panelden yayınlama',
+      'Vercel yerine kendi altyapı',
+    ],
+  },
+  {
+    slug: 'caprover',
+    name: 'CapRover',
+    description: 'Docker + nginx ile ölçeklenebilir self-host PaaS (Heroku alternatifi).',
+    icon: 'caprover',
+    listingType: 'saas',
+    category: 'Platform & Dağıtım',
+    brandColor: '#ED5B2D',
+    features: [
+      'Tek tıkla Node, Python, PHP ve veritabanı',
+      'Let’s Encrypt SSL',
+      'Ölçeklenebilir Docker + nginx',
+      'Web arayüzü ve CLI',
+      'One-click uygulama kataloğu',
+    ],
+    about:
+      'CapRover, kendi Docker sunucunuza saniyeler içinde uygulama ve veritabanı kurmanızı sağlayan ölçeklenebilir bir PaaS’tır. Heroku benzeri deneyimi kendi makinenizde sunar.',
+    useCases: [
+      'Küçük ekip self-host Heroku',
+      'Hızlı staging ortamı',
+      'Tek VPS’te çoklu uygulama',
+    ],
+  },
+  {
+    slug: 'appsmith',
+    name: 'Appsmith',
+    description: 'Veritabanı ve API’lere bağlı iç araç ve admin paneli oluşturucu.',
+    icon: 'appsmith',
+    listingType: 'saas',
+    category: 'Geliştirme Araçları',
+    brandColor: '#E15615',
+    features: [
+      '25+ veritabanı ve herhangi bir API',
+      'Sürükle-bırak admin paneli',
+      'JS ile iş mantığı',
+      'Self-host açık kaynak',
+      'Retool alternatifi',
+    ],
+    about:
+      'Appsmith, veritabanlarınıza bağlanarak şirket içi yönetim panelleri ve iç araçlar tasarlamanızı sağlar. Operasyon ekipleri için hızlı dahili yazılım üretir.',
+    useCases: [
+      'Müşteri destek admin paneli',
+      'Stok ve sipariş iç aracı',
+      'Retool yerine self-host internal tools',
+    ],
+  },
+  {
+    slug: 'strix',
+    name: 'Strix',
+    description: 'Yapay zeka ile web açıklarını bulan açık kaynak sızma testi aracı.',
+    icon: 'strix',
+    listingType: 'saas',
+    category: 'Kimlik & Güvenlik',
+    brandColor: '#7C3AED',
+    features: [
+      'AI destekli zafiyet tarama',
+      'Web uygulama sızma testi',
+      'Bulunan açıklar için düzeltme yönlendirmesi',
+      'Açık kaynak, self-host edilebilir',
+      'Geliştirici odaklı güvenlik',
+    ],
+    about:
+      'Strix, yapay zeka ile web uygulamalarındaki güvenlik açıklarını otomatik tespit etmeyi hedefler. Penetrasyon testi ihtiyacını geliştirme döngüsüne yaklaştırır.',
+    useCases: [
+      'Sprint öncesi güvenlik taraması',
+      'Staging ortamında zafiyet avı',
+      'Küçük ekipler için pentest yardımcısı',
+    ],
+  },
+  {
+    slug: 'superset',
+    name: 'Apache Superset',
+    description: 'Büyük veri kaynaklarına bağlanan kurumsal görselleştirme ve BI platformu.',
+    icon: 'superset',
+    listingType: 'saas',
+    category: 'BI & Görselleştirme',
+    brandColor: '#20A7C9',
+    features: [
+      'SQL Lab ve görsel grafik oluşturucu',
+      'Çoklu veri kaynağı bağlantısı',
+      'Dashboard paylaşımı ve rol tabanlı erişim',
+      'Self-host Apache lisansı',
+      'Power BI / Tableau alternatifi',
+    ],
+    about:
+      'Apache Superset, büyük veri kaynaklarına bağlanıp gelişmiş görselleştirmeler ve paneller hazırlayan kurumsal iş zekası platformudur.',
+    useCases: [
+      'Şirket metrik panosu',
+      'SQL ekibi için self-servis BI',
+      'Tableau yerine açık kaynak BI',
+    ],
+  },
+  {
+    slug: 'lightdash',
+    name: 'Lightdash',
+    description: 'Kod hızında metrik, grafik ve ajan tabanlı iş zekası.',
+    icon: 'lightdash',
+    listingType: 'saas',
+    category: 'BI & Görselleştirme',
+    brandColor: '#0D0D0D',
+    features: [
+      'dbt semantik katmanıyla uyum',
+      'Hızlı grafik ve metrik tanımlama',
+      'Self-host açık kaynak',
+      'Looker alternatifi analitik',
+      'Geliştirici dostu BI',
+    ],
+    about:
+      'Lightdash, veri ekiplerinin hızlıca grafikler, metrikler ve iş zekası panelleri oluşturmasını sağlar. Analitiği kod ve depo ile aynı hızda tutmayı hedefler.',
+    useCases: [
+      'dbt kullanan ekiplerde self-servis BI',
+      'Ürün metrik panosu',
+      'Looker yerine açık kaynak katman',
+    ],
+  },
+  {
+    slug: 'redash',
+    name: 'Redash',
+    description: 'SQL ile grafik ve paylaşılabilir rapor panoları üreten veri aracı.',
+    icon: 'redash',
+    listingType: 'saas',
+    category: 'BI & Görselleştirme',
+    brandColor: '#FF7964',
+    features: [
+      'Herhangi bir veri kaynağına SQL',
+      'Grafik ve dashboard paylaşımı',
+      'Zamanlanmış sorgular ve uyarılar',
+      'Self-host açık kaynak',
+      'Metabase alternatifi sorgu odaklı BI',
+    ],
+    about:
+      'Redash, veritabanlarınıza SQL atarak hızlıca grafikler ve paylaşılabilir rapor panelleri oluşturmanızı sağlar. Şirketi veri odaklı hale getirmeyi kolaylaştırır.',
+    useCases: [
+      'Operasyon SQL raporları',
+      'Paylaşılan sorgu kütüphanesi',
+      'Hafif self-host BI',
+    ],
+  },
+  {
+    slug: 'medusa',
+    name: 'Medusa',
+    description: 'Headless, modüler ve özelleştirilebilir açık kaynak e-ticaret altyapısı.',
+    icon: 'medusa',
+    listingType: 'saas',
+    category: 'E-ticaret',
+    brandColor: '#000000',
+    features: [
+      'Headless commerce API',
+      'Modüler sepet, ödeme ve stok',
+      'Ajan ve geliştirici odaklı uzantılar',
+      'Self-host açık kaynak',
+      'Shopify alternatifi esneklik',
+    ],
+    about:
+      'Medusa, özelleştirilebilir ve ön yüzü bağımsız (headless) bir e-ticaret platformudur. Kendi vitrininizi bağlayıp ticaret mantığını API üzerinden yönetirsiniz.',
+    useCases: [
+      'Özel vitrinli D2C mağaza',
+      'Headless commerce backend',
+      'Shopify yerine kod kontrolü',
+    ],
+  },
+  {
+    slug: 'btcpay',
+    name: 'BTCPay Server',
+    description: 'Aracısız, self-host Bitcoin ve kripto ödeme işlemcisi.',
+    icon: 'btcpay',
+    listingType: 'saas',
+    category: 'E-ticaret',
+    brandColor: '#51B13E',
+    features: [
+      'Doğrudan kendi cüzdanınıza ödeme',
+      'Komisyonsuz Bitcoin tahsilatı',
+      'Self-host açık kaynak',
+      'Fatura ve POS',
+      'Stripe alternatifi kripto tahsilat',
+    ],
+    about:
+      'BTCPay Server, aracı komisyonu ödemeden Bitcoin ve kripto ödemesi almanızı sağlayan serbest ödeme işlemcisidir. Fonlar sizin cüzdanınızda kalır.',
+    useCases: [
+      'E-ticarette Bitcoin checkout',
+      'Bağış ve fatura tahsilatı',
+      'Self-host ödeme altyapısı',
+    ],
+  },
+  {
+    slug: 'freecodecamp',
+    name: 'freeCodeCamp',
+    description: 'İnteraktif kodlama müfredatı ve topluluk sunan açık kaynak eğitim platformu.',
+    icon: 'freecodecamp',
+    listingType: 'saas',
+    category: 'Dokümantasyon & Wiki',
+    brandColor: '#0A0A23',
+    features: [
+      'Ücretsiz programlama müfredatı',
+      'İnteraktif alıştırmalar',
+      'Topluluk ve sertifika yapısı',
+      'Açık kaynak kod tabanı',
+      'Self-host edilebilir eğitim altyapısı',
+    ],
+    about:
+      'freeCodeCamp, interaktif kodlama dersleri, müfredat ve topluluk yönetimi sunan açık kaynak bir eğitim platformudur. Kendi eğitim deneyiminizi bu kod tabanı üzerine kurabilirsiniz.',
+    useCases: [
+      'İç eğitim akademisi',
+      'Açık kaynak müfredat yayını',
+      'Topluluk öğrenme portalı',
+    ],
+  },
 ];
 
 export type ServiceDealMeta = {
@@ -1140,7 +1588,7 @@ export function getServiceDealMeta(_slug: string, _index = 0): ServiceDealMeta {
 export function asOfficialCatalog(service: ServiceCatalogEntry): ServiceCatalogEntry {
   return {
     ...service,
-    listingType: 'service',
+    listingType: service.listingType || 'service',
     verified: true,
     vendorName: 'BlackNook',
     source: 'catalog',

@@ -42,11 +42,10 @@ async function runSeed() {
   const existing = new Set((slugRows || []).map((row: { slug: string }) => String(row.slug)));
 
   for (const service of SERVICES) {
-    if (existing.has(service.slug)) continue;
-
+    const listingType = service.listingType || 'service';
     const listing = {
       productName: service.name,
-      listingType: 'service',
+      listingType,
       category: service.category,
       tagline: service.description,
       usp: service.about,
@@ -54,6 +53,24 @@ async function runSeed() {
       catalogIcon: service.icon,
       delivery: 'self-host',
     };
+
+    if (existing.has(service.slug)) {
+      if (listingType === 'saas' || listingType === 'micro-saas') {
+        try {
+          await pool.query(
+            `UPDATE products
+             SET listing_data = COALESCE(listing_data, '{}'::jsonb) || CAST(? AS jsonb),
+                 icon_image = COALESCE(NULLIF(icon_image, ''), ?),
+                 verified = TRUE
+             WHERE slug = ?`,
+            [JSON.stringify({ listingType, catalogIcon: service.icon }), service.icon, service.slug]
+          );
+        } catch (error) {
+          console.warn('[seedCatalog] Güncellenemedi:', service.slug, error);
+        }
+      }
+      continue;
+    }
 
     try {
       await pool.query(

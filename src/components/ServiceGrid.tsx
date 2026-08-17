@@ -83,7 +83,7 @@ export default function ServiceGrid() {
 
   const groups = useMemo<Group[]>(() => {
     const services = market.filter((item) => item.listingType === 'service').slice(0, 9);
-    const saas = market.filter((item) => item.listingType === 'saas').slice(0, 6);
+    const saas = market.filter((item) => item.listingType === 'saas').slice(0, 9);
     const micro = market.filter((item) => item.listingType === 'micro-saas').slice(0, 6);
 
     return [

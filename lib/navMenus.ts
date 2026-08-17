@@ -14,7 +14,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'pazarlama',
     label: 'Pazarlama & Analitik',
-    match: ['E-posta & Pazarlama', 'E-posta Altyapısı', 'Analitik & Ürün'],
+    match: ['E-posta & Pazarlama', 'E-posta Altyapısı', 'Analitik & Ürün', 'E-ticaret'],
   },
   {
     id: 'veri-bi',

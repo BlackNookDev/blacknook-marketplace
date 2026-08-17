@@ -52,6 +52,7 @@ const HOMARR_ICONS =
 /** Simple Icons CDN slug differs from our `icon` key in data.ts */
 export const SIMPLE_ICON_SLUG_ALIASES: Record<string, string> = {
   rocketchat: 'rocketdotchat',
+  superset: 'apachesuperset',
 };
 
 /** Brands not in Simple Icons / react-icons — static or third-party logo URL */
@@ -62,6 +63,21 @@ export const CUSTOM_LOGO_URLS: Record<string, string> = {
   flowise: `${HOMARR_ICONS}/flowise.png`,
   langfuse: '/service-logos/langfuse.png',
   dokku: '/service-logos/dokku.svg',
+  activepieces: '/service-logos/activepieces.png',
+  jan: '/service-logos/jan.png',
+  anythingllm: '/service-logos/anything-llm.png',
+  dokploy: '/service-logos/dokploy.png',
+  medusa: '/service-logos/medusa.png',
+  caprover: '/service-logos/caprover.png',
+  superset: '/service-logos/apache-superset.png',
+  typebot: '/service-logos/typebot.png',
+  mastra: '/service-logos/mastra.png',
+  stagehand: '/service-logos/stagehand.png',
+  strix: '/service-logos/strix.png',
+  lightdash: '/service-logos/lightdash.png',
+  corteza: '/service-logos/corteza.png',
+  krayin: '/service-logos/krayin.png',
+  btcpay: '/service-logos/btcpay.png',
 };
 
 export const SERVICE_ICON_MAP: Record<string, IconType> = {
