@@ -136,15 +136,51 @@ export function brandLogoUrl(iconKey: string, hex: string) {
   return `https://cdn.simpleicons.org/${slug}/${hex.replace('#', '')}`;
 }
 
-/** Dark brand colors disappear on zinc cards — lift icon tint when needed */
-export function iconDisplayColor(hex: string): string {
-  const h = hex.replace('#', '');
-  if (h.length !== 6) return hex;
+export function hexLuminance(hex: string): number {
+  const raw = hex.replace('#', '');
+  const h =
+    raw.length === 3
+      ? raw
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : raw;
+  if (h.length < 6) return 0.5;
   const r = parseInt(h.slice(0, 2), 16);
   const g = parseInt(h.slice(2, 4), 16);
   const b = parseInt(h.slice(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance < 0.38 ? '#F4F4F5' : hex;
+  if ([r, g, b].some((n) => Number.isNaN(n))) return 0.5;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+/** Dark brand colors disappear on zinc cards — lift icon tint when needed */
+export function iconDisplayColor(hex: string): string {
+  return hexLuminance(hex) < 0.38 ? '#F4F4F5' : hex;
+}
+
+/** Dark-on-transparent marks that need a light plate */
+const LIGHT_PLATE_KEYS = new Set(['medusa']);
+
+function fileStem(src: string) {
+  return src.split('?')[0].split('/').pop()?.replace(/\.[a-z0-9]+$/i, '') ?? '';
+}
+
+/**
+ * Logo tile: dark by default (icons are lightened for this theme).
+ * Light plate only for dark glyphs that would vanish on zinc.
+ */
+export function logoPlateTone(iconKey: string, brandColor: string): 'light' | 'dark' {
+  const resolved = resolveServiceLogo(iconKey, brandColor);
+  if (resolved.kind === 'icon') return 'dark';
+
+  const src = resolved.src;
+  const stem = fileStem(src);
+  if (LIGHT_PLATE_KEYS.has(iconKey) || LIGHT_PLATE_KEYS.has(stem)) return 'light';
+
+  const simple = src.match(/cdn\.simpleicons\.org\/[^/]+\/([0-9A-Fa-f]{3,8})/i);
+  if (simple) return hexLuminance(simple[1]) < 0.45 ? 'light' : 'dark';
+
+  return 'dark';
 }
 
 export function resolveServiceLogo(iconKey: string, brandColor: string) {

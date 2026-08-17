@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { resolveServiceLogo } from '@/lib/serviceIconMap';
+import { useEffect, useState } from 'react';
+import { logoPlateTone, resolveServiceLogo } from '@/lib/serviceIconMap';
+import { cn } from '@/lib/utils';
 
 type ServiceCatalogLogoProps = {
   icon: string;
@@ -9,12 +10,20 @@ type ServiceCatalogLogoProps = {
   name: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  framed?: boolean;
+  frameClassName?: string;
 };
 
 const SIZE = {
   sm: 'h-5 w-5',
   md: 'h-8 w-8',
   lg: 'h-12 w-12',
+} as const;
+
+const FRAME = {
+  sm: 'h-8 w-8 rounded-lg p-1',
+  md: 'h-12 w-12 rounded-xl p-1.5',
+  lg: 'h-[4.75rem] w-[4.75rem] rounded-2xl p-2.5 sm:h-20 sm:w-20',
 } as const;
 
 const MONO_SIZE = {
@@ -31,26 +40,60 @@ function monogram(name: string) {
   return name.slice(0, 2).toUpperCase();
 }
 
-export default function ServiceCatalogLogo({
+function sampleMarkTone(img: HTMLImageElement): 'light' | 'dark' | null {
+  const size = 32;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  try {
+    ctx.drawImage(img, 0, 0, size, size);
+    const { data } = ctx.getImageData(0, 0, size, size);
+    let lumSum = 0;
+    let n = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+      if (a < 40) continue;
+      lumSum += (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
+      n += 1;
+    }
+    if (n < 8) return null;
+    const opaqueRatio = n / (size * size);
+    if (opaqueRatio > 0.85) return 'dark';
+    const avg = lumSum / n;
+    if (avg < 0.28) return 'light';
+    return 'dark';
+  } catch {
+    return null;
+  }
+}
+
+function LogoMark({
   icon,
   brandColor,
   name,
-  size = 'sm',
-  className = '',
-}: ServiceCatalogLogoProps) {
+  size,
+  className,
+}: Omit<ServiceCatalogLogoProps, 'framed' | 'frameClassName'>) {
   const [imgFailed, setImgFailed] = useState(false);
-  const dim = SIZE[size];
+  const dim = SIZE[size ?? 'sm'];
   const resolved = resolveServiceLogo(icon, brandColor);
 
   if (resolved.kind === 'icon') {
     const { Icon, color } = resolved;
-    return <Icon className={`${dim} ${className}`} color={color} aria-hidden />;
+    return <Icon className={cn(dim, className)} color={color} aria-hidden />;
   }
 
   if (imgFailed) {
     return (
       <span
-        className={`${dim} ${MONO_SIZE[size]} inline-flex items-center justify-center font-bold text-zinc-300 ${className}`}
+        className={cn(
+          dim,
+          MONO_SIZE[size ?? 'sm'],
+          'inline-flex items-center justify-center font-bold text-zinc-300',
+          className
+        )}
         aria-hidden
       >
         {monogram(name)}
@@ -63,10 +106,69 @@ export default function ServiceCatalogLogo({
     <img
       src={resolved.src}
       alt={`${name} logosu`}
-      className={`${dim} object-contain ${className}`}
+      className={cn(dim, 'object-contain', className)}
       loading="lazy"
       decoding="async"
       onError={() => setImgFailed(true)}
     />
+  );
+}
+
+export default function ServiceCatalogLogo({
+  icon,
+  brandColor,
+  name,
+  size = 'sm',
+  className = '',
+  framed = false,
+  frameClassName,
+}: ServiceCatalogLogoProps) {
+  const heuristic = logoPlateTone(icon, brandColor);
+  const [plate, setPlate] = useState<'light' | 'dark'>(heuristic);
+  const resolved = resolveServiceLogo(icon, brandColor);
+  const imageSrc = resolved.kind === 'image' ? resolved.src : '';
+
+  useEffect(() => {
+    setPlate(heuristic);
+    if (!framed || !imageSrc.startsWith('/')) return;
+
+    const img = new Image();
+    let cancelled = false;
+    img.onload = () => {
+      const sampled = sampleMarkTone(img);
+      if (!cancelled && sampled) setPlate(sampled);
+    };
+    img.src = imageSrc;
+    return () => {
+      cancelled = true;
+    };
+  }, [framed, heuristic, imageSrc]);
+
+  const mark = (
+    <LogoMark
+      icon={icon}
+      brandColor={brandColor}
+      name={name}
+      size={size}
+      className={framed ? undefined : className}
+    />
+  );
+
+  if (!framed) return mark;
+
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center overflow-hidden ring-1',
+        FRAME[size],
+        plate === 'light'
+          ? 'bg-white ring-black/10'
+          : 'bg-zinc-950 ring-white/15',
+        frameClassName,
+        className
+      )}
+    >
+      {mark}
+    </div>
   );
 }

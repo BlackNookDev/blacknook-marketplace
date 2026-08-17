@@ -55,19 +55,32 @@ async function runSeed() {
     };
 
     if (existing.has(service.slug)) {
-      if (listingType === 'saas' || listingType === 'micro-saas') {
-        try {
-          await pool.query(
-            `UPDATE products
-             SET listing_data = COALESCE(listing_data, '{}'::jsonb) || CAST(? AS jsonb),
-                 icon_image = COALESCE(NULLIF(icon_image, ''), ?),
-                 verified = TRUE
-             WHERE slug = ?`,
-            [JSON.stringify({ listingType, catalogIcon: service.icon }), service.icon, service.slug]
-          );
-        } catch (error) {
-          console.warn('[seedCatalog] Güncellenemedi:', service.slug, error);
-        }
+      try {
+        await pool.query(
+          `UPDATE products
+           SET listing_data = COALESCE(listing_data, '{}'::jsonb)
+                 || jsonb_build_object(
+                      'listingType', ?::text,
+                      'catalogIcon', ?::text,
+                      'productName', ?::text,
+                      'category', ?::text,
+                      'tagline', ?::text
+                    ),
+               icon_image = COALESCE(NULLIF(icon_image, ''), ?),
+               verified = TRUE
+           WHERE slug = ?`,
+          [
+            listingType,
+            service.icon,
+            service.name,
+            service.category,
+            service.description,
+            service.icon,
+            service.slug,
+          ]
+        );
+      } catch (error) {
+        console.warn('[seedCatalog] Güncellenemedi:', service.slug, error);
       }
       continue;
     }
@@ -77,7 +90,7 @@ async function runSeed() {
         `INSERT INTO products
           (vendor_id, title, slug, category, short_description, long_description,
            features_list, listing_data, icon_image, brand_color, status, verified)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', TRUE)`,
+         VALUES (?, ?, ?, ?, ?, ?, CAST(? AS jsonb), CAST(? AS jsonb), ?, ?, 'approved', TRUE)`,
         [
           vendorId,
           service.name,
@@ -98,7 +111,7 @@ async function runSeed() {
   }
 }
 
-/** Statik katalog servislerini BlackNook hesabıyla products tablosuna yazar. Tekrar çalışınca mevcut slug’lara dokunmaz. */
+/** Statik katalogu products tablosuna yazar; mevcut satırlarda listingType senkron kalır. */
 export function seedOfficialCatalog(): Promise<void> {
   if (!seedPromise) {
     seedPromise = runSeed().catch((error) => {

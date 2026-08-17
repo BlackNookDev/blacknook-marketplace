@@ -52,14 +52,14 @@ export default function BrowseProductCard({ service, className }: Props) {
               aria-hidden
             />
             <div className="absolute inset-0 flex items-center justify-center p-6">
-              <div className="flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-2xl bg-white p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-transform duration-premium group-hover:scale-105 sm:h-20 sm:w-20">
-                <ServiceCatalogLogo
-                  icon={icon}
-                  brandColor={service.brandColor}
-                  name={service.name}
-                  size="lg"
-                />
-              </div>
+              <ServiceCatalogLogo
+                icon={icon}
+                brandColor={service.brandColor}
+                name={service.name}
+                size="lg"
+                framed
+                frameClassName="shadow-[0_12px_40px_rgba(0,0,0,0.45)] transition-transform duration-premium group-hover:scale-105"
+              />
             </div>
           </>
         )}
