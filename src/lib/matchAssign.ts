@@ -1,4 +1,6 @@
 import pool from '@/lib/db';
+import { DEVELOPERS, getActiveDeveloperCount } from '../../lib/developerPresence';
+import { isStaffDisplayName, publicMatchName, staffPersona } from '@/lib/matchDisplay';
 
 const PALETTE = [
   '#34d399',
@@ -45,12 +47,48 @@ export function colorFromSeed(seed: string) {
 }
 
 export function toPublicPerson(person: { id: number; name: string; skills?: string; role?: string }): MatchPublicPerson {
+  if (isStaffDisplayName(person.name)) {
+    const persona = staffPersona(person.id);
+    return {
+      id: `u${person.id}`,
+      initials: persona.initials,
+      color: persona.color,
+      role: person.skills || persona.role,
+    };
+  }
   return {
     id: `u${person.id}`,
     initials: initialsFromName(person.name),
     color: colorFromSeed(String(person.id)),
     role: person.skills || person.role || 'Geliştirici',
   };
+}
+
+export function toRequesterFacingAssignee(person: MatchPerson) {
+  const persona = toPublicPerson(person);
+  return {
+    name: publicMatchName(person.name),
+    skills: person.skills || persona.role,
+    ...persona,
+  };
+}
+
+export function buildPublicMatchPool(real: MatchPerson[]) {
+  const count = getActiveDeveloperCount();
+  const people: MatchPublicPerson[] = real.map(toPublicPerson);
+  const used = new Set(people.map((p) => p.initials));
+  for (const dev of DEVELOPERS) {
+    if (people.length >= Math.min(count, 8)) break;
+    if (used.has(dev.initials)) continue;
+    people.push({
+      id: dev.id,
+      initials: dev.initials,
+      color: dev.color,
+      role: dev.role,
+    });
+    used.add(dev.initials);
+  }
+  return { count, people };
 }
 
 function mapPerson(row: any): MatchPerson {

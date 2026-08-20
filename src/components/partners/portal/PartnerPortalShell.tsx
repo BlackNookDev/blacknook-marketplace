@@ -9,6 +9,7 @@ import { signOut } from 'next-auth/react';
 import { usePartnerAccess } from '@/components/partners/portal/PartnerAccess';
 import { PARTNER_PORTAL_NAV } from '@/lib/partnerPortal';
 import { cn } from '@/lib/utils';
+import { PaytrTrustRow } from '@/components/PaytrLogo';
 
 type Props = {
   title: string;
@@ -147,6 +148,12 @@ export default function PartnerPortalShell({ title, children }: Props) {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">{children}</div>
+
+      <div className="border-t border-white/[0.06] px-4 py-5 sm:px-6">
+        <div className="mx-auto flex max-w-6xl justify-center sm:justify-end">
+          <PaytrTrustRow />
+        </div>
+      </div>
     </div>
   );
 }

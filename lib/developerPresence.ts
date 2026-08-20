@@ -1,4 +1,4 @@
-/** Platform ipuçları — sahte “çevrimiçi” sayısı yok; gerçek havuz /api/match-pool */
+/** Platform ipuçları ve halka açık aktif geliştirici sayısı */
 
 export type DevPresence = {
   id: string;
@@ -31,11 +31,11 @@ export const PLATFORM_HINTS: PlatformHint[] = [
   { id: 'h3', message: 'Teknik ekip talepleri inceliyor' },
 ];
 
-/** Saat bazlı yavaş salınan “aktif” sayısı (2–8 arası) */
+/** 3–10 arası; birkaç dakikada bir kayar, 1–2’de takılmaz */
 export function getActiveDeveloperCount(now = Date.now()): number {
-  const minute = Math.floor(now / 60_000);
-  const wave = Math.sin(minute / 7) * 2.2 + Math.cos(minute / 11) * 1.2;
-  return Math.max(2, Math.min(8, Math.round(5 + wave)));
+  const slot = Math.floor(now / (3 * 60_000));
+  const wave = Math.sin(slot * 1.73) * 3.4 + Math.cos(slot * 0.91) * 1.9;
+  return Math.max(3, Math.min(10, Math.round(6.5 + wave)));
 }
 
 export function getRotatingPlatformHint(now = Date.now()): PlatformHint {

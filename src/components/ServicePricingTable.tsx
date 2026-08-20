@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { Check, ChevronLeft, ChevronRight, Shield, X } from 'lucide-react';
 import type { PricingCell, ServicePricingPlan } from '../../lib/pricingTiers';
+import { PaytrTrustRow } from '@/components/PaytrLogo';
 
 type Props = {
   serviceName: string;
@@ -152,15 +153,18 @@ export default function ServicePricingTable({ serviceName, plan }: Props) {
         </div>
       </div>
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-400">
-        <p className="inline-flex items-center gap-2">
-          <Shield className="h-4 w-4 text-emerald-400" aria-hidden />
-          60 güne kadar iade edilebilir
-        </p>
-        <p className="inline-flex items-center gap-2">
-          <Check className="h-4 w-4 text-emerald-400" aria-hidden />
-          Garantimiz altındasınız
-        </p>
+      <div className="mt-10 flex flex-col items-center gap-5">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-400">
+          <p className="inline-flex items-center gap-2">
+            <Shield className="h-4 w-4 text-emerald-400" aria-hidden />
+            60 güne kadar iade edilebilir
+          </p>
+          <p className="inline-flex items-center gap-2">
+            <Check className="h-4 w-4 text-emerald-400" aria-hidden />
+            Garantimiz altındasınız
+          </p>
+        </div>
+        <PaytrTrustRow />
       </div>
     </section>
   );

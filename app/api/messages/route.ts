@@ -11,6 +11,7 @@ import {
 import { notifyUser } from '@/lib/notify';
 import { messageReceivedEmail } from '@/lib/emailTemplates';
 import { sendUserEmail } from '@/lib/mail';
+import { publicSenderName } from '@/lib/matchDisplay';
 import pool from '@/lib/db';
 import { ensureCriticalSchema } from '@/lib/ensureSchema';
 import { failResponse, logServerError } from '@/lib/errorLog';
@@ -86,10 +87,11 @@ export async function POST(req: NextRequest) {
       body: text,
     });
 
+    const fromName = publicSenderName(user.name);
     const href = `/account/messages?c=${conversationId}`;
     await notifyUser({
       userId: peer.id,
-      title: `${user.name} size yazdı`,
+      title: `${fromName} size yazdı`,
       body: text.length > 120 ? `${text.slice(0, 117)}…` : text,
       href,
     });
@@ -102,7 +104,7 @@ export async function POST(req: NextRequest) {
       if (to) {
         const mail = messageReceivedEmail({
           toName: peer.name,
-          fromName: user.name,
+          fromName,
           preview: text,
           conversationId,
         });

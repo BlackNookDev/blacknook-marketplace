@@ -473,16 +473,21 @@ export function matchUserEmail(params: {
     ? siteUrl(`/account/messages?c=${params.conversationId}`)
     : siteUrl('/account/requests');
   const matched = Boolean(params.assigneeName);
+  const generic = params.assigneeName === 'Bir geliştirici';
   const html = renderBrandEmail({
     preheader: matched
-      ? `${params.assigneeName} ile eşleştiniz.`
+      ? generic
+        ? 'Bir geliştiriciyle eşleştiniz.'
+        : `${params.assigneeName} ile eşleştiniz.`
       : 'Eşleşme talebiniz alındı.',
     eyebrow: 'Eşleşme',
     title: matched ? 'Eşleşme kuruldu' : 'Talebiniz kaydedildi',
     bodyHtml: [
       p(
         matched
-          ? `Merhaba ${escapeHtml(params.name)}, talebiniz ${strong(params.assigneeName || '')} ile eşleştirildi. Sohbete siteden devam edebilirsiniz.`
+          ? generic
+            ? `Merhaba ${escapeHtml(params.name)}, talebiniz bir geliştiriciyle eşleştirildi. Sohbete siteden devam edebilirsiniz.`
+            : `Merhaba ${escapeHtml(params.name)}, talebiniz ${strong(params.assigneeName || '')} ile eşleştirildi. Sohbete siteden devam edebilirsiniz.`
           : `Merhaba ${escapeHtml(params.name)}, eşleşme talebinizi aldık. Uygun bir geliştirici bulunduğunda sizinle iletişime geçeceğiz.`
       ),
       params.requestId != null
@@ -500,13 +505,17 @@ export function matchUserEmail(params: {
 
   return {
     subject: matched
-      ? `${params.assigneeName} ile eşleştiniz — Blacknook`
+      ? generic
+        ? 'Bir geliştiriciyle eşleştiniz — Blacknook'
+        : `${params.assigneeName} ile eşleştiniz — Blacknook`
       : 'Eşleşme talebiniz alındı — Blacknook',
     text: [
       `Merhaba ${params.name},`,
       '',
       matched
-        ? `Talebiniz ${params.assigneeName} ile eşleştirildi.`
+        ? generic
+          ? 'Talebiniz bir geliştiriciyle eşleştirildi.'
+          : `Talebiniz ${params.assigneeName} ile eşleştirildi.`
         : 'Eşleşme talebiniz alındı.',
       params.requestId != null ? `Talep #${params.requestId}` : '',
       '',

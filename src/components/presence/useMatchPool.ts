@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/apiUrl';
+import { getActiveDeveloperCount } from '../../../lib/developerPresence';
 
 export type MatchPoolPerson = {
   id: string;
@@ -11,7 +12,7 @@ export type MatchPoolPerson = {
 };
 
 export function useMatchPool() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(() => getActiveDeveloperCount());
   const [people, setPeople] = useState<MatchPoolPerson[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -25,11 +26,11 @@ export function useMatchPool() {
           people?: MatchPoolPerson[];
         };
         if (cancelled) return;
-        setCount(Number(data.count) || 0);
+        setCount(getActiveDeveloperCount());
         setPeople(Array.isArray(data.people) ? data.people : []);
       } catch {
         if (!cancelled) {
-          setCount(0);
+          setCount(getActiveDeveloperCount());
           setPeople([]);
         }
       } finally {
@@ -37,7 +38,10 @@ export function useMatchPool() {
       }
     };
     void load();
-    const id = window.setInterval(() => void load(), 30_000);
+    const id = window.setInterval(() => {
+      setCount(getActiveDeveloperCount());
+      void load();
+    }, 20_000);
     return () => {
       cancelled = true;
       window.clearInterval(id);

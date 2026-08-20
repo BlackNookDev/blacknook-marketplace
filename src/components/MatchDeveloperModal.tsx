@@ -9,6 +9,7 @@ import DeveloperAvatars from '@/components/presence/DeveloperAvatars';
 import { useMatchPool } from '@/components/presence/useMatchPool';
 import { duration, easePremium } from '@/components/motion/tokens';
 import { apiFetch } from '@/lib/apiUrl';
+import { matchSuccessTitle } from '@/lib/matchDisplay';
 
 type Phase = 'ask' | 'typing' | 'matching' | 'done' | 'error';
 
@@ -223,7 +224,7 @@ export default function MatchDeveloperModal({ open, onClose }: Props) {
                         )}
                       </div>
                       <p className="font-display text-lg font-semibold text-white">
-                        {assigned ? `${assigned.name} ile eşleştiniz` : 'Talebiniz ekibe iletildi'}
+                        {assigned ? matchSuccessTitle(assigned.name) : 'Talebiniz ekibe iletildi'}
                       </p>
                       <p className="mt-2 text-sm leading-relaxed text-zinc-400">
                         {assigned

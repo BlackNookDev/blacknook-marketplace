@@ -7,7 +7,8 @@ import {
   matchUserEmail,
 } from '@/lib/emailTemplates';
 import { getMatchMailTo, sendPlatformEmail, sendUserEmail } from '@/lib/mail';
-import { pickMatchAssignee, toPublicPerson } from '@/lib/matchAssign';
+import { pickMatchAssignee, toRequesterFacingAssignee } from '@/lib/matchAssign';
+import { matchSuccessTitle, publicMatchName } from '@/lib/matchDisplay';
 import { createMatchConversation } from '@/lib/conversations';
 import { notifyUser } from '@/lib/notify';
 import { ensureCriticalSchema } from '@/lib/ensureSchema';
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
         assigned: row.assigned_user_id
           ? {
               id: Number(row.assigned_user_id),
-              name: row.assigned_name || 'Blacknook',
+              name: publicMatchName(row.assigned_name || 'Geliştirici'),
               skills: row.assigned_skills || '',
             }
           : null,
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
 
     await notifyUser({
       userId: user.id,
-      title: assignee ? `${assignee.name} ile eşleştiniz` : 'Eşleşme talebiniz alındı',
+      title: assignee ? matchSuccessTitle(assignee.name) : 'Eşleşme talebiniz alındı',
       body: need.length > 120 ? `${need.slice(0, 117)}…` : need,
       href: messagesHref,
     });
@@ -176,7 +177,7 @@ export async function POST(req: NextRequest) {
       name,
       need,
       requestId: insertId,
-      assigneeName: assignee?.name,
+      assigneeName: assignee ? publicMatchName(assignee.name) : undefined,
       conversationId,
     });
     const userResult = await sendUserEmail({ to: email, ...userMail });
@@ -201,13 +202,7 @@ export async function POST(req: NextRequest) {
       ok: true,
       id: insertId,
       conversationId,
-      assigned: assignee
-        ? {
-            name: assignee.name,
-            skills: assignee.skills,
-            ...toPublicPerson(assignee),
-          }
-        : null,
+      assigned: assignee ? toRequesterFacingAssignee(assignee) : null,
       mailed: teamResult.ok || userResult.ok,
     });
   } catch (error) {

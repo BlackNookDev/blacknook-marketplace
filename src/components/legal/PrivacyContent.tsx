@@ -71,7 +71,7 @@ export default function PrivacyContent() {
         <li>Partner ürün başvurusu ve listeleme içeriği</li>
       </ul>
       <p>
-        Kart bilgileri doğrudan Blacknook tarafından saklanmaz; ödeme işlemcileri (ör. Stripe)
+        Kart bilgileri doğrudan Blacknook tarafından saklanmaz; ödeme işlemcileri (ör. PayTR)
         üzerinden işlenir.
       </p>
 
@@ -96,7 +96,7 @@ export default function PrivacyContent() {
           sağlayıcılar
         </li>
         <li>Birleşme, satış veya benzeri kurumsal işlemlerde</li>
-        <li>Ödeme işlemcileri (Stripe vb.)</li>
+        <li>Ödeme işlemcileri (PayTR vb.)</li>
         <li>Yasal zorunluluk, mahkeme kararı veya kamu otoritesi talebi</li>
         <li>
           <Link href="/terms">Kullanım Koşulları</Link>’nın uygulanması; hak, mülkiyet veya güvenliğin

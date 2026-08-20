@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Wallet } from 'lucide-react';
 import { useMineProducts } from '@/components/partners/useMineProducts';
+import { PaytrTrustRow } from '@/components/PaytrLogo';
 
 export default function PortalBillingContent() {
   const { products, loading } = useMineProducts();
@@ -36,7 +37,9 @@ export default function PortalBillingContent() {
         <h2 className="mt-3 font-display text-lg font-semibold text-white">Ödeme yöntemi</h2>
         <p className="mt-2 text-sm text-zinc-500">
           Banka veya ödeme hesabı bağlama henüz açık değil. Kart veya IBAN bu ekrandan toplanmaz.
+          Kartlı tahsilat PayTR altyapısı üzerinden yapılacaktır.
         </p>
+        <PaytrTrustRow className="mt-5" />
       </section>
 
       <section className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center">

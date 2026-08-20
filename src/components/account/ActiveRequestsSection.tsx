@@ -163,8 +163,9 @@ export default function ActiveRequestsSection() {
                 <p className="mt-3 text-sm leading-relaxed text-zinc-200">{req.need}</p>
                 {req.assigned ? (
                   <p className="mt-2 text-xs text-zinc-500">
-                    Atanan: {req.assigned.name}
-                    {req.assigned.skills ? ` · ${req.assigned.skills}` : ''}
+                    {req.assigned.name === 'Bir geliştirici'
+                      ? 'Bir geliştiriciyle eşleştiniz'
+                      : `Atanan: ${req.assigned.name}${req.assigned.skills ? ` · ${req.assigned.skills}` : ''}`}
                   </p>
                 ) : (
                   <p className="mt-2 text-xs text-zinc-500">Ekip inceliyor</p>

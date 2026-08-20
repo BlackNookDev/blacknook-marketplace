@@ -1,5 +1,6 @@
 import pool from '@/lib/db';
 import { colorFromSeed, initialsFromName } from '@/lib/matchAssign';
+import { isStaffDisplayName, publicSenderName, staffPersona } from '@/lib/matchDisplay';
 
 export type InboxPeer = {
   id: number;
@@ -36,6 +37,18 @@ function peerFromRow(row: any): InboxPeer {
     initials: initialsFromName(name),
     color: colorFromSeed(String(id)),
     skills: row.peer_skills || '',
+  };
+}
+
+function publicPeer(peer: InboxPeer): InboxPeer {
+  if (!isStaffDisplayName(peer.name)) return peer;
+  const persona = staffPersona(peer.id);
+  return {
+    ...peer,
+    name: publicSenderName(peer.name),
+    initials: persona.initials,
+    color: persona.color,
+    skills: peer.skills || persona.role,
   };
 }
 
@@ -117,7 +130,7 @@ export async function listInbox(userId: number): Promise<InboxConversation[]> {
       id: Number(row.id),
       type: row.type || 'match',
       matchNeed: row.match_need || '',
-      peer: peerFromRow(row),
+      peer: publicPeer(peerFromRow(row)),
       lastMessage: row.last_body
         ? {
             body: String(row.last_body),
@@ -142,6 +155,7 @@ export async function getThread(conversationId: number, userId: number) {
   if (!metaRows?.[0]) return null;
 
   const peer = await getPeer(conversationId, userId);
+
   const [msgRows]: any = await pool.query(
     `SELECT id, sender_id, message, created_at
      FROM messages
@@ -155,7 +169,7 @@ export async function getThread(conversationId: number, userId: number) {
     id: Number(metaRows[0].id),
     type: metaRows[0].type || 'match',
     matchNeed: metaRows[0].match_need || '',
-    peer,
+    peer: peer ? publicPeer(peer) : peer,
     messages: (msgRows || []).map((row: any) => ({
       id: Number(row.id),
       senderId: Number(row.sender_id),

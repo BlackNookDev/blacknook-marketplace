@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
 import FooterSellColumn from '@/components/FooterSellColumn';
+import { PaytrTrustRow } from '@/components/PaytrLogo';
 
 const ACCOUNT_LINKS = [
   { href: '/account', label: 'Profil' },
@@ -104,10 +105,11 @@ export default function Footer() {
         <FooterColumn title="Öğren" links={LEARN_LINKS} ariaLabel="Öğrenme kaynakları" />
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 border-t border-white/[0.06] px-6 py-5 sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/[0.06] px-6 py-5 sm:flex-row">
         <p className="text-xs text-zinc-600">
           © {new Date().getFullYear()} BlackNOOK. Tüm hakları saklıdır.
         </p>
+        <PaytrTrustRow />
       </div>
     </footer>
   );
