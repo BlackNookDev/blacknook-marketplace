@@ -9,7 +9,7 @@ import { duration, easePremium } from '@/components/motion/tokens';
 const DEPARTMENTS = [
   {
     title: 'Ürün & Mühendislik',
-    body: 'Pazaryeri deneyimini, partner araçlarını ve altyapıyı birlikte büyütüyorsun.',
+    body: 'Ekosistem deneyimini, partner araçlarını ve altyapıyı birlikte büyütüyorsun.',
   },
   {
     title: 'Partner & Büyüme',
@@ -106,7 +106,7 @@ export default function CareersContent() {
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg">
               Yazılımı keşfedilir kılan ekibe katıl. Partnerler ve alıcılar için sakin, güçlü bir
-              pazaryeri inşa ediyoruz.
+              yazılım ekosistemi inşa ediyoruz.
             </p>
             <a
               href="#acil-roller"

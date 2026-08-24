@@ -56,9 +56,23 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureCriticalSchema();
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Ürün göndermek için giriş yapın.' }, { status: 401 });
+    }
+
+    const { userCanAccessDeveloperPortal } = await import('@/lib/developerApplications');
+    const allowed = await userCanAccessDeveloperPortal(user);
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error:
+            'Ürün eklemek için önce geliştirici başvurunuzun onaylanması gerekir.',
+          code: 'DEVELOPER_APPROVAL_REQUIRED',
+        },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();
@@ -122,7 +136,7 @@ export async function POST(req: NextRequest) {
       title: status === 'approved' ? 'Ürününüz yayınlandı' : 'Ürününüz incelemeye alındı',
       body:
         status === 'approved'
-          ? `${title} pazaryerinde öne çıkan bölümde yayında.`
+          ? `${title} ekosistemde öne çıkan bölümde yayında.`
           : `${title} admin onayından sonra katalogda görünecek.`,
       href: status === 'approved' ? `/service/${slug}` : '/partners/listings',
     });

@@ -125,7 +125,7 @@ const MONEY = [
       'Anket veya yorumlardan ürün fikrini doğrulayın',
       'Tek sonucu vaat eden dar kapsam seçin',
       'Beta kullanıcıdan testimonial alın',
-      'Landing + pazaryeri listesiyle satışa çıkın',
+      'Landing + ekosistem listesiyle satışa çıkın',
     ],
   },
   {
@@ -575,7 +575,7 @@ export default function GuideCreatorEconomyContent() {
                 Blacknook ile sonraki adım
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-                İşinizi büyütecek yazılımları keşfedin veya kendi dijital ürününüzü pazaryerinde
+                İşinizi büyütecek yazılımları keşfedin veya kendi dijital ürününüzü ekosistemde
                 listeleyin. Online işletme kurma rehberimizle birlikte okuyun.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
@@ -596,7 +596,7 @@ export default function GuideCreatorEconomyContent() {
                   href="/sell"
                   className="inline-flex h-11 items-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
                 >
-                  Ürününü listele
+                  Ürün ekle
                 </Link>
               </div>
             </div>

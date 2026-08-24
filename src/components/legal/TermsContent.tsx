@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import LegalDoc from '@/components/legal/LegalDoc';
 
-/** Blacknook kullanım koşulları — dijital pazaryeri yapısına uyarlanmış özet metin */
+/** Blacknook kullanım koşulları — yazılım ekosistemi yapısına uyarlanmış özet metin */
 export default function TermsContent() {
   return (
     <LegalDoc title="Kullanım Koşulları" updated="1 Ağustos 2026">
       <p>
-        Blacknook’a hoş geldiniz. Blacknook; yazılım ve dijital ürünlerin alınıp satıldığı, partnerler ile
-        alıcıların buluştuğu bir dijital pazaryeridir. Bu metin, platformu nasıl işlettiğimizi, sizden
+        Blacknook’a hoş geldiniz. Blacknook; yazılım ve dijital ürünlerin keşfedildiği, partnerler ile
+        alıcıların buluştuğu bir yazılım ekosistemidir. Bu metin, platformu nasıl işlettiğimizi, sizden
         neler beklediğimizi ve sizin bizden neler bekleyebileceğinizi açıklar.
       </p>
       <p>Blacknook Ekibi</p>
@@ -19,7 +19,7 @@ export default function TermsContent() {
         <strong>bizim</strong>”) arasında bağlayıcı bir sözleşmedir.
       </p>
       <p>
-        Koşullar; blacknook.com üzerindeki dijital pazaryerinde veya Blacknook’un sağladığı diğer
+        Koşullar; blacknook.com üzerindeki yazılım ekosisteminde veya Blacknook’un sağladığı diğer
         hizmetlerde (“<strong>Hizmetler</strong>”) ürün alıp satarken veya gezinirken hak ve
         sorumluluklarınızı belirler. Hizmetleri kullanarak (yalnızca gezinmek dahil) Koşulları kabul
         etmiş sayılırsınız. Kabul etmiyorsanız Hizmetleri kullanmayın.
@@ -32,7 +32,7 @@ export default function TermsContent() {
           <Link href="/privacy">Gizlilik Politikası</Link>’nı kabul eder.
         </li>
         <li>
-          Pazaryerinde ürün (“<strong>Ürün</strong>”) listeleyen partnerler, ayrıca partner başvuru ve
+          Ekosistemde ürün (“<strong>Ürün</strong>”) listeleyen partnerler, ayrıca partner başvuru ve
           moderasyon kurallarına uyar.
         </li>
         <li>Satın alma yapan kullanıcılar özellikle 5. bölüme dikkat etmelidir.</li>
@@ -84,8 +84,8 @@ export default function TermsContent() {
 
       <h2>5. Satın alma</h2>
       <p>
-        Blacknook, partnerlerin geliştirdiği Ürünlerin listelendiği bir pazaryeri sağlar. Ürünleri
-        onaylamaz, garanti etmez veya onların kalitesinden sorumlu olmaz.
+        Blacknook, partnerlerin geliştirdiği Ürünlerin listelendiği bir yazılım ekosistemi sağlar.
+        Ürünleri onaylamaz, garanti etmez veya onların kalitesinden sorumlu olmaz.
       </p>
       <h3>A. İade</h3>
       <p>
@@ -131,7 +131,8 @@ export default function TermsContent() {
 
       <h2>8. Üçüncü taraf fikri mülkiyet</h2>
       <p>
-        Partnerler kendi ürün ve içeriklerinden sorumludur. Blacknook, pazaryerini sağlar; partner
+        Partnerler kendi ürün ve içeriklerinden sorumludur. Blacknook, yazılım ekosistemini sağlar;
+        partner
         ürünlerini üretmez. İhlal bildirimi aldığında erişimi kaldırabilir veya kısıtlayabilir.
       </p>
       <p>
@@ -161,7 +162,8 @@ export default function TermsContent() {
 
       <h2>12. Garanti reddi ve sorumluluk sınırı</h2>
       <p>
-        Blacknook satılan Ürünleri geliştirmez; yalnızca pazaryeri sağlar. Ürün kalitesi, güvenliği
+        Blacknook satılan Ürünleri geliştirmez; yalnızca yazılım ekosistemini sağlar. Ürün kalitesi,
+        güvenliği
         veya yasallığı hakkında garanti vermez. Ürüne ilişkin talepler öncelikle satıcıya yöneltilir.
       </p>
       <p>

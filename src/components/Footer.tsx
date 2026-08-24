@@ -5,7 +5,7 @@ import { PaytrTrustRow } from '@/components/PaytrLogo';
 
 const ACCOUNT_LINKS = [
   { href: '/account', label: 'Profil' },
-  { href: '/help', label: 'Yardım merkezi' },
+  { href: '/help', label: 'Yardım' },
   { href: '/terms', label: 'Kullanım koşulları' },
   { href: '/privacy', label: 'Gizlilik' },
 ];
@@ -17,8 +17,8 @@ const COMPANY_LINKS = [
 ];
 
 const LEARN_LINKS = [
-  { href: '/learn/online-isletme', label: 'Online işletme rehberi' },
-  { href: '/learn/creator-economy', label: 'Creator economy nedir?' },
+  { href: '/learn/online-isletme', label: 'Online iş rehberi' },
+  { href: '/learn/creator-economy', label: 'İçerik üreticileri' },
 ];
 
 function FooterColumn({
@@ -75,7 +75,7 @@ export default function Footer() {
         <div className="sm:col-span-2 lg:col-span-1">
           <BrandLogo textClassName="text-xl" iconClassName="h-8 w-8" />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-zinc-500">
-            Bağımsız geliştiriciler ve erken aşama girişimler için yazılım pazaryeri.
+            Bağımsız geliştiriciler ve erken aşama girişimler için yazılım ekosistemi.
           </p>
           <div className="mt-5 flex items-center gap-2.5">
             <a

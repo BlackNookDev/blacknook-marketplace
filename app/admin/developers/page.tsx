@@ -17,10 +17,10 @@ export default function AdminDevelopersPage() {
       <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-28 sm:px-6">
         <PanelNav variant="admin" />
         <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Partner başvuruları
+          Geliştirici başvuruları
         </h1>
         <p className="mt-3 text-sm text-zinc-500">
-          Gönderilen ürünün görselleri, fiyatı, hikâyesi ve bağlantıları burada. Bekleyenler açık gelir.
+          Onay / red. Ürünler için Ürünler sayfası.
         </p>
         <div className="mt-10">
           <AdminDevelopersClient />

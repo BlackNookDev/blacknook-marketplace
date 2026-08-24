@@ -62,7 +62,7 @@ export default function PortalListingsContent() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-zinc-500">
-          Pazaryerindeki ürün listelerinizi yönetin. Yeni gönderimler inceleme kuyruğuna düşer.
+          Ürün listeleriniz.
         </p>
         <Link
           href="/partners/self-submission"
@@ -109,7 +109,7 @@ export default function PortalListingsContent() {
         <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center">
           <p className="font-display text-lg font-semibold text-white">Henüz listeniz yok</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-            İlk ürününüzü oluşturduğunuzda burada durum, planlar ve inceleme notları görünür.
+            Henüz ürün yok.
           </p>
           <Link
             href="/partners/self-submission"

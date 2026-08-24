@@ -6,7 +6,7 @@ import { absoluteUrl, buildPageMetadata, organizationJsonLd } from '@/lib/seo';
 export const metadata: Metadata = buildPageMetadata({
   title: 'Hakkımızda | Blacknook',
   description:
-    'Blacknook; bağımsız yazılımcılar ve erken aşama girişimler için yazılım ve dijital ürün pazaryeridir.',
+    'Blacknook; bağımsız yazılımcılar ve erken aşama girişimler için bir yazılım ekosistemidir.',
   path: '/about',
 });
 
@@ -16,7 +16,7 @@ const aboutJsonLd = {
   name: 'Hakkımızda | Blacknook',
   url: absoluteUrl('/about'),
   description:
-    'Blacknook; bağımsız yazılımcılar ve erken aşama girişimler için yazılım ve dijital ürün pazaryeridir.',
+    'Blacknook; bağımsız yazılımcılar ve erken aşama girişimler için bir yazılım ekosistemidir.',
   mainEntity: organizationJsonLd(),
 };
 

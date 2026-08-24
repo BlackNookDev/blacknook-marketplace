@@ -64,7 +64,7 @@ export default function BrowseProductCard({ service, className }: Props) {
           </>
         )}
         {service.verified ? (
-          <span className="absolute left-2.5 top-2.5 rounded-full bg-sky-500/20 px-2 py-0.5 ring-1 ring-sky-400/30">
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-sky-500/20 p-1 ring-1 ring-sky-400/30">
             <VerifiedBadge compact className="text-sky-200" />
           </span>
         ) : service.source === 'marketplace' ? (

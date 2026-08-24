@@ -32,16 +32,13 @@ export default function StatusView() {
   if (!latest) {
     return (
       <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-        <p className="text-sm text-zinc-400">Henüz bir ürün başvurunuz yok.</p>
+        <p className="text-sm text-zinc-400">Ürün yok.</p>
         <div className="mt-4 flex flex-wrap gap-4">
           <Link
-            href="/partners/self-submission"
+            href="/developers/apply"
             className="text-sm font-medium text-sky-400 hover:text-sky-300"
           >
-            Ürününü listele →
-          </Link>
-          <Link href="/sell" className="text-sm font-medium text-sky-400 hover:text-sky-300">
-            Partner programı →
+            Başvur →
           </Link>
         </div>
       </div>
@@ -56,7 +53,7 @@ export default function StatusView() {
           <p className="text-sm font-medium text-emerald-200">{latest.title} yayında.</p>
         </div>
         <p className="mt-3 text-sm text-zinc-500">
-          Ürününüz pazaryerinde açık kaynak listesinin önünde sergileniyor.
+          Ürününüz ekosistemde açık kaynak listesinin önünde sergileniyor.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link

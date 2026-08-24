@@ -1,11 +1,6 @@
-import ComingSoonAccount from '@/components/account/ComingSoonAccount';
+import { redirect } from 'next/navigation';
 
+/** Affiliate menüden kaldırıldı — eski URL’ler profile yönlendirilir */
 export default function AccountAffiliatePage() {
-  return (
-    <ComingSoonAccount
-      title="Affiliate programı"
-      description="Referans komisyonu henüz açık değil."
-      body="Affiliate başvurusu veya referans kodu şu an oluşturulmaz. Program açılınca burada gerçek bağlantınız görünür."
-    />
-  );
+  redirect('/account');
 }

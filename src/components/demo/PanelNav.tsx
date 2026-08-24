@@ -14,7 +14,7 @@ const VENDOR_NAV: Item[] = [
 ];
 
 const ADMIN_NAV: Item[] = [
-  { href: '/admin/developers', label: 'Partner başvuruları', icon: Users },
+  { href: '/admin/developers', label: 'Geliştirici başvuruları', icon: Users },
   { href: '/admin/products', label: 'Ürün moderasyonu', icon: Shield },
   { href: '/admin/errors', label: 'Hatalar', icon: AlertTriangle },
 ];
@@ -29,7 +29,7 @@ export default function PanelNav({ variant }: Props) {
 
   return (
     <nav
-      aria-label={variant === 'vendor' ? 'Partner paneli' : 'Admin paneli'}
+      aria-label={variant === 'vendor' ? 'Geliştirici paneli' : 'Admin paneli'}
       className="mb-8 flex flex-wrap gap-1 border-b border-white/[0.08] pb-3"
     >
       {items.map((item) => {

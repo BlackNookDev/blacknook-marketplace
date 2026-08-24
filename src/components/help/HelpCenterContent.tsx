@@ -44,14 +44,14 @@ export default function HelpCenterContent() {
           Destek
         </p>
         <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-          Blacknook Yardım Merkezi
+          Blacknook Yardım
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
           Servisler, kurulum talepleri, hesap ve partner süreçleri hakkında dürüst yanıtlar.
         </p>
 
         <label className="relative mx-auto mt-8 block max-w-xl">
-          <span className="sr-only">Yardım merkezinde ara</span>
+          <span className="sr-only">Yardımda ara</span>
           <Search
             className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
             aria-hidden
@@ -145,9 +145,9 @@ export default function HelpCenterContent() {
         <div className="flex flex-col items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-8">
           <BookOpen className="h-8 w-8 shrink-0 text-zinc-400" aria-hidden />
           <div className="flex-1">
-            <p className="font-medium text-zinc-100">Creator economy nedir?</p>
+            <p className="font-medium text-zinc-100">İçerik üreticileri</p>
             <p className="mt-1 text-sm text-zinc-500">
-              Platformlar, gelir modelleri ve 2026’ya dair pratik bir creator rehberi.
+              Platformlar, gelir modelleri ve 2026’ya dair pratik bir rehber.
             </p>
           </div>
           <Link

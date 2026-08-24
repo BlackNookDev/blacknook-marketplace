@@ -66,7 +66,7 @@ export async function PATCH(
               ? 'Ürününüz yayından alındı'
               : 'Ürün başvurunuz güncellendi',
           status === 'approved'
-            ? `${product.title} pazaryerinde önde sergileniyor.`
+            ? `${product.title} ekosistemde önde sergileniyor.`
             : status === 'unpublished'
               ? `${product.title} katalogdan kaldırıldı.`
               : status === 'rejected'

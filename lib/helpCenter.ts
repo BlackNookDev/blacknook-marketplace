@@ -22,8 +22,8 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: 'what-is',
         title: 'Blacknook nedir?',
-        summary: 'Bağımsız yazılım hub’ı: keşif, kurulum ve partner yolları.',
-        body: 'Blacknook; bağımsız geliştiriciler ve erken aşama ekipler için yazılım hub’ıdır. Bugün canlı kanal Servisler’dir: self-host ve iş araçlarını keşfeder, kurulum talebi gönderir veya geliştirici eşleşmesi isteyebilirsiniz. Partner programı ve Blacknook Select, ürününü pazara çıkarmak isteyen ekipler içindir (giriş gerekir). SaaS, Micro-SaaS ve Scriptler kanalları yakında açılacaktır.',
+        summary: 'Yazılım ekosistemi: keşif, kurulum ve partner yolları.',
+        body: 'Blacknook; bağımsız geliştiriciler ve erken aşama ekipler için bir yazılım ekosistemidir. Bugün canlı kanal Ekosistem’dir: self-host ve iş araçlarını keşfeder, kurulum talebi gönderir veya geliştirici eşleşmesi isteyebilirsiniz. Partner programı ve Blacknook Select, ürününü pazara çıkarmak isteyen ekipler içindir (giriş gerekir). SaaS, Micro-SaaS ve Scriptler kanalları yakında açılacaktır.',
       },
       {
         id: 'contact',
@@ -34,8 +34,8 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: 'channels',
         title: 'Hangi kanallar canlı, hangileri yakında?',
-        summary: 'Servisler hub’ı vs SaaS / Micro-SaaS / Scriptler.',
-        body: 'Servisler hub’ı açıktır: katalogda ürünleri gezip kurulum talebi oluşturabilirsiniz. SaaS, Micro-SaaS ve Scriptler menüde “Yakında” olarak görünür; bu kanallarda henüz satın alma veya liste yayını yoktur. Partner başvurusu ve Select, giriş yaptıktan sonra ilgili sayfalardan ilerler.',
+        summary: 'Ekosistem hub’ı vs SaaS / Micro-SaaS / Scriptler.',
+        body: 'Ekosistem hub’ı açıktır: katalogda ürünleri gezip kurulum talebi oluşturabilirsiniz. SaaS, Micro-SaaS ve Scriptler menüde “Yakında” olarak görünür; bu kanallarda henüz satın alma veya liste yayını yoktur. Partner başvurusu ve Select, giriş yaptıktan sonra ilgili sayfalardan ilerler.',
       },
       {
         id: 'tos',
@@ -52,7 +52,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
     articles: [
       {
         id: 'browse',
-        title: 'Servisler hub’ında nasıl gezinirim?',
+        title: 'Ekosistem hub’ında nasıl gezinirim?',
         summary: 'Arama, kategori filtreleri ve ürün kartları.',
         body: '/services sayfasında arama kutusu ve kategorilerle ürünleri süzebilirsiniz. Bir karta tıklayınca ürün detayına gidersiniz. Filtreler mobilde “Kategoriler” paneli üzerinden açılır. Boş bir kategoride ürün yoksa dürüst bir boş durum mesajı görürsünüz; bu, sahte listeleri doldurmadığımız anlamına gelir.',
       },
@@ -91,7 +91,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'create',
         title: 'Hesap nasıl oluşturulur?',
         summary: 'Kayıt, giriş ve ilk adımlar.',
-        body: '/register üzerinden e-posta ve şifrenizle hesap açın. Google ile giriş, yapılandırıldıysa kullanılabilir. Giriş sonrası kurulum/eşleşme talebi gönderebilir, Partner Portal ve Select sayfalarına erişebilirsiniz. Partner satış panelleri onay sonrası açılır.',
+        body: '/register üzerinden e-posta ve şifrenizle hesap açın. Google ile giriş, yapılandırıldıysa kullanılabilir. Giriş sonrası kurulum/eşleşme talebi gönderebilirsiniz. Ürün listelemek için önce Geliştirici Başvurusu (/developers/apply) gerekir; onay sonrası Geliştirici Portal açılır.',
       },
       {
         id: 'password',
@@ -103,7 +103,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'profile',
         title: 'Profilimi nereden düzenlerim?',
         summary: 'Hesap menüsü ve sekmeler.',
-        body: 'Giriş yaptıktan sonra sağ üstteki hesap menüsünden Profil’e gidin. Talepler ve mesajlar canlıdır. Ödeme, kredi, üyelik, ödül ve affiliate sayfaları ödeme gelene kadar “henüz açık değil” olarak durur; kart bilgisi toplanmaz.',
+        body: 'Giriş yaptıktan sonra sağ üstteki hesap menüsünden Profil’e gidin. Talepler ve mesajlar canlıdır. Profilde dil tercihi seçebilirsiniz. Ödeme, kredi ve ödül sayfaları ödeme gelene kadar “henüz açık değil” olarak durur; kart bilgisi toplanmaz.',
       },
     ],
   },
@@ -147,7 +147,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'lifetime',
         title: '“Ömür boyu” ifadesi ne anlama gelir?',
         summary: 'Gelecek deal / lisans teklifleri için kapsam notu.',
-        body: 'Bazı partner tekliflerinde “ömür boyu” ifadesi geçebilir. Bu, kişisel ömrünüz veya ürünün sonsuza dek aynı özelliklerle kalacağı anlamına gelmez; ürünün ilgili programda tanımlandığı süre ve kapsam için geçerlidir. Bugün Servisler hub’ında klasik lifetime deal satışı yoktur.',
+        body: 'Bazı partner tekliflerinde “ömür boyu” ifadesi geçebilir. Bu, kişisel ömrünüz veya ürünün sonsuza dek aynı özelliklerle kalacağı anlamına gelmez; ürünün ilgili programda tanımlandığı süre ve kapsam için geçerlidir. Bugün Ekosistem hub’ında klasik lifetime deal satışı yoktur.',
       },
       {
         id: 'resell',
@@ -166,13 +166,13 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'why-partner',
         title: 'Neden Blacknook partneri olmalıyım?',
         summary: 'Görünürlük, erken kullanıcı ve peşin listeleme ücreti yok.',
-        body: 'Blacknook, bağımsız ekiplerin yazılımını iş odaklı alıcılara ulaştırmayı hedefler. Peşin listeleme ücreti yoktur. Bugün hub’da Servisler öne çıkar; SaaS / Micro-SaaS / Script kanalları yakında. Select, seçilmiş ürünler için kürasyonlu lansman yoludur. Detay: /sell.',
+        body: 'Blacknook, bağımsız ekiplerin yazılımını iş odaklı alıcılara ulaştırmayı hedefler. Peşin listeleme ücreti yoktur. Bugün hub’da Ekosistem öne çıkar; SaaS / Micro-SaaS / Script kanalları yakında. Select, seçilmiş ürünler için kürasyonlu lansman yoludur. Detay: /sell.',
       },
       {
         id: 'how-to-submit',
         title: 'Nasıl ortak olur ve ürünümü nasıl gönderirim?',
         summary: 'Sell → form → durum takibi (giriş gerekir).',
-        body: 'Önce /sell sayfasını okuyun. Giriş yaptıktan sonra /partners/self-submission formunu doldurun: ürün bilgisi, medya, özellikler, fiyat planları ve kurucu hikâyesi. Durumu /partners/status veya Partner Portal’dan izleyin. Portal’a girişle erişebilirsiniz; satış ve fatura sekmeleri onay sonrası anlamlı veri gösterir.',
+        body: 'Önce /developers/apply ile Geliştirici Başvurusu yapın. Onay sonrası /partners/self-submission formunu doldurun: ürün bilgisi, medya, özellikler, fiyat planları ve kurucu hikâyesi. Durumu /developers/status veya Geliştirici Portal’dan izleyin. Satış ve fatura sekmeleri onaylı geliştiriciler için açılır.',
       },
       {
         id: 'vetting',
@@ -214,7 +214,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'after-approval',
         title: 'Ürünüm onaylandıktan sonra ne yapmalıyım?',
         summary: 'Destek kanalı, Portal ve Select.',
-        body: 'Destek e-postanızı ve dokümantasyonu kontrol edin; ilk günler için yanıt beklentisini netleştirin. Partner Portal’dan liste durumunu izleyin. Select’e uygunsa giriş yapıp /select üzerinden kürasyonlu lansmanı değerlendirin. Büyük kırıcı değişiklikleri sessizce yayınlamayın.',
+        body: 'Destek e-postanızı ve dokümantasyonu kontrol edin; ilk günler için yanıt beklentisini netleştirin. Geliştirici Portal’dan liste durumunu izleyin. Select’e uygunsa giriş yapıp /select üzerinden kürasyonlu lansmanı değerlendirin. Büyük kırıcı değişiklikleri sessizce yayınlamayın.',
       },
       {
         id: 'support-ready',
@@ -232,7 +232,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         id: 'update-offer',
         title: 'Listemi nasıl güncellerim?',
         summary: 'Fiyat, plan ve medya değişiklikleri.',
-        body: 'Önemli değişiklikler (fiyat, özellik kaldırma, medya) yeniden incelemeye gidebilir. Daha önce verdiğiniz taahhütleri tek taraflı bozmayın. Güncellemeyi Partner Portal ve ürün formu üzerinden yapın.',
+        body: 'Önemli değişiklikler (fiyat, özellik kaldırma, medya) yeniden incelemeye gidebilir. Daha önce verdiğiniz taahhütleri tek taraflı bozmayın. Güncellemeyi Geliştirici Portal ve ürün formu üzerinden yapın.',
       },
       {
         id: 'buyer-contacts',
@@ -272,9 +272,9 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       },
       {
         id: 'portal-nav',
-        title: 'Partner Portal’da nasıl gezinirim?',
-        summary: 'Overview, listeler, satış, fatura — giriş gerekir.',
-        body: '/partners/overview kontrol panelidir. Listeler ürünlerinizi gösterir; Satış ve Faturalandırma onay ve sipariş sonrası dolar. Destek sekmesindeki SSS’ye bakabilirsiniz; form şu an demo amaçlıdır — gerçek destek için contact@blacknook.com yazın. Select için giriş sonrası /select; standart başvuru için /sell.',
+        title: 'Geliştirici Portal’da nasıl gezinirim?',
+        summary: 'Menü ve onay sonrası sekmeler.',
+        body: 'Geliştirici Portal (/partners/overview) menüsünde kontrol paneli, listeler, satış, fatura ve destek vardır. Geliştirici başvurunuz onaylanmadan ürün ekleme ve satış panelleri kilitlidir. Onay sonrası listelerinizi yönetebilirsiniz. Select için /select; başvuru için /developers/apply.',
       },
       {
         id: 'select-vs-standard',

@@ -7,13 +7,15 @@ import { ArrowRight, X } from 'lucide-react';
 import { ECOSYSTEM_NAV } from '../../lib/navMenus';
 
 const SITE_LINKS = [
-  { href: '/sell', label: 'Satışa başla', gated: true },
-  { href: '/select', label: 'Blacknook Select', gated: true },
-  { href: '/partners/overview', label: 'Partner Portal', gated: true },
-  { href: '/learn/online-isletme', label: 'Online işletme rehberi', gated: false },
-  { href: '/learn/creator-economy', label: 'Creator economy', gated: false },
+  { href: '/developers/apply', label: 'Geliştirici ol', gated: true },
+  { href: '/partners/self-submission', label: 'Ürün ekle', gated: true },
+  { href: '/sell', label: 'Satış yap', gated: true },
+  { href: '/select', label: 'Select programı', gated: true },
+  { href: '/partners/overview', label: 'Geliştirici paneli', gated: true },
+  { href: '/learn/online-isletme', label: 'Online iş rehberi', gated: false },
+  { href: '/learn/creator-economy', label: 'İçerik üreticileri', gated: false },
   { href: '/about', label: 'Hakkımızda', gated: false },
-  { href: '/help', label: 'Yardım merkezi', gated: false },
+  { href: '/help', label: 'Yardım', gated: false },
   { href: '/careers', label: 'Kariyer', gated: false },
 ] as const;
 
@@ -101,7 +103,7 @@ export default function MobileNavPanel({ open, onClose }: Props) {
 
           <section>
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">
-              Trend
+              Popüler
             </p>
             <ul className="space-y-0.5">
               {ECOSYSTEM_NAV.trending.map((item) => (
@@ -128,7 +130,7 @@ export default function MobileNavPanel({ open, onClose }: Props) {
 
           <section>
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">
-              Keşfet
+              Site
             </p>
             <ul className="space-y-0.5">
               {SITE_LINKS.map((item) => (

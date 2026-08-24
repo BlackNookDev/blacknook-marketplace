@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { Clock, Lock, ShieldX } from 'lucide-react';
 import { useMineProducts, type MineProduct } from '@/components/partners/useMineProducts';
+import {
+  useDeveloperAccess,
+} from '@/components/developers/DeveloperPortalGate';
 
 export type PartnerAccessState = {
   ready: boolean;
@@ -19,37 +21,19 @@ export type PartnerAccessState = {
 };
 
 export function usePartnerAccess(): PartnerAccessState {
-  const { data: session, status } = useSession();
   const { products, loading } = useMineProducts();
-  const [ready, setReady] = useState(false);
+  const { ready: devReady, role, canAccess, application: devApp } = useDeveloperAccess();
 
-  useEffect(() => {
-    if (status === 'loading' || loading) {
-      setReady(false);
-      return;
-    }
-    setReady(true);
-  }, [status, loading]);
+  const ready = devReady && !loading;
+  const canManage = canAccess;
 
-  const role = session?.user?.role || 'user';
-  const hasListing = products.length > 0;
-  const hasApproved = products.some((p) => p.status === 'approved');
-  const hasPending = products.some((p) => p.status === 'pending');
-  const latest = products[0];
-
-  const application = hasListing
+  const application = devApp
     ? {
-        status: (hasApproved
-          ? 'approved'
-          : hasPending
-            ? 'pending'
-            : 'rejected') as 'pending' | 'approved' | 'rejected',
-        rejectReason: products.find((p) => p.status === 'rejected')?.rejectReason,
-        submittedAt: latest?.createdAt,
+        status: devApp.status,
+        rejectReason: devApp.rejectReason,
+        submittedAt: undefined as string | undefined,
       }
     : null;
-
-  const canManage = role === 'admin' || role === 'vendor' || hasListing;
 
   return { ready, role, products, application, canManage };
 }
@@ -60,7 +44,7 @@ type LockedProps = {
 };
 
 export function PartnerFeatureGate({ title, children }: LockedProps) {
-  const { ready, canManage, application, role } = usePartnerAccess();
+  const { ready, canManage, application } = usePartnerAccess();
 
   if (!ready) {
     return <p className="text-sm text-zinc-500">Yükleniyor…</p>;
@@ -87,56 +71,35 @@ export function PartnerFeatureGate({ title, children }: LockedProps) {
       <h2 className="mt-5 font-display text-xl font-semibold text-white">{title}</h2>
       {rejected ? (
         <>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            Son listeniz reddedildi.{' '}
-            {application?.rejectReason || 'Güncelleyip yeniden gönderebilirsiniz.'}
+          <p className="mx-auto mt-3 max-w-md text-sm text-zinc-500">
+            {application?.rejectReason || 'Başvuru reddedildi.'}
           </p>
           <Link
-            href="/partners/self-submission"
+            href="/developers/apply"
             className="mt-6 inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
           >
-            Yeni ürün gönder
+            Yeniden başvur
           </Link>
         </>
       ) : pending ? (
         <>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            Listeniz incelemede. Onaylandıktan sonra {title.toLowerCase()} burada açılacak.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/partners/status"
-              className="inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
-            >
-              Liste durumu
-            </Link>
-            <Link
-              href="/partners/listings"
-              className="inline-flex h-11 items-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
-            >
-              Listeler
-            </Link>
-          </div>
+          <p className="mx-auto mt-3 max-w-md text-sm text-zinc-500">İncelemede.</p>
+          <Link
+            href="/developers/status"
+            className="mt-6 inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
+          >
+            Durum
+          </Link>
         </>
       ) : (
         <>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
-            {role === 'user'
-              ? 'Bu bölüm, ürün gönderdikten sonra açılır. Listeniz veritabanına kaydedilir ve admin onayına düşer.'
-              : 'Bu bölüm partner onayından sonra açılır.'}
-          </p>
+          <p className="mx-auto mt-3 max-w-md text-sm text-zinc-500">Önce başvuru gerekli.</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/partners/self-submission"
+              href="/developers/apply"
               className="inline-flex h-11 items-center rounded-xl bg-white px-5 text-sm font-bold text-black hover:opacity-90"
             >
-              Ürün oluştur
-            </Link>
-            <Link
-              href="/sell"
-              className="inline-flex h-11 items-center rounded-xl border border-white/15 px-5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
-            >
-              Partner programı
+              Başvur
             </Link>
           </div>
         </>

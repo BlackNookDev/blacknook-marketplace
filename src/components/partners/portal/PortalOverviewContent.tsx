@@ -66,30 +66,21 @@ function EmptyWelcome() {
 
         <div>
           <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Blacknook ile ortak olun
+            Kontrol paneli
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-500 sm:text-base">
-            Partner Portal’a giriş yaptınız. Satışa ve onay sonrası burada özet metrikler, siparişler
-            ve liste durumunuz görünecek.
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            Hazır mısınız? İlk ürününüzü listelemek için{' '}
-            <strong className="font-semibold text-zinc-200">Satmaya başlayın</strong>’a tıklayın.
-          </p>
-          <p className="mt-3 text-sm text-zinc-500">
-            Blacknook Select ile ilgileniyor musunuz?{' '}
-            <Link href="/select" className="text-teal-300/90 underline underline-offset-2 hover:text-teal-200">
-              Select programını inceleyin
-            </Link>
-            .
-          </p>
+          <p className="mt-3 text-sm text-zinc-500">Ürün ekleyin, listelerinizi yönetin.</p>
           <Link
             href="/partners/self-submission"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-black transition-opacity hover:opacity-90"
           >
-            Satmaya başlayın
+            Ürün ekle
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
+          <p className="mt-4 text-sm text-zinc-500">
+            <Link href="/select" className="text-teal-300/90 underline underline-offset-2 hover:text-teal-200">
+              Select
+            </Link>
+          </p>
         </div>
       </div>
     </div>
@@ -101,13 +92,10 @@ function PendingWelcome({ submittedAt }: { submittedAt?: string }) {
     <div className="rounded-2xl border border-amber-400/20 bg-amber-500/[0.06] p-6 sm:p-10">
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge status="pending" />
-        <p className="text-sm font-medium text-amber-100">Başvurunuz incelemede</p>
+        <p className="text-sm font-medium text-amber-100">İncelemede</p>
       </div>
-      <h2 className="mt-4 font-display text-2xl font-bold text-white">Portal hazır — içerik yakında</h2>
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-400">
-        Menüyü gezebilir, destek alabilir ve Select’i inceleyebilirsiniz. Listeler, satış analitiği
-        ve faturalandırma partner onayından sonra açılır.
-      </p>
+      <h2 className="mt-4 font-display text-2xl font-bold text-white">Beklemede</h2>
+      <p className="mt-3 max-w-xl text-sm text-zinc-400">Onay sonrası paneller açılır.</p>
       {submittedAt ? (
         <p className="mt-2 text-xs text-zinc-500">
           Gönderim: {new Date(submittedAt).toLocaleString('tr-TR')}

@@ -27,7 +27,7 @@ const FLOATING = getFeaturedServices(8).map((s, i) => ({
 const TRUST = [
   { icon: Sparkles, label: '60 gün para iadesi garantisi' },
   { icon: Shield, label: 'Doğrulanmış sağlayıcılar' },
-  { icon: Check, label: '50+ araç tek pazaryerinde' },
+  { icon: Check, label: '50+ araç tek ekosistemde' },
 ];
 
 export default function HeroMailCollector() {

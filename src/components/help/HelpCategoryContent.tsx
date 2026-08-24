@@ -23,7 +23,7 @@ export default function HelpCategoryContent({ slug }: Props) {
           className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-200"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-          Yardım merkezi
+          Yardım
         </Link>
         <h1 className="mt-5 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
           {category.title}
@@ -36,22 +36,22 @@ export default function HelpCategoryContent({ slug }: Props) {
         {isPartner ? (
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/sell"
+              href="/developers/apply"
               className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-black hover:opacity-90"
             >
-              Partner programı
+              Geliştirici ol
             </Link>
             <Link
               href="/partners/overview"
               className="inline-flex h-10 items-center rounded-full border border-white/15 px-4 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
             >
-              Partner Portal
+              Geliştirici paneli
             </Link>
             <Link
               href="/select"
               className="inline-flex h-10 items-center rounded-full border border-white/15 px-4 text-sm font-semibold text-zinc-200 hover:bg-white/[0.05]"
             >
-              Blacknook Select
+              Select programı
             </Link>
           </div>
         ) : null}

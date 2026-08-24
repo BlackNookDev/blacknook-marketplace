@@ -62,14 +62,14 @@ export default function ComingSoonCatalog({ copy }: Props) {
           href="/services"
           className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-white px-4 text-sm font-bold text-black transition-opacity hover:opacity-90"
         >
-          Servisleri keşfet
+          Ekosistemi keşfet
           <ArrowRight className="h-3.5 w-3.5" aria-hidden />
         </Link>
         <Link
           href="/sell"
           className="inline-flex h-10 items-center rounded-lg border border-white/15 px-4 text-sm font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:text-white"
         >
-          Ürününü listele
+          Ürün ekle
         </Link>
       </div>
 
@@ -79,7 +79,7 @@ export default function ComingSoonCatalog({ copy }: Props) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: duration.base, ease: easePremium }}
       >
-        Kurulum talepleri şu an Servis hub’ında açık.
+        Kurulum talepleri şu an Ekosistem hub’ında açık.
       </m.p>
     </div>
   );

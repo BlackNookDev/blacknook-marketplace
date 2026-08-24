@@ -46,18 +46,18 @@ export default function PortalSupportContent() {
             href: '/help/partner',
             icon: BookOpen,
             title: 'Partner kaynakları',
-            body: 'Başvuru, Portal ve Select rehberi',
+            body: 'Başvuru, panel ve Select rehberi',
           },
           {
             href: '/help',
             icon: HelpCircle,
-            title: 'Yardım merkezi',
+            title: 'Yardım',
             body: 'Servisler, hesap ve genel makaleler',
           },
           {
             href: '/select',
             icon: BookOpen,
-            title: 'Blacknook Select',
+            title: 'Select programı',
             body: 'Özel lansman programı hakkında',
           },
           {

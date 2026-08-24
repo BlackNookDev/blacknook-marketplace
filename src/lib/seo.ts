@@ -7,13 +7,13 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://blacknook.
 
 export const SITE_NAME = 'Blacknook';
 
-export const SITE_TAGLINE = 'Yazılımı kendi sunucunda çalıştır';
+export const SITE_TAGLINE = 'Yazılım Ekosistemi';
 
-export const DEFAULT_TITLE = 'Blacknook — Yazılımı kendi sunucunda çalıştır';
+export const DEFAULT_TITLE = 'Blacknook — Yazılım Ekosistemi';
 
 /** max ~155–160 chars */
 export const DEFAULT_DESCRIPTION =
-  'Ghost, n8n, Supabase ve bağımsız ekiplerin ürünlerini keşfet. Kendi altyapında kur; kurulum talebiyle aynı gün başla.';
+  'Self-host araçlar, SaaS ve bağımsız ekiplerin yazılımlarını keşfet. Kurulum talebi ve geliştirici eşleşmesiyle Blacknook yazılım ekosisteminde başla.';
 
 export const OG_IMAGE = `${SITE_URL}/og.png`;
 export const FAVICON_48 = `${SITE_URL}/favicon-48.png`;

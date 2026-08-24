@@ -5,7 +5,7 @@ import PortalListingsContent from '@/components/partners/portal/PortalListingsCo
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Listeler | Partner Portal',
+  title: 'Listeler | Geliştirici paneli',
   description: 'Blacknook partner ürün listeleri.',
   path: '/partners/listings',
   noIndex: true,

@@ -43,7 +43,7 @@ const STEPS = [
   {
     n: '01',
     title: 'Seçim',
-    body: 'Başvurular incelenir. Select’e yalnızca ürünü, desteği ve pazaryeri uyumu net olan ekipler alınır.',
+    body: 'Başvurular incelenir. Select’e yalnızca ürünü, desteği ve ekosistem uyumu net olan ekipler alınır.',
   },
   {
     n: '02',
@@ -267,7 +267,7 @@ export default function SelectContent() {
               href="/partners/self-submission"
               className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200"
             >
-              Ürününü listele
+              Ürün ekle
             </Link>
           </p>
         </div>

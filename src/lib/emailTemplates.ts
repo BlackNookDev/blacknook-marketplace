@@ -222,7 +222,7 @@ export function renderBrandEmail(payload: BrandEmailPayload): string {
           <tr>
             <td align="center" style="padding:22px 8px 0;">
               <p style="margin:0;font-family:${FONT_BODY};font-size:11px;line-height:1.5;color:${C.faint};">
-                Yazılım pazaryeri · kurulum · eşleşme
+                Yazılım ekosistemi · kurulum · eşleşme
               </p>
             </td>
           </tr>
@@ -257,7 +257,7 @@ export function welcomeRegisterEmail(params: { name: string; email: string }) {
         { label: 'Hesap', valueHtml: strong(escapeHtml(params.email)) },
       ]),
     ].join(''),
-    cta: { href: services, label: 'Servisleri keşfet' },
+    cta: { href: services, label: 'Ekosistemi keşfet' },
     footerNote: 'Bu e-postayı kayıt olduğunuz için aldınız.',
   });
 
@@ -269,7 +269,7 @@ export function welcomeRegisterEmail(params: { name: string; email: string }) {
       'Hesabınız başarıyla oluşturuldu.',
       `Kayıtlı e-posta: ${params.email}`,
       '',
-      `Servisleri keşfet: ${services}`,
+      `Ekosistemi keşfet: ${services}`,
     ].join('\n'),
     html,
   };

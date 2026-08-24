@@ -89,7 +89,7 @@ export default function ServiceGrid() {
     return [
       {
         id: 'saas',
-        title: 'SaaS',
+        title: 'Bulut yazılım',
         href: '/services?type=saas',
         moreLabel: 'Tümünü gör',
         items: saas,
@@ -97,7 +97,7 @@ export default function ServiceGrid() {
       },
       {
         id: 'micro-saas',
-        title: 'MicroSaaS',
+        title: 'Mini yazılım',
         href: '/services?type=micro-saas',
         moreLabel: 'Tümünü gör',
         items: micro,
@@ -105,9 +105,9 @@ export default function ServiceGrid() {
       },
       {
         id: 'services',
-        title: 'Servisler',
+        title: 'Ekosistem',
         href: '/services',
-        moreLabel: 'Daha fazla servis',
+        moreLabel: 'Ekosistemi keşfet',
         items: services.length ? services : CATALOG,
       },
     ];

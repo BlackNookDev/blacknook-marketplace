@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
-const SELL_LINKS = [
-  { href: '/partners/self-submission', label: 'Ürününü listele' },
-  { href: '/sell', label: 'Satışa başla' },
-  { href: '/partners/overview', label: 'Partner Portal' },
-  { href: '/select', label: 'Blacknook Select' },
+const DEVELOPER_LINKS = [
+  { href: '/developers/apply', label: 'Geliştirici ol' },
+  { href: '/partners/self-submission', label: 'Ürün ekle' },
+  { href: '/sell', label: 'Satış yap' },
+  { href: '/partners/overview', label: 'Geliştirici paneli' },
+  { href: '/select', label: 'Select programı' },
 ] as const;
 
 export default function FooterSellColumn() {
@@ -16,10 +17,10 @@ export default function FooterSellColumn() {
 
   return (
     <div>
-      <p className="mb-4 text-sm font-semibold text-white">Satış</p>
-      <nav aria-label="Satış ve partner sayfaları">
+      <p className="mb-4 text-sm font-semibold text-white">Geliştirici</p>
+      <nav aria-label="Geliştirici ve satış sayfaları">
         <ul className="space-y-3">
-          {SELL_LINKS.map((link) => {
+          {DEVELOPER_LINKS.map((link) => {
             const href = loggedIn
               ? link.href
               : `/login?callbackUrl=${encodeURIComponent(link.href)}`;

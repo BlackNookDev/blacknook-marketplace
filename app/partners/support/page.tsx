@@ -5,8 +5,8 @@ import PortalSupportContent from '@/components/partners/portal/PortalSupportCont
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Destek | Partner Portal',
-  description: 'Blacknook partner portal destek merkezi.',
+  title: 'Destek | Geliştirici paneli',
+  description: 'Blacknook geliştirici portal destek merkezi.',
   path: '/partners/support',
   noIndex: true,
 });

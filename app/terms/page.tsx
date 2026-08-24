@@ -5,7 +5,7 @@ import { buildPageMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildPageMetadata({
   title: 'Kullanım Koşulları | Blacknook',
   description:
-    'Blacknook pazaryeri kullanım koşulları: hesap, satın alma, içerik ve sorumluluk sınırları.',
+    'Blacknook yazılım ekosistemi kullanım koşulları: hesap, satın alma, içerik ve sorumluluk sınırları.',
   path: '/terms',
 });
 

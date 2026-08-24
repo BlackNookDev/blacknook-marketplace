@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { Eye, EyeOff, ExternalLink, Loader2, Upload } from 'lucide-react';
 import AccountSection from '@/components/account/AccountSection';
+import LanguagePreference from '@/components/account/LanguagePreference';
 import { apiFetch } from '@/lib/apiUrl';
 
 export default function AccountProfilePage() {
@@ -175,7 +176,7 @@ export default function AccountProfilePage() {
 
         <AccountSection
           title="Herkese açık profil"
-          description="Blacknook Marketplace’te işletmenizi ve yetkinliklerinizi görünür kılın. İsterseniz daha sonra gizleyebilirsiniz."
+          description="Blacknook ekosisteminde işletmenizi ve yetkinliklerinizi görünür kılın. İsterseniz daha sonra gizleyebilirsiniz."
           action={
             <Link
               href="/account"
@@ -236,6 +237,8 @@ export default function AccountProfilePage() {
             {profileError ? <p className="text-xs text-rose-300">{profileError}</p> : null}
           </div>
         </AccountSection>
+
+        <LanguagePreference />
 
         <AccountSection
           title="Eşleşme havuzu"

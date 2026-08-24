@@ -4,6 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import pool from './db';
 import { ensureAuthEnv, getAuthSecret } from './authEnv';
+import { isGoogleOAuthEnabled } from './googleOAuth';
 
 ensureAuthEnv();
 
@@ -83,11 +84,11 @@ const providers: AuthOptions['providers'] = [
   }),
 ];
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (isGoogleOAuthEnabled()) {
   providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
     })
   );

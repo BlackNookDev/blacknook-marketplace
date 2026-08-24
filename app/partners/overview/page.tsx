@@ -5,8 +5,8 @@ import PortalOverviewContent from '@/components/partners/portal/PortalOverviewCo
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Kontrol Paneli | Partner Portal',
-  description: 'Blacknook partner portalı kontrol paneli.',
+  title: 'Kontrol Paneli | Geliştirici paneli',
+  description: 'Blacknook geliştirici portalı kontrol paneli.',
   path: '/partners/overview',
   noIndex: true,
 });

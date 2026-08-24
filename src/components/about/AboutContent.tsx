@@ -9,7 +9,7 @@ import { duration, easePremium } from '@/components/motion/tokens';
 const MISSION = [
   {
     title: 'Geliştirici odaklı ekosistem',
-    body: 'Yazılım üreten topluluklar ile dijital araç arayan kullanıcıları doğrudan buluşturan merkezi bir pazar yeri olmak.',
+    body: 'Yazılım üreten topluluklar ile dijital araç arayan kullanıcıları doğrudan buluşturan merkezi bir yazılım ekosistemi olmak.',
   },
   {
     title: 'Büyüme ve lansman kaldıracı',
@@ -55,7 +55,7 @@ const AUDIENCE = [
     points: [
       'Yeni nesil yazılımlara erken erişim',
       'İş akışını hızlandıran dijital araçlar',
-      'Tek pazaryerinden keşif ve kurulum talebi',
+      'Tek ekosistemden keşif ve kurulum talebi',
     ],
   },
 ];
@@ -92,12 +92,12 @@ export default function AboutContent() {
           </p>
           <h1 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-white">
             Yazılımı büyütenler için
-            <span className="mt-1 block text-zinc-400">dijital ürün pazaryeri</span>
+            <span className="mt-1 block text-zinc-400">yazılım ekosistemi</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
             Blacknook; bağımsız yazılımcılar, indie hacker&apos;lar ve erken aşama girişimler için
-            geliştirilmiş yazılım ve dijital ürün pazar yeridir. Geliştiricilerin ürünlerini pazara
-            sunmasını kolaylaştırır; kullanıcıların yenilikçi araçlara tek noktadan erişmesini sağlar.
+            geliştirilmiş bir yazılım ekosistemidir. Geliştiricilerin ürünlerini pazara sunmasını
+            kolaylaştırır; kullanıcıların yenilikçi araçlara tek noktadan erişmesini sağlar.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -239,7 +239,7 @@ export default function AboutContent() {
             Ekosisteme katılın
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-zinc-400">
-            Ürününü listelemek veya yeni araçları keşfetmek için Blacknook Marketplace&apos;te yerini
+            Ürününü listelemek veya yeni araçları keşfetmek için Blacknook ekosisteminde yerini
             al.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -247,7 +247,7 @@ export default function AboutContent() {
               href="/services"
               className="inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
             >
-              Servislere göz at
+              Ekosisteme göz at
             </Link>
             <a
               href="mailto:contact@blacknook.com"

@@ -177,12 +177,12 @@ export default function Navbar() {
                 <span className="hidden sm:inline">Eşleş</span>
                 <MatchPresenceBadge />
               </button>
-              <div className="hidden md:block">
-                <NavDropdown />
-              </div>
             </div>
 
             <div className="flex items-center gap-0.5 sm:gap-1">
+              <div className="hidden md:block">
+                <NavDropdown />
+              </div>
               <div className="relative" ref={notifRef}>
                 <button
                   type="button"
@@ -323,7 +323,7 @@ export default function Navbar() {
                           onClick={() => setMenuOpen(false)}
                           className="block px-3 py-2 text-left text-sm text-emerald-300 transition-colors hover:bg-white/[0.05]"
                         >
-                          Admin
+                          Yönetim
                         </Link>
                       ) : null}
                       <button

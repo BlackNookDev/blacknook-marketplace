@@ -11,32 +11,32 @@ export type ComingSoonCopy = {
 const COMING_SOON: Record<Exclude<CatalogChannel, 'service'>, ComingSoonCopy> = {
   saas: {
     eyebrow: 'Yakında',
-    title: 'SaaS stack’i kuruluyor',
-    body: 'Bağımsız SaaS ürünlerini tek seferlik lisans ve deal modeliyle burada listeleyeceğiz. Şimdilik canlı hub Servisler’de.',
+    title: 'Bulut yazılım yakında',
+    body: 'Bağımsız bulut yazılımlarını tek seferlik lisans ve kampanya modeliyle burada listeleyeceğiz. Şimdilik canlı hub Ekosistem’de.',
     bullets: [
-      'Seçilmiş SaaS ürünleri ve deal’ler',
+      'Seçilmiş bulut yazılımları ve kampanyalar',
       'Lisans ve erişim akışı',
       'Erken listeleme için partner başvurusu açık',
     ],
   },
   'micro-saas': {
     eyebrow: 'Yakında',
-    title: 'Micro-SaaS stack’i geliyor',
+    title: 'Mini yazılım yakında',
     body: 'Dar kapsamlı, odaklı araçlar için ayrı bir hub açıyoruz. Küçük ürünler burada yer alacak.',
     bullets: [
-      'Tek amaçlı Micro-SaaS araçları',
+      'Tek amaçlı mini yazılımlar',
       'Hızlı keşif ve karşılaştırma',
       'Geliştiriciler için erken listeleme',
     ],
   },
   script: {
     eyebrow: 'Yakında',
-    title: 'Script stack’i yakında',
-    body: 'Küçük scriptler, otomasyon paketleri ve teknik tool’lar için ayrı hub açılıyor. Servis kurulumları şimdilik Servisler’den.',
+    title: 'Betikler yakında',
+    body: 'Küçük betikler, otomasyon paketleri ve teknik araçlar için ayrı hub açılıyor. Kurulum talepleri şimdilik Ekosistem’den.',
     bullets: [
-      'Hazır script ve otomasyon paketleri',
-      'Teknik tool ve şablonlar',
-      'Kurulum talebi Servis hub’ında devam ediyor',
+      'Hazır betik ve otomasyon paketleri',
+      'Teknik araçlar ve şablonlar',
+      'Kurulum talebi Ekosistem hub’ında devam ediyor',
     ],
   },
 };

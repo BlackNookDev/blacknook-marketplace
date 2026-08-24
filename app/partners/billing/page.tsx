@@ -6,7 +6,7 @@ import PortalBillingContent from '@/components/partners/portal/PortalBillingCont
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Faturalandırma | Partner Portal',
+  title: 'Faturalandırma | Geliştirici paneli',
   description: 'Blacknook partner faturalandırma ve ödemeler.',
   path: '/partners/billing',
   noIndex: true,

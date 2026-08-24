@@ -7,6 +7,7 @@ import SiteFooter from '@/components/SiteFooter';
 import TechLogoLoop from '@/components/TechLogoLoop';
 import SiteBackground from '@/components/SiteBackground';
 import JsonLd from '@/components/seo/JsonLd';
+import LocaleBootstrap from '@/components/LocaleBootstrap';
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
@@ -57,12 +58,12 @@ export const metadata: Metadata = {
   publisher: 'Blacknook',
   keywords: [
     'Blacknook',
-    'yazılım pazaryeri',
+    'yazılım ekosistemi',
     'SaaS',
     'geliştirici araçları',
-    'dijital ürün',
+    'self-host',
     'indie hacker',
-    'marketplace',
+    'yazılım hub',
   ],
   category: 'technology',
   icons: {
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={[websiteJsonLd(), organizationJsonLd()]} />
         <SiteBackground />
         <Providers>
+          <LocaleBootstrap />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-black"

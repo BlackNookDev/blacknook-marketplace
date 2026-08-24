@@ -7,6 +7,7 @@ import { Lock, LogOut, Menu, X } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { signOut } from 'next-auth/react';
 import { usePartnerAccess } from '@/components/partners/portal/PartnerAccess';
+import { DeveloperPortalGate } from '@/components/developers/DeveloperPortalGate';
 import { PARTNER_PORTAL_NAV } from '@/lib/partnerPortal';
 import { cn } from '@/lib/utils';
 import { PaytrTrustRow } from '@/components/PaytrLogo';
@@ -32,7 +33,7 @@ export default function PartnerPortalShell({ title, children }: Props) {
           <Link
             href="/partners/overview"
             className="inline-flex shrink-0 items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40"
-            aria-label="Blacknook Partner Portal"
+            aria-label="Blacknook Geliştirici paneli"
           >
             <Image
               src="/bn-mark.png"
@@ -44,11 +45,11 @@ export default function PartnerPortalShell({ title, children }: Props) {
             <span className="font-display text-[13px] font-bold tracking-wide text-white sm:text-sm">
               BLACKNOOK
               <span className="mx-1.5 text-zinc-600">|</span>
-              <span className="font-semibold text-zinc-400">PARTNER PORTAL</span>
+              <span className="font-semibold text-zinc-400">GELİŞTİRİCİ PORTAL</span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Partner portal">
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Geliştirici portal">
             {PARTNER_PORTAL_NAV.map((item) => {
               const active = pathname === item.href;
               const locked = item.requiresApproval && !canManage;
@@ -62,7 +63,7 @@ export default function PartnerPortalShell({ title, children }: Props) {
                       ? 'font-semibold text-white'
                       : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100'
                   )}
-                  title={locked ? 'Partner onayından sonra açılır' : undefined}
+                  title={locked ? 'Geliştirici onayından sonra açılır' : undefined}
                 >
                   {item.label}
                   {locked ? <Lock className="h-3 w-3 opacity-60" aria-hidden /> : null}
@@ -100,7 +101,7 @@ export default function PartnerPortalShell({ title, children }: Props) {
 
         {mobileOpen ? (
           <div className="border-t border-white/[0.06] px-4 py-3 lg:hidden">
-            <nav className="flex flex-col gap-0.5" aria-label="Partner portal mobil">
+            <nav className="flex flex-col gap-0.5" aria-label="Geliştirici portal mobil">
               {PARTNER_PORTAL_NAV.map((item) => {
                 const active = pathname === item.href;
                 const locked = item.requiresApproval && !canManage;
@@ -140,14 +141,16 @@ export default function PartnerPortalShell({ title, children }: Props) {
             {title}
           </h1>
           {!canManage ? (
-            <p className="mt-2 text-sm text-zinc-500">
-              Erken erişim: menüyü gezebilirsiniz. Listeler, satış ve fatura onay sonrası açılır.
-            </p>
+            <p className="mt-2 text-sm text-zinc-500">Başvuru onayı gerekli.</p>
           ) : null}
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">{children}</div>
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <DeveloperPortalGate title="Onay gerekli">
+          {children}
+        </DeveloperPortalGate>
+      </div>
 
       <div className="border-t border-white/[0.06] px-4 py-5 sm:px-6">
         <div className="mx-auto flex max-w-6xl justify-center sm:justify-end">

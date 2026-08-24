@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 import { normalizeEmail, safeCallbackUrl } from '@/lib/authUrl';
+import { isGoogleOAuthUiEnabled } from '@/lib/googleOAuth';
 
 function GoogleIcon() {
   return (
@@ -65,6 +66,8 @@ export default function LoginForm() {
     }
   };
 
+  const googleEnabled = isGoogleOAuthUiEnabled();
+
   return (
     <div className="w-full max-w-md">
       <h1 className="font-display text-4xl font-bold tracking-tight text-white md:text-[2.75rem]">
@@ -80,26 +83,32 @@ export default function LoginForm() {
         </Link>
       </p>
 
-      <div className="mt-8">
-        <button
-          type="button"
-          disabled={isLoading}
-          onClick={handleGoogle}
-          className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.04] px-4 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
-        >
-          <GoogleIcon />
-          Google ile devam edin
-        </button>
-      </div>
+      {googleEnabled ? (
+        <>
+          <div className="mt-8">
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={handleGoogle}
+              className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.04] px-4 text-sm font-semibold text-zinc-100 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
+            >
+              <GoogleIcon />
+              Google ile devam edin
+            </button>
+          </div>
 
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center" aria-hidden>
-          <div className="w-full border-t border-white/10" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-black px-3 text-zinc-500">veya</span>
-        </div>
-      </div>
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center" aria-hidden>
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-black px-3 text-zinc-500">veya</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="mt-8" />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {error ? (

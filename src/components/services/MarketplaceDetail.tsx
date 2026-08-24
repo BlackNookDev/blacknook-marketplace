@@ -1,21 +1,22 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { Check } from 'lucide-react';
-import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
 import JsonLd from '@/components/seo/JsonLd';
 import ServiceDetailActions from '../../../app/service/[slug]/ServiceDetailActions';
 import type { MarketplaceProduct } from '@/lib/marketplace';
 import { breadcrumbJsonLd, softwareApplicationJsonLd } from '@/lib/seo';
 import VerifiedBadge from '@/components/VerifiedBadge';
+import ServicePromoVisual from '@/components/services/ServicePromoVisual';
 
 export default function MarketplaceDetail({ product }: { product: MarketplaceProduct }) {
   const listing = product.listing;
   const faqs = (listing?.faqs || []).filter((f) => f.question.trim() && f.answer.trim());
   const gallery = product.gallery.filter(Boolean);
   const useCases = (listing?.tldr || []).filter(Boolean);
+  const icon = product.iconImage || product.coverImage || 'marketplace';
 
   return (
-    <main className="min-h-screen bg-transparent pb-24 pt-28">
+    <main className="min-h-screen bg-transparent pb-24">
       <JsonLd
         data={[
           softwareApplicationJsonLd({
@@ -31,8 +32,23 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
           ]),
         ]}
       />
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <nav className="mb-12 text-sm text-zinc-500" aria-label="Sayfa konumu">
+
+      <ServicePromoVisual
+        name={product.title}
+        slug={product.slug}
+        description={product.shortDescription}
+        category={product.category}
+        brandColor={product.brandColor || '#71717a'}
+        icon={icon}
+        features={product.features}
+        eyebrow={`${product.verified ? 'BlackNook' : 'Partner'} · ${product.category}`}
+        badge={product.verified ? <VerifiedBadge /> : null}
+        coverSrc={product.coverImage || null}
+        coverAlt={listing?.heroAlt || product.title}
+      />
+
+      <div className="mx-auto max-w-6xl px-6 pt-8">
+        <nav className="mb-10 text-sm text-zinc-500" aria-label="Sayfa konumu">
           <ol className="flex flex-wrap items-center gap-2">
             <li>
               <Link href="/" className="hover:text-zinc-300">
@@ -50,43 +66,7 @@ export default function MarketplaceDetail({ product }: { product: MarketplacePro
           </ol>
         </nav>
 
-        {product.coverImage ? (
-          <div className="mb-10 overflow-hidden rounded-2xl border border-white/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product.coverImage}
-              alt={listing?.heroAlt || product.title}
-              className="max-h-[420px] w-full object-cover"
-            />
-          </div>
-        ) : null}
-
-        <header className="flex flex-col items-start gap-6 sm:flex-row">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
-            <ServiceCatalogLogo
-              icon={product.iconImage || product.coverImage || 'marketplace'}
-              brandColor={product.brandColor}
-              name={product.title}
-              size="lg"
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-              {product.verified ? 'BlackNook' : 'Partner'} · {product.category}
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 md:text-5xl">
-                {product.title}
-              </h1>
-              {product.verified ? <VerifiedBadge /> : null}
-            </div>
-            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-zinc-500 md:text-xl">
-              {product.shortDescription}
-            </p>
-          </div>
-        </header>
-
-        <div className="mt-14 flex flex-col gap-14 lg:flex-row lg:gap-16">
+        <div className="flex flex-col gap-14 lg:flex-row lg:gap-16">
           <div className="w-full space-y-12 lg:w-[62%]">
             {product.longDescription ? (
               <section>

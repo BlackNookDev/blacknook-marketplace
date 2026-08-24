@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "seed:admin": "node scripts/seed-admin.js",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "aider": "bash ./scripts/run-aider.sh",
+    "aider:claude": "bash ./scripts/run-aider.sh claude",
+    "aider:gpt": "bash ./scripts/run-aider.sh gpt"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

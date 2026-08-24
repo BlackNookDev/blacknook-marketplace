@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { Check } from 'lucide-react';
-import ServiceCatalogLogo from '@/components/ServiceCatalogLogo';
 import JsonLd from '@/components/seo/JsonLd';
 import { getAllServiceSlugs, getServiceBySlug } from '../../../lib/data';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@/lib/seo';
 import ServiceDetailActions from './ServiceDetailActions';
 import MarketplaceDetail from '@/components/services/MarketplaceDetail';
+import ServicePromoVisual from '@/components/services/ServicePromoVisual';
 import { getMarketplaceBySlug } from '@/lib/marketplace';
 import { ensureCriticalSchema } from '@/lib/ensureSchema';
 
@@ -76,7 +76,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   if (!service) notFound();
 
   return (
-    <main className="min-h-screen bg-transparent pb-24 pt-28">
+    <main className="min-h-screen bg-transparent pb-24">
       <JsonLd
         data={[
           softwareApplicationJsonLd({
@@ -92,8 +92,28 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           ]),
         ]}
       />
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <nav className="mb-12 text-sm text-zinc-500" aria-label="Sayfa konumu">
+
+      <ServicePromoVisual
+        name={service.name}
+        slug={service.slug}
+        description={service.description}
+        category={service.category}
+        brandColor={service.brandColor}
+        icon={service.icon}
+        features={service.features}
+        badge={
+          <span
+            className="inline-flex items-center rounded-full bg-sky-500/15 p-1.5 text-sky-300 ring-1 ring-sky-400/30"
+            title="Doğrulanmış"
+            aria-label="Doğrulanmış"
+          >
+            <Check className="h-3.5 w-3.5" aria-hidden />
+          </span>
+        }
+      />
+
+      <div className="mx-auto max-w-6xl px-6 pt-8">
+        <nav className="mb-10 text-sm text-zinc-500" aria-label="Sayfa konumu">
           <ol className="flex flex-wrap items-center gap-2">
             <li>
               <Link
@@ -123,29 +143,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           </ol>
         </nav>
 
-        <header className="flex flex-col items-start gap-6 sm:flex-row">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
-            <ServiceCatalogLogo
-              icon={service.icon}
-              brandColor={service.brandColor}
-              name={service.name}
-              size="lg"
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-              {service.category}
-            </p>
-            <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 md:text-5xl">
-              {service.name}
-            </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-zinc-500 md:text-xl">
-              {service.description}
-            </p>
-          </div>
-        </header>
-
-        <div className="mt-14 flex flex-col gap-14 lg:flex-row lg:gap-16">
+        <div className="flex flex-col gap-14 lg:flex-row lg:gap-16">
           <div className="w-full space-y-12 lg:w-[62%]">
             <section aria-labelledby="overview-heading">
               <h2 id="overview-heading" className="mb-4 font-display text-2xl font-semibold text-white">
@@ -210,8 +208,9 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                   <dt className="text-zinc-500">Sağlayıcı</dt>
                   <dd className="flex items-center gap-1.5 font-medium text-zinc-200">
                     <span>BlackNook</span>
-                    <Check className="h-4 w-4 text-sky-300" aria-hidden />
-                    <span className="text-sky-300">Doğrulanmış</span>
+                    <span title="Doğrulanmış" aria-label="Doğrulanmış" className="inline-flex">
+                      <Check className="h-4 w-4 text-sky-300" aria-hidden />
+                    </span>
                   </dd>
                 </div>
               </dl>

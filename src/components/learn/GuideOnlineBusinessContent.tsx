@@ -89,12 +89,12 @@ const TIPS = [
   {
     icon: Users,
     title: 'Topluluk ve dağıtım',
-    body: 'İlk kullanıcılar genelde soğuk reklamdan değil; niş topluluklar, kişisel ağ ve pazaryeri listelerinden gelir.',
+    body: 'İlk kullanıcılar genelde soğuk reklamdan değil; niş topluluklar, kişisel ağ ve ekosistem listelerinden gelir.',
   },
   {
     icon: Rocket,
     title: 'Araç seçimini basitleştir',
-    body: 'İşini büyütecek yazılımları tek yerden keşfetmek için Blacknook Marketplace kataloğunu kullan; kurulum talebiyle hızlı başla.',
+    body: 'İşini büyütecek yazılımları tek yerden keşfetmek için Blacknook ekosistemini kullan; kurulum talebiyle hızlı başla.',
   },
 ];
 
@@ -171,7 +171,7 @@ export default function GuideOnlineBusinessContent() {
                 <span className="text-emerald-400" aria-hidden>
                   ✓
                 </span>
-                SaaS lansmanı ve pazaryeri dağıtımı için pratik notlar
+                SaaS lansmanı ve ekosistem dağıtımı için pratik notlar
               </li>
             </ul>
           </m.div>
@@ -304,7 +304,7 @@ export default function GuideOnlineBusinessContent() {
             <GuideImage
               src="/learn/online-isletme-saas.png"
               alt="SaaS ürün lansmanı çalışma ortamı"
-              caption="Çekirdek özellik, erken kullanıcı ve pazaryeri dağıtımı ile lansmanı hızlandırın."
+              caption="Çekirdek özellik, erken kullanıcı ve ekosistem dağıtımı ile lansmanı hızlandırın."
             />
 
             <ul className="mt-6 space-y-3 text-sm leading-relaxed text-zinc-400">
@@ -314,7 +314,7 @@ export default function GuideOnlineBusinessContent() {
               </li>
               <li>
                 <strong className="font-medium text-zinc-200">Erken kullanıcı:</strong> Niş
-                topluluklar, mevcut ağın ve pazaryeri listeleri ilk müşteri için en hızlı yoldur.
+                topluluklar, mevcut ağın ve ekosistem listeleri ilk müşteri için en hızlı yoldur.
               </li>
               <li>
                 <strong className="font-medium text-zinc-200">Doğrulama:</strong> Satış + geri
@@ -323,7 +323,7 @@ export default function GuideOnlineBusinessContent() {
               <li>
                 <strong className="font-medium text-zinc-200">Dağıtım:</strong>{' '}
                 <Link href="/services" className="text-sky-400 hover:text-sky-300">
-                  Blacknook Marketplace
+                  Blacknook ekosistemi
                 </Link>{' '}
                 üzerinden görünürlük, kurulum talebi ve geliştirici eşleşmesi ile büyümeyi hızlandır.
               </li>
@@ -378,7 +378,7 @@ export default function GuideOnlineBusinessContent() {
                 href="/learn/creator-economy"
                 className="inline-flex rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-zinc-200 transition-colors hover:bg-white/[0.06]"
               >
-                Creator economy rehberi
+                İçerik üreticileri rehberi
               </Link>
               <Link
                 href="/about"

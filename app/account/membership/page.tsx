@@ -1,11 +1,6 @@
-import ComingSoonAccount from '@/components/account/ComingSoonAccount';
+import { redirect } from 'next/navigation';
 
+/** Plus üyelik menüden kaldırıldı — eski URL’ler profile yönlendirilir */
 export default function AccountMembershipPage() {
-  return (
-    <ComingSoonAccount
-      title="Plus üyelik"
-      description="Ücretli üyelik henüz satılmıyor."
-      body="Hesabınız ücretsiz plandadır: katalog, kurulum talebi ve eşleşme. Plus yükseltme butonu yok; ödeme açılınca burada gerçek bir plan seçimi olacak."
-    />
-  );
+  redirect('/account');
 }

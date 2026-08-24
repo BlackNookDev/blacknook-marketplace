@@ -5,8 +5,8 @@ export type PricingModel = 'licensing' | 'codes';
 export type ListingType = 'saas' | 'micro-saas';
 
 export const LISTING_TYPES = [
-  { id: 'saas', label: 'SaaS' },
-  { id: 'micro-saas', label: 'MicroSaaS' },
+  { id: 'saas', label: 'Bulut yazılım' },
+  { id: 'micro-saas', label: 'Mini yazılım' },
 ] as const;
 
 export type ListingTier = {

@@ -28,11 +28,11 @@ export default function NavDropdown() {
       </button>
 
       <div
-        className="invisible absolute left-0 top-[calc(100%+0.4rem)] z-50 w-[min(42rem,calc(100vw-2rem))] origin-top-left scale-[0.98] opacity-0 transition-all duration-premium ease-premium group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-focus-within:visible group-focus-within:scale-100 group-focus-within:opacity-100 xl:w-[46rem]"
+        className="invisible absolute right-0 top-[calc(100%+0.4rem)] z-50 w-[min(42rem,calc(100vw-2rem))] origin-top-right scale-[0.98] opacity-0 transition-all duration-premium ease-premium group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-focus-within:visible group-focus-within:scale-100 group-focus-within:opacity-100 xl:w-[46rem]"
         role="menu"
         aria-label={ECOSYSTEM_NAV.label}
       >
-        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-zinc-950/95 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl backdrop-saturate-150">
+        <div className="overflow-hidden rounded-2xl border border-white/[0.1] bg-zinc-950 shadow-[0_20px_60px_rgba(0,0,0,0.75)]">
           <div className="grid grid-cols-3 divide-x divide-white/[0.06]">
             <div className="flex flex-col p-4 sm:p-5">
               <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">
@@ -76,7 +76,7 @@ export default function NavDropdown() {
 
             <div className="p-4 sm:p-5">
               <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">
-                Trend
+                Popüler
               </p>
               <ul className="space-y-3.5">
                 {ECOSYSTEM_NAV.trending.map((item) => (

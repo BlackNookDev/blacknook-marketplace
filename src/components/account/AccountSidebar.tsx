@@ -4,15 +4,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   CreditCard,
-  Gift,
   Grid2X2,
   Inbox,
   LogOut,
   MessageSquare,
-  Plus,
   User,
-  Users,
-  Coins,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { ACCOUNT_NAV, type AccountNavIcon } from '@/components/account/accountNav';
@@ -24,10 +20,6 @@ const ICONS: Record<AccountNavIcon, typeof User> = {
   requests: MessageSquare,
   grid: Grid2X2,
   card: CreditCard,
-  coins: Coins,
-  gift: Gift,
-  plus: Plus,
-  users: Users,
 };
 
 export default function AccountSidebar() {

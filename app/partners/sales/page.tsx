@@ -6,7 +6,7 @@ import PortalSalesContent from '@/components/partners/portal/PortalSalesContent'
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Satış ve Analitik | Partner Portal',
+  title: 'Satış ve Analitik | Geliştirici paneli',
   description: 'Blacknook partner satış ve analitik paneli.',
   path: '/partners/sales',
   noIndex: true,

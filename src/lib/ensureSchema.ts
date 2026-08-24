@@ -66,6 +66,61 @@ BEGIN
     CHECK (status IN ('pending','approved','rejected','unpublished'));
 END $$`,
   `ALTER TABLE products ADD COLUMN IF NOT EXISTS verified BOOLEAN DEFAULT FALSE`,
+  `CREATE TABLE IF NOT EXISTS developer_applications (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     full_name VARCHAR(255) NOT NULL,
+     company_name VARCHAR(255),
+     website_url VARCHAR(500),
+     github_url VARCHAR(500),
+     portfolio_url VARCHAR(500),
+     skills TEXT,
+     about TEXT NOT NULL,
+     status VARCHAR(20) NOT NULL DEFAULT 'pending'
+       CHECK (status IN ('pending', 'approved', 'rejected')),
+     reject_reason TEXT,
+     reviewed_at TIMESTAMP,
+     reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_developer_applications_status
+     ON developer_applications (status, created_at DESC)`,
+  `CREATE INDEX IF NOT EXISTS idx_developer_applications_user
+     ON developer_applications (user_id, created_at DESC)`,
+  `ALTER TABLE developer_applications
+     ADD COLUMN IF NOT EXISTS applicant_type VARCHAR(32) NOT NULL DEFAULT 'developer'`,
+  `ALTER TABLE developer_applications
+     ADD COLUMN IF NOT EXISTS answers JSONB NOT NULL DEFAULT '{}'::jsonb`,
+  `DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'developer_applications_applicant_type_check'
+  ) THEN
+    ALTER TABLE developer_applications
+      ADD CONSTRAINT developer_applications_applicant_type_check
+      CHECK (applicant_type IN ('developer', 'entrepreneur'));
+  END IF;
+END $$`,
+  `CREATE INDEX IF NOT EXISTS idx_developer_applications_type
+     ON developer_applications (applicant_type, status)`,
+  `CREATE TABLE IF NOT EXISTS developer_workspaces (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     project_name VARCHAR(64) NOT NULL DEFAULT 'default',
+     coder_workspace_id VARCHAR(64) NOT NULL,
+     coder_workspace_name VARCHAR(64) NOT NULL,
+     status VARCHAR(32) NOT NULL DEFAULT 'pending',
+     access_url TEXT,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     UNIQUE (user_id, project_name)
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_developer_workspaces_user
+     ON developer_workspaces (user_id, updated_at DESC)`,
+  `CREATE INDEX IF NOT EXISTS idx_developer_workspaces_coder
+     ON developer_workspaces (coder_workspace_id)`,
 ];
 
 let ensurePromise: Promise<void> | null = null;
@@ -109,6 +164,8 @@ export async function checkRequiredSchema(): Promise<SchemaCheck> {
     { kind: 'table', table: 'installation_requests' },
     { kind: 'table', table: 'error_logs' },
     { kind: 'column', table: 'products', column: 'verified' },
+    { kind: 'table', table: 'developer_applications' },
+    { kind: 'table', table: 'developer_workspaces' },
   ] as const;
 
   const missing: string[] = [];

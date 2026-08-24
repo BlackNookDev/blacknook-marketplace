@@ -166,13 +166,9 @@ export default function ServicesBrowse() {
 
   const heading = category
     ? browseHeading(category)
-    : type === 'saas'
-      ? 'SaaS'
-      : type === 'micro-saas'
-        ? 'MicroSaaS'
-        : type
-          ? `${NAV_MENUS.find((m) => m.id === type)?.label ?? ''} keşfet`
-          : 'Servisleri keşfet';
+    : type
+      ? `${NAV_MENUS.find((m) => m.id === type)?.label ?? ''} keşfet`
+      : 'Ekosistemi keşfet';
 
   const hasActiveFilters = Boolean(category || type || cat || debouncedQ);
 
@@ -296,7 +292,7 @@ export default function ServicesBrowse() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={`Servis ara (${catalog.length})`}
+            placeholder={`Ekosistem ara (${catalog.length})`}
             className="h-12 w-full rounded-full border border-white/15 bg-white/[0.04] py-2 pl-11 pr-10 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-white/30 focus:ring-2 focus:ring-white/10"
           />
           {q ? (
@@ -318,7 +314,7 @@ export default function ServicesBrowse() {
           onClick={clearAll}
           className="mb-4 text-[13px] font-medium text-sky-400 hover:text-sky-300"
         >
-          ← Tüm servislere dön
+          ← Ekosisteme dön
         </button>
       )}
 
@@ -392,7 +388,7 @@ export default function ServicesBrowse() {
               </p>
               <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-zinc-500">
                 {isAreaEmpty
-                  ? 'Başka bir kategoriye bakabilir veya tüm servislere dönebilirsiniz.'
+                  ? 'Başka bir kategoriye bakabilir veya ekosisteme dönebilirsiniz.'
                   : 'Aramayı temizleyerek veya kategoriyi değiştirerek deneyin.'}
               </p>
               <button
@@ -400,7 +396,7 @@ export default function ServicesBrowse() {
                 onClick={clearAll}
                 className="mt-5 text-sm font-medium text-sky-400 hover:text-sky-300"
               >
-                Tüm servisleri gör
+                Tüm ekosistemi gör
               </button>
             </div>
           ) : (

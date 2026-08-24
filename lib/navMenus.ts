@@ -13,22 +13,22 @@ export type BrowseCategory = {
 export const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
     id: 'pazarlama',
-    label: 'Pazarlama & Analitik',
+    label: 'Pazarlama ve analiz',
     match: ['E-posta & Pazarlama', 'E-posta Altyapısı', 'Analitik & Ürün', 'E-ticaret'],
   },
   {
     id: 'veri-bi',
-    label: 'Veri & BI',
+    label: 'Veri ve raporlar',
     match: ['BI & Görselleştirme', 'Arama'],
   },
   {
     id: 'cms-icerik',
-    label: 'CMS & İçerik',
+    label: 'İçerik yönetimi',
     match: ['Yayın & CMS', 'Dokümantasyon & Wiki'],
   },
   {
     id: 'operasyon',
-    label: 'Operasyon & Infra',
+    label: 'Sunucu ve altyapı',
     match: [
       'İzleme & Güvenilirlik',
       'Gözlemlenebilirlik',
@@ -39,7 +39,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   },
   {
     id: 'build-backend',
-    label: 'Build & Backend',
+    label: 'Yazılım geliştirme',
     match: [
       'Backend & BaaS',
       'Kaynak Kodu & DevOps',
@@ -51,7 +51,7 @@ export const BROWSE_CATEGORIES: BrowseCategory[] = [
   },
   {
     id: 'destek-kimlik',
-    label: 'Destek & Kimlik',
+    label: 'Destek ve güvenlik',
     match: ['İletişim & Destek', 'Planlama & Randevu', 'Kimlik & Güvenlik'],
   },
 ];
@@ -73,21 +73,21 @@ export type NavMenuConfig = {
 export const NAV_MENUS: NavMenuConfig[] = [
   {
     id: 'saas',
-    label: 'SaaS',
+    label: 'Bulut yazılım',
     href: '/services?type=saas',
     channel: 'saas',
     dropdownItems: [],
   },
   {
     id: 'micro-saas',
-    label: 'MicroSaaS',
+    label: 'Mini yazılım',
     href: '/services?type=micro-saas',
     channel: 'micro-saas',
     dropdownItems: [],
   },
   {
     id: 'script',
-    label: 'Scriptler',
+    label: 'Betikler',
     href: '/services?type=script',
     channel: 'script',
     comingSoon: true,
@@ -95,7 +95,7 @@ export const NAV_MENUS: NavMenuConfig[] = [
   },
   {
     id: 'services',
-    label: 'Servisler',
+    label: 'Ekosistem',
     href: '/services',
     channel: 'service',
     dropdownItems: [],
@@ -106,47 +106,47 @@ export const NAV_MENUS: NavMenuConfig[] = [
 export const ECOSYSTEM_NAV = {
   label: 'Ekosistem',
   href: '/services',
-  browseAllLabel: 'Servisleri keşfet',
+  browseAllLabel: 'Ekosistemi keşfet',
   categories: [
     ...BROWSE_CATEGORIES.map((c) => ({
       label: c.label,
       href: `/services?category=${c.id}`,
     })),
-    { label: 'SaaS', href: '/services?type=saas' },
-    { label: 'MicroSaaS', href: '/services?type=micro-saas' },
-    { label: 'Scriptler', href: '/services?type=script', badge: 'Yakında' as const },
+    { label: 'Bulut yazılım', href: '/services?type=saas' },
+    { label: 'Mini yazılım', href: '/services?type=micro-saas' },
+    { label: 'Betikler', href: '/services?type=script', badge: 'Yakında' as const },
   ],
   trending: [
     {
-      title: 'Self-host stack',
+      title: 'Kendi sunucunda kur',
       description: 'Coolify, Portainer, Traefik ve sunucu araçları.',
       href: '/services?category=operasyon',
     },
     {
-      title: 'AI araçları',
+      title: 'Yapay zeka',
       description: 'Ollama, Flowise, Langfuse ve yerel LLM.',
       href: `/services?category=build-backend&cat=${encodeURIComponent('Yapay Zeka')}`,
       badge: 'AI' as const,
     },
     {
-      title: 'Backend & BaaS',
+      title: 'Backend araçları',
       description: 'Supabase, Appwrite, PocketBase, Hasura.',
       href: `/services?category=build-backend&cat=${encodeURIComponent('Backend & BaaS')}`,
     },
     {
-      title: 'CMS & yayın',
+      title: 'İçerik ve blog',
       description: 'Ghost, Strapi, Directus, WordPress.',
       href: `/services?category=cms-icerik&cat=${encodeURIComponent('Yayın & CMS')}`,
     },
     {
-      title: 'Otomasyon & iş akışı',
-      description: 'n8n ve otomasyon araçları.',
+      title: 'Otomasyon',
+      description: 'n8n ve iş akışı araçları.',
       href: `/services?category=build-backend&cat=${encodeURIComponent('Otomasyon & İş Akışı')}`,
     },
   ],
   featured: {
-    title: 'Pazarlama & analitik',
-    description: 'Analitik ve e-posta çözümlerini keşfet.',
+    title: 'Pazarlama ve analiz',
+    description: 'Analitik ve e-posta çözümlerine göz atın.',
     href: '/services?category=pazarlama',
     cta: 'Keşfet',
   },
@@ -157,10 +157,10 @@ export const CATEGORIES_NAV = {
   label: ECOSYSTEM_NAV.label,
   href: ECOSYSTEM_NAV.href,
   items: [
-    { label: 'Servisler', href: '/services' },
-    { label: 'MicroSaaS', href: '/services?type=micro-saas' },
-    { label: 'SaaS', href: '/services?type=saas' },
-    { label: 'Scriptler', href: '/services?type=script' },
+    { label: 'Ekosistem', href: '/services' },
+    { label: 'Mini yazılım', href: '/services?type=micro-saas' },
+    { label: 'Bulut yazılım', href: '/services?type=saas' },
+    { label: 'Betikler', href: '/services?type=script' },
   ],
 } as const;
 

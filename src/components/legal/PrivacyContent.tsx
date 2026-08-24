@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import LegalDoc from '@/components/legal/LegalDoc';
 
-/** Blacknook gizlilik politikası — pazaryeri yapısına uyarlanmış özet metin */
+/** Blacknook gizlilik politikası — yazılım ekosistemi yapısına uyarlanmış özet metin */
 export default function PrivacyContent() {
   return (
     <LegalDoc title="Gizlilik Politikası" updated="1 Ağustos 2026">
