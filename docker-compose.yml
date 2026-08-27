@@ -17,6 +17,7 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_OAUTH: ${NEXT_PUBLIC_GOOGLE_OAUTH:-}
         NEXT_PUBLIC_CODER_URL: ${NEXT_PUBLIC_CODER_URL:-http://127.0.0.1:7080}
+        NEXT_PUBLIC_CODER_FEATURE_ENABLED: ${NEXT_PUBLIC_CODER_FEATURE_ENABLED:-false}
     restart: unless-stopped
     environment:
       DB_HOST: ${DB_HOST:?DB_HOST is required}
@@ -50,6 +51,7 @@ services:
       CODER_API_TOKEN: ${CODER_API_TOKEN:-}
       CODER_TEMPLATE_ID: ${CODER_TEMPLATE_ID:-}
       NEXT_PUBLIC_CODER_URL: ${NEXT_PUBLIC_CODER_URL:-http://127.0.0.1:7080}
+      NEXT_PUBLIC_CODER_FEATURE_ENABLED: ${NEXT_PUBLIC_CODER_FEATURE_ENABLED:-false}
     ports:
       - '127.0.0.1:${APP_PORT:-18080}:3000'
     volumes:
@@ -63,8 +65,9 @@ services:
       retries: 5
       start_period: 60s
 
-  # Coder v2 control plane — çok kullanıcılı izole workspace'ler
+  # Coder v2 — varsayılan kapalı. Açmak: docker compose --profile coder up -d
   coder:
+    profiles: ['coder']
     image: ghcr.io/coder/coder:latest
     restart: unless-stopped
     ports:
@@ -94,6 +97,7 @@ services:
       start_period: 30s
 
   coder-db:
+    profiles: ['coder']
     image: postgres:16-alpine
     restart: unless-stopped
     environment:

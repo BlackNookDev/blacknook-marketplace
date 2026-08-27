@@ -1,4 +1,6 @@
-export const PARTNER_PORTAL_NAV = [
+import { isCoderFeatureEnabled } from '@/lib/coderFeature';
+
+const PARTNER_PORTAL_NAV_ALL = [
   { href: '/partners/overview', label: 'Kontrol Paneli', requiresApproval: false },
   { href: '/partners/listings', label: 'Listeler', requiresApproval: false },
   { href: '/partners/studio', label: 'Kendi uygulamanı yap', requiresApproval: false },
@@ -7,9 +9,15 @@ export const PARTNER_PORTAL_NAV = [
   { href: '/partners/support', label: 'Destek', requiresApproval: false },
 ] as const;
 
+/** Menüde görünen portal sekmeleri (Coder kapalıysa stüdyo yok) */
+export const PARTNER_PORTAL_NAV = PARTNER_PORTAL_NAV_ALL.filter(
+  (item) => item.href !== '/partners/studio' || isCoderFeatureEnabled()
+);
+
 export function isPartnerPortalPath(pathname: string | null): boolean {
   if (!pathname) return false;
-  return PARTNER_PORTAL_NAV.some(
+  // Kapalı stüdyo URL’si de portal chrome’unda kalsın (yönlendirme sırasında)
+  return PARTNER_PORTAL_NAV_ALL.some(
     (item) => pathname === item.href || pathname.startsWith(`${item.href}/`)
   );
 }

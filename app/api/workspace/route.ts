@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/sessionUser';
 import { ensureCriticalSchema } from '@/lib/ensureSchema';
+import { isCoderFeatureEnabled } from '@/lib/coderFeature';
 import { getCoderPublicUrl, isCoderConfigured } from '@/lib/coderService';
 import {
   createUserWorkspace,
@@ -19,6 +20,18 @@ export async function GET(req: NextRequest) {
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
+    }
+
+    if (!isCoderFeatureEnabled()) {
+      return NextResponse.json(
+        {
+          enabled: false,
+          configured: false,
+          workspace: null,
+          message: 'Coder stüdyosu şu an kapalı.',
+        },
+        { status: 503 }
+      );
     }
 
     if (!isCoderConfigured()) {
@@ -77,6 +90,13 @@ export async function POST(req: NextRequest) {
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: 'Giriş gerekli.' }, { status: 401 });
+    }
+
+    if (!isCoderFeatureEnabled()) {
+      return NextResponse.json(
+        { error: 'Coder stüdyosu şu an kapalı.', enabled: false },
+        { status: 503 }
+      );
     }
 
     if (!isCoderConfigured()) {
